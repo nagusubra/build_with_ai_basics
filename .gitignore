@@ -1,0 +1,7 @@
+# Personal learning context. 1-start adds this rule; keep it here so a later run can extend this file.
+/devpost/learner-profile.md
+
+# Local secrets. A secret-free example file may be committed.
+.env
+.env.*
+!.env.example
