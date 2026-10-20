@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BakeOut — Scope</title>
+<style>
+  :root {
+    --cream: #fff8f0;
+    --paper: #ffffff;
+    --cherry: #c8102e;
+    --cherry-dark: #8f0b21;
+    --cherry-soft: #fde4e7;
+    --leaf: #3f7d3a;
+    --leaf-soft: #e5f2e1;
+    --butter: #f6c453;
+    --butter-soft: #fdf1d3;
+    --ink: #2b1d1a;
+    --muted: #7a6560;
+    --line: #ecdcd2;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 40px 24px 80px; }
+  header { display: flex; align-items: center; gap: 20px; margin-bottom: 8px; }
+  h1 { font-size: 44px; margin: 0; letter-spacing: -0.5px; }
+  h1 span { color: var(--cherry); }
+  .status {
+    display: inline-block; font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; padding: 4px 10px; border-radius: 999px;
+    background: var(--butter-soft); color: #8a6100; border: 1px solid var(--butter);
+  }
+  .tagline { font-size: 19px; color: var(--muted); margin: 6px 0 32px; max-width: 760px; }
+  h2 { font-size: 22px; margin: 0 0 12px; }
+  section { margin-top: 36px; }
+  .card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px 24px; box-shadow: 0 2px 0 rgba(43,29,26,0.04);
+  }
+  .kernel {
+    background: linear-gradient(135deg, var(--cherry) 0%, var(--cherry-dark) 100%);
+    color: #fff; border: none;
+  }
+  .kernel h2 { color: #fff; }
+  .kernel blockquote {
+    margin: 14px 0 0; padding: 10px 14px; border-left: 3px solid var(--butter);
+    background: rgba(255,255,255,0.1); border-radius: 0 10px 10px 0; font-style: italic;
+  }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } h1 { font-size: 34px; } }
+  .label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+  .stat { font-size: 34px; font-weight: 800; color: var(--cherry); line-height: 1.1; }
+
+  /* Diagram */
+  .diagram svg { width: 100%; height: auto; display: block; }
+  .diagram .caption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+
+  /* Stepper */
+  .stepper-track { display: flex; gap: 6px; margin: 16px 0 18px; flex-wrap: wrap; }
+  .stepper-track button {
+    flex: 1 1 0; min-width: 90px; border: 1px solid var(--line); background: var(--cream);
+    border-radius: 10px; padding: 8px 6px; font: inherit; font-size: 13px; font-weight: 600;
+    color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .stepper-track button.kern { border-color: var(--cherry); }
+  .stepper-track button.active { background: var(--cherry); color: #fff; border-color: var(--cherry); }
+  .step-body { min-height: 120px; }
+  .step-body h3 { margin: 0 0 6px; font-size: 19px; }
+  .step-body .who { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .pill {
+    display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px;
+    background: var(--cherry-soft); color: var(--cherry-dark); margin-left: 6px; vertical-align: middle;
+  }
+  .step-nav { display: flex; justify-content: space-between; margin-top: 14px; }
+  .step-nav button {
+    font: inherit; font-weight: 600; border: none; background: var(--ink); color: #fff;
+    padding: 8px 16px; border-radius: 10px; cursor: pointer;
+  }
+  .step-nav button:disabled { opacity: .3; cursor: default; }
+
+  /* Boundary reveals */
+  details {
+    border: 1px solid var(--line); border-radius: 12px; background: var(--paper);
+    margin-bottom: 10px; overflow: hidden;
+  }
+  summary {
+    cursor: pointer; padding: 14px 18px; font-weight: 700; list-style: none;
+    display: flex; align-items: center; gap: 10px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; margin-left: auto; font-size: 20px; color: var(--muted); }
+  details[open] summary::after { content: "–"; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  details ul { margin: 0; padding: 0 18px 16px 40px; }
+  details li { margin: 6px 0; }
+  .now summary { background: var(--leaf-soft); }
+  .later summary { background: var(--butter-soft); }
+  .cut summary { background: #f3eeec; }
+  .note { font-size: 14px; color: var(--muted); }
+  footer { margin-top: 48px; font-size: 13px; color: var(--muted); }
+  code { background: #f4e9e2; padding: 1px 6px; border-radius: 6px; font-size: 0.92em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 6 C 30 16, 24 22, 20 30" stroke="#3f7d3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M32 6 C 34 16, 40 22, 44 30" stroke="#3f7d3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M32 6 C 38 4, 46 6, 48 12 C 42 14, 36 11, 32 6 Z" fill="#3f7d3a"/>
+      <circle cx="20" cy="42" r="13" fill="#c8102e"/>
+      <circle cx="44" cy="42" r="13" fill="#c8102e"/>
+      <circle cx="16" cy="38" r="3" fill="#fff" opacity=".6"/>
+      <circle cx="40" cy="38" r="3" fill="#fff" opacity=".6"/>
+    </svg>
+    <div>
+      <h1>Bake<span>Out</span></h1>
+      <span class="status">Scope · approved</span>
+    </div>
+  </header>
+  <p class="tagline">A Flutter dating app where people match over how they cook and eat, and a cherry-shaped AI wingman takes a new match from "hi" to a planned virtual cooking date — then leaves them to it.</p>
+
+  <section class="card kernel">
+    <h2>The Unique Kernel</h2>
+    <p>After a match, the AI wingman steps in as a middle person, breaks the ice, and keeps pushing until the two people have a virtual cooking date set: a fixed time, a dish they both confirmed, the recipe, and a song. Then it leaves the chat forever.</p>
+    <blockquote>"Now it's on you two how you bake this out further."</blockquote>
+  </section>
+
+  <section class="card diagram">
+    <h2>Who, what, and the proof</h2>
+    <svg viewBox="0 0 940 330" role="img" aria-label="Diagram: an introvert foodie goes through food profile, match, cherry wingman, date locked, wingman leaves, and keeps chatting. The wingman steps are the kernel and the proof in the demo.">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#7a6560"/>
+        </marker>
+      </defs>
+
+      <!-- Who -->
+      <rect x="10" y="110" width="150" height="110" rx="14" fill="#fff8f0" stroke="#ecdcd2" stroke-width="2"/>
+      <text x="85" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#7a6560" letter-spacing="1">WHO</text>
+      <text x="85" y="166" text-anchor="middle" font-size="15" font-weight="700" fill="#2b1d1a">Introvert foodie</text>
+      <text x="85" y="187" text-anchor="middle" font-size="12" fill="#7a6560">not a small-talk person;</text>
+      <text x="85" y="203" text-anchor="middle" font-size="12" fill="#7a6560">stuck on the first reply</text>
+
+      <line x1="160" y1="165" x2="192" y2="165" stroke="#7a6560" stroke-width="2" marker-end="url(#arr)"/>
+
+      <!-- Kernel bracket -->
+      <rect x="398" y="40" width="398" height="250" rx="18" fill="#fde4e7" stroke="#c8102e" stroke-width="2" stroke-dasharray="6 5"/>
+      <text x="597" y="64" text-anchor="middle" font-size="12" font-weight="800" fill="#8f0b21" letter-spacing="1.5">THE KERNEL · CHERRY WINGMAN</text>
+
+      <!-- Steps -->
+      <g font-size="13" text-anchor="middle">
+        <rect x="196" y="135" width="90" height="60" rx="12" fill="#e5f2e1" stroke="#3f7d3a" stroke-width="1.5"/>
+        <text x="241" y="158" font-weight="700" fill="#2b1d1a">Food profile</text>
+        <text x="241" y="176" font-size="11.5" fill="#3f7d3a">+ photo</text>
+        <text x="241" y="190" font-size="11.5" fill="#3f7d3a">verified ✓</text>
+
+        <line x1="286" y1="165" x2="300" y2="165" stroke="#7a6560" stroke-width="2" marker-end="url(#arr)"/>
+
+        <rect x="304" y="135" width="84" height="60" rx="12" fill="#e5f2e1" stroke="#3f7d3a" stroke-width="1.5"/>
+        <text x="346" y="161" font-weight="700" fill="#2b1d1a">Swipe &amp;</text>
+        <text x="346" y="178" font-weight="700" fill="#2b1d1a">match</text>
+
+        <line x1="388" y1="165" x2="410" y2="165" stroke="#7a6560" stroke-width="2" marker-end="url(#arr)"/>
+
+        <rect x="414" y="86" width="112" height="60" rx="12" fill="#c8102e"/>
+        <text x="470" y="112" font-weight="700" fill="#fff">Wingman</text>
+        <text x="470" y="129" font-weight="700" fill="#fff">breaks the ice</text>
+
+        <rect x="414" y="186" width="112" height="60" rx="12" fill="#c8102e"/>
+        <text x="470" y="212" font-weight="700" fill="#fff">They get to</text>
+        <text x="470" y="229" font-weight="700" fill="#fff">know each other</text>
+
+        <line x1="470" y1="146" x2="470" y2="182" stroke="#fff" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="526" y1="216" x2="552" y2="190" stroke="#7a6560" stroke-width="2" marker-end="url(#arr)"/>
+
+        <rect x="556" y="120" width="108" height="90" rx="12" fill="#c8102e"/>
+        <text x="610" y="146" font-weight="700" fill="#fff">Date locked</text>
+        <text x="610" y="166" font-size="11.5" fill="#fff">time · dish ✓✓</text>
+        <text x="610" y="182" font-size="11.5" fill="#fff">recipe · song</text>
+
+        <line x1="664" y1="165" x2="680" y2="165" stroke="#7a6560" stroke-width="2" marker-end="url(#arr)"/>
+
+        <rect x="684" y="120" width="102" height="90" rx="12" fill="#8f0b21"/>
+        <text x="735" y="150" font-weight="700" fill="#fff">Wingman</text>
+        <text x="735" y="167" font-weight="700" fill="#fff">leaves</text>
+        <text x="735" y="186" font-size="11.5" fill="#fde4e7">forever</text>
+      </g>
+
+      <line x1="796" y1="165" x2="810" y2="165" stroke="#7a6560" stroke-width="2" marker-end="url(#arr)"/>
+
+      <!-- Proof -->
+      <rect x="814" y="110" width="116" height="110" rx="14" fill="#fdf1d3" stroke="#f6c453" stroke-width="2"/>
+      <text x="872" y="140" text-anchor="middle" font-size="12" font-weight="700" fill="#8a6100" letter-spacing="1">PROOF</text>
+      <text x="872" y="166" text-anchor="middle" font-size="14" font-weight="700" fill="#2b1d1a">Two people</text>
+      <text x="872" y="184" text-anchor="middle" font-size="14" font-weight="700" fill="#2b1d1a">keep talking</text>
+      <text x="872" y="204" text-anchor="middle" font-size="12" fill="#7a6560">on their own</text>
+
+      <text x="292" y="312" text-anchor="middle" font-size="12" fill="#3f7d3a">sets up the match</text>
+      <text x="597" y="312" text-anchor="middle" font-size="12" fill="#8f0b21">what nobody else has</text>
+    </svg>
+    <p class="caption">Green steps set the stage. Red steps are the kernel, and they're the "oh, that's cool" beat the demo video has to land. Two real people on two phones, in one live chat with the wingman.</p>
+  </section>
+
+  <section class="card">
+    <h2>The Core Loop, step by step</h2>
+    <p class="note">Step through what someone does, from setting up a profile to the moment the wingman leaves. Steps marked <span class="pill" style="margin:0">kernel</span> are what makes BakeOut different.</p>
+    <div class="stepper-track" id="track"></div>
+    <div class="step-body" id="body"></div>
+    <div class="step-nav">
+      <button id="prev">← Back</button>
+      <button id="next">Next →</button>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Who It's For</h2>
+      <p>An introvert who isn't a small-talk person and loves food. On today's apps they find it hard to get a match, and after matching it's "so hard to think of even one reply." They swipe, stall on the first message, and the match goes nowhere.</p>
+    </div>
+    <div class="card">
+      <div class="label">Early signal</div>
+      <div class="stat">23 of 25</div>
+      <p>people the team shared the idea with in the past 2–3 days said they want to try it. The team found nothing close to it among existing dating apps.</p>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2>Inspiration &amp; Identity</h2>
+      <ul>
+        <li><strong>Mascot:</strong> a cherry wingman — male cherry on his side, female cherry on hers.</li>
+        <li><strong>Feel:</strong> comfortable and calming for someone dating apps overwhelm. Fun, warm, food-led.</li>
+        <li><strong>Tone:</strong> playful food language — "bake this out."</li>
+        <li><strong>Insight:</strong> eating habits reflect a person more deeply than random talk.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Why This Matters</h2>
+      <p>Vinamra is an introvert who finds current dating apps too hard: "despite all the development the core of dating apps never really upgraded." Both he and Subu love cooking, and they want to "build something I wish should have existed."</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>What "Working" Looks Like</h2>
+      <p>Two real people on two phones. Each sets up a food-centered profile and passes picture verification, they see each other, swipe right, and match instantly. The cherry wingman appears in a shared chat on both sides, starts the conversation, helps them get to know each other, then sets up the date: picks a dish from their choices, confirms it with both, posts the recipe, suggests a song, and fixes a time. It signs off and leaves. The two keep chatting without it.</p>
+    <p class="note">The demo video wraps this in an opening skit (two people tired of dating apps, bored while cooking, nudged by a WhatsApp-style message) and a behind-the-scenes look at the end. That's video content for <code>6-ship</code>, not app features.</p>
+  </section>
+
+  <section class="card">
+    <h2>Open Questions for Later Phases</h2>
+    <ul>
+      <li><strong>Picture verification:</strong> what exactly counts as "verified" (<code>3-prd</code>), and whether it runs on the phone or through an outside service, plus how face data is handled (<code>4-spec</code>).</li>
+      <li><strong>Wingman behavior:</strong> what it asks to help them get to know each other, and how it decides it's time to move to the date (<code>3-prd</code>).</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>The Boundary</h2>
+    <details class="now" open>
+      <summary><span class="dot" style="background:var(--leaf)"></span>Now: the proof of concept</summary>
+      <ul>
+        <li>Quick food-centered profile setup (cooking and eating habits).</li>
+        <li>Picture verification during setup, so there are no fake people or profiles. A real build, not simulated. Added after the first draft; the wingman stays the priority.</li>
+        <li>The two users see each other, swipe right, and match. A couple of profiles is enough; no matching at scale.</li>
+        <li>After the match, the wingman joins a live chat between the two real users and breaks the ice.</li>
+        <li>The wingman guides them to a date: time, a dish both confirm, the recipe in chat, a song suggestion.</li>
+        <li>The wingman signs off and permanently leaves; the two users keep chatting.</li>
+        <li>A polished, comfortable UI with the cherry mascot. The interface is part of what the demo sells.</li>
+      </ul>
+    </details>
+    <details class="later">
+      <summary><span class="dot" style="background:var(--butter)"></span>Later: worth doing, not now</summary>
+      <ul>
+        <li>Food filters for search (vegan, vegetarian, baking, and so on). May come back once the core path works.</li>
+        <li>Real matching across many users.</li>
+        <li>The virtual cooking date itself, e.g. an in-app video call.</li>
+        <li>Playing music in the app, rather than suggesting a song.</li>
+      </ul>
+    </details>
+    <details class="cut">
+      <summary><span class="dot" style="background:#b8a9a4"></span>Explicitly cut</summary>
+      <ul><li>None so far.</li></ul>
+    </details>
+  </section>
+
+  <footer>Companion to <code>devpost/scope.md</code>, which is the canonical version. Works offline.</footer>
+</div>
+
+<script>
+  const steps = [
+    { t: "Food profile", who: "Each person, on their own phone", d: "They set up a profile built around how they cook and eat, not a normal dating profile." },
+    { t: "Get verified", who: "Each person, on their own phone", d: "They verify with a picture during setup, so there are no fake people or profiles. How it works gets decided in the PRD and spec." },
+    { t: "Swipe & match", who: "Both people", d: "They see each other, swipe right, and match instantly. For the proof of concept a couple of profiles is enough." },
+    { t: "Wingman arrives", who: "Cherry wingman, in a shared chat on both phones", d: "Instead of an empty chat, the cherry wingman appears and starts the conversation for both of them.", k: true },
+    { t: "Getting to know", who: "Cherry wingman + both people", d: "The wingman helps them get to know each other and keeps steering toward a date.", k: true },
+    { t: "Date locked", who: "Cherry wingman + both people", d: "It picks a dish from both people's food choices and confirms it with each of them, posts the recipe in the chat, suggests a song, and fixes a time.", k: true },
+    { t: "Wingman leaves", who: "Cherry wingman", d: "It signs off — \"now it's on you two how you bake this out further\" — and leaves the chat for good.", k: true },
+    { t: "On their own", who: "Both people", d: "The two of them keep chatting without the wingman. That's the proof: a fresh match turned into a real plan." }
+  ];
+  const track = document.getElementById("track");
+  const body = document.getElementById("body");
+  const prev = document.getElementById("prev");
+  const next = document.getElementById("next");
+  let i = 0;
+  steps.forEach((s, n) => {
+    const b = document.createElement("button");
+    b.textContent = (n + 1) + ". " + s.t;
+    if (s.k) b.classList.add("kern");
+    b.onclick = () => { i = n; render(); };
+    track.appendChild(b);
+  });
+  function render() {
+    const s = steps[i];
+    [...track.children].forEach((b, n) => b.classList.toggle("active", n === i));
+    body.innerHTML = "<h3>" + s.t + (s.k ? '<span class="pill">kernel</span>' : "") + "</h3>" +
+      '<div class="who">' + s.who + "</div><p>" + s.d + "</p>";
+    prev.disabled = i === 0;
+    next.disabled = i === steps.length - 1;
+  }
+  prev.onclick = () => { if (i > 0) { i--; render(); } };
+  next.onclick = () => { if (i < steps.length - 1) { i++; render(); } };
+  render();
+</script>
+</body>
+</html>

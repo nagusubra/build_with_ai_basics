@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BakeOut — Product Requirements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E83D55;
+    --cream: #FFF9F3;
+    --pink: #FFF0F2;
+    --deep: #A71938;
+    --ink: #29252A;
+    --leaf: #73984A;
+    --leaf-soft: #EEF4E6;
+    --muted: #7b6f73;
+    --line: #f1dfe2;
+    --butter: #FDF1D3;
+    --radius: 20px;
+    --shadow: 0 6px 24px rgba(167, 25, 56, 0.07);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Nunito", ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink); background: var(--cream); line-height: 1.6;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 44px 24px 90px; }
+  header { display: flex; align-items: center; gap: 18px; }
+  h1 { font-size: 46px; font-weight: 900; margin: 0; letter-spacing: -0.5px; color: var(--ink); }
+  h1 span { color: var(--red); }
+  .status {
+    display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+    padding: 4px 12px; border-radius: 999px; background: var(--butter); color: #8a6100; border: 1px solid #f6c453;
+  }
+  .tagline { font-size: 19px; color: var(--muted); margin: 10px 0 0; max-width: 820px; }
+  h2 { font-size: 24px; font-weight: 800; margin: 0 0 14px; color: var(--deep); }
+  section { margin-top: 38px; }
+  .card { background: #fff; border-radius: var(--radius); padding: 24px 26px; box-shadow: var(--shadow); border: 1px solid var(--line); }
+  .note { color: var(--muted); font-size: 15px; }
+  code { background: var(--pink); color: var(--deep); padding: 1px 7px; border-radius: 6px; font-size: .9em; }
+
+  /* Journey diagram */
+  .journey svg { width: 100%; height: auto; display: block; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; color: var(--muted); margin-top: 12px; }
+  .legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; margin-right: 6px; vertical-align: -2px; }
+
+  /* Screen explorer */
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .tabs button {
+    font: inherit; font-weight: 700; font-size: 14px; padding: 8px 14px; border-radius: 999px;
+    border: 1.5px solid var(--line); background: var(--cream); color: var(--ink); cursor: pointer; transition: all .15s;
+  }
+  .tabs button.kern { border-color: var(--red); }
+  .tabs button.active { background: var(--red); border-color: var(--red); color: #fff; }
+  .panel { display: grid; grid-template-columns: 1.1fr 1fr; gap: 22px; }
+  @media (max-width: 820px) { .panel { grid-template-columns: 1fr; } h1 { font-size: 36px; } }
+  .panel h3 { margin: 0 0 4px; font-size: 22px; font-weight: 800; }
+  .panel .src { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .box { background: var(--cream); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+  .box .lbl { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--deep); margin-bottom: 6px; }
+  .box ul { margin: 0; padding-left: 20px; }
+  .box li { margin: 4px 0; }
+  .crit li { list-style: none; margin-left: -20px; padding-left: 26px; position: relative; }
+  .crit li::before { content: "☐"; position: absolute; left: 0; color: var(--red); font-weight: 900; }
+  .states { background: var(--leaf-soft); }
+  .states .lbl { color: #4d6a2f; }
+  .open { background: var(--butter); }
+  .open .lbl { color: #8a6100; }
+  .quote { font-style: italic; color: var(--deep); }
+  .nav { display: flex; justify-content: space-between; margin-top: 8px; }
+  .nav button { font: inherit; font-weight: 800; border: none; background: var(--ink); color: #fff; padding: 9px 18px; border-radius: 12px; cursor: pointer; }
+  .nav button:disabled { opacity: .3; cursor: default; }
+
+  /* Cherry's rules */
+  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 820px) { .rules { grid-template-columns: 1fr; } }
+  .rule { border-radius: 16px; padding: 16px; background: var(--pink); }
+  .rule b { display: block; color: var(--deep); margin-bottom: 4px; }
+
+  /* Palette */
+  .palette { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+  @media (max-width: 820px) { .palette { grid-template-columns: repeat(3, 1fr); } }
+  .sw { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: #fff; }
+  .sw div { height: 64px; }
+  .sw p { margin: 0; padding: 8px 10px; font-size: 12.5px; line-height: 1.35; }
+  .sw p b { display: block; font-size: 13px; }
+
+  details { background: #fff; border: 1px solid var(--line); border-radius: 16px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  summary { cursor: pointer; padding: 15px 20px; font-weight: 800; list-style: none; display: flex; gap: 10px; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; margin-left: auto; font-size: 22px; color: var(--muted); }
+  details[open] summary::after { content: "–"; }
+  details > div { padding: 0 22px 18px; }
+  details ul { margin: 0; padding-left: 20px; }
+  details li { margin: 6px 0; }
+  .tag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; padding: 2px 8px; border-radius: 999px; margin-left: 6px; }
+  .tag.block { background: var(--pink); color: var(--deep); }
+  .tag.wait { background: var(--leaf-soft); color: #4d6a2f; }
+  footer { margin-top: 46px; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <svg width="66" height="66" viewBox="0 0 64 64" aria-hidden="true">
+      <path d="M32 6 C 30 16, 24 22, 20 30" stroke="#73984A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M32 6 C 34 16, 40 22, 44 30" stroke="#73984A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M32 6 C 38 4, 46 6, 48 12 C 42 14, 36 11, 32 6 Z" fill="#73984A"/>
+      <circle cx="20" cy="42" r="13" fill="#E83D55"/>
+      <circle cx="44" cy="42" r="13" fill="#E83D55"/>
+      <circle cx="16" cy="38" r="3" fill="#fff" opacity=".6"/>
+      <circle cx="40" cy="38" r="3" fill="#fff" opacity=".6"/>
+    </svg>
+    <div>
+      <h1>Bake<span>Out</span></h1>
+      <span class="status">PRD · approved</span>
+    </div>
+  </header>
+  <p class="tagline">A Flutter dating app for people who find dating apps overwhelming and small talk hard. Profiles are built around how you cook and eat, and after a match, Cherry turns an awkward first chat into a confirmed virtual cooking date, then leaves the two of you to it.</p>
+
+  <section class="card journey">
+    <h2>The Core Journey</h2>
+    <p class="note">Scope said "set up a food profile, match, the wingman sets the date." Now we know exactly what each step means. Click any step in the explorer below for its behavior and checks.</p>
+    <svg viewBox="0 0 1000 400" role="img" aria-label="Journey: Welcome, Sign up, Food quiz, Photos and verify, Profile preview, Meet Cherry, then Discover, Match, Cherry opens the chat, Getting to know each other, The date, Cherry leaves, On their own. A loop from The date back to Getting to know when the plan doesn't come together.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b6f73"/></marker>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#A71938"/></marker>
+      </defs>
+
+      <text x="20" y="30" font-size="13" font-weight="800" fill="#4d6a2f" letter-spacing="1.2">ONBOARDING · ABOUT 3–5 MINUTES</text>
+      <g font-size="14" font-weight="800" text-anchor="middle" fill="#29252A">
+        <rect x="20" y="44" width="140" height="62" rx="16" fill="#EEF4E6" stroke="#73984A" stroke-width="1.5"/><text x="90" y="72">1 · Welcome</text><text x="90" y="91" font-size="11.5" font-weight="600" fill="#7b6f73">cherries + one button</text>
+        <rect x="186" y="44" width="140" height="62" rx="16" fill="#EEF4E6" stroke="#73984A" stroke-width="1.5"/><text x="256" y="72">2 · Sign up</text><text x="256" y="91" font-size="11.5" font-weight="600" fill="#7b6f73">email · 18+ check</text>
+        <rect x="352" y="44" width="140" height="62" rx="16" fill="#EEF4E6" stroke="#73984A" stroke-width="1.5"/><text x="422" y="72">3 · Food quiz</text><text x="422" y="91" font-size="11.5" font-weight="600" fill="#7b6f73">10 fun card questions</text>
+        <rect x="518" y="44" width="140" height="62" rx="16" fill="#EEF4E6" stroke="#73984A" stroke-width="1.5"/><text x="588" y="72">4 · Photos</text><text x="588" y="91" font-size="11.5" font-weight="600" fill="#7b6f73">+ live selfie ✓</text>
+        <rect x="684" y="44" width="140" height="62" rx="16" fill="#EEF4E6" stroke="#73984A" stroke-width="1.5"/><text x="754" y="72">5 · Preview</text><text x="754" y="91" font-size="11.5" font-weight="600" fill="#7b6f73">food is the personality</text>
+        <rect x="850" y="44" width="130" height="62" rx="16" fill="#EEF4E6" stroke="#73984A" stroke-width="1.5"/><text x="915" y="72">6 · Meet Cherry</text><text x="915" y="91" font-size="11.5" font-weight="600" fill="#7b6f73">short intro</text>
+      </g>
+      <g stroke="#7b6f73" stroke-width="2">
+        <line x1="160" y1="75" x2="182" y2="75" marker-end="url(#a)"/>
+        <line x1="326" y1="75" x2="348" y2="75" marker-end="url(#a)"/>
+        <line x1="492" y1="75" x2="514" y2="75" marker-end="url(#a)"/>
+        <line x1="658" y1="75" x2="680" y2="75" marker-end="url(#a)"/>
+        <line x1="824" y1="75" x2="846" y2="75" marker-end="url(#a)"/>
+      </g>
+      <path d="M915 106 C 915 140, 90 128, 90 168" stroke="#7b6f73" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+      <text x="20" y="160" font-size="13" font-weight="800" fill="#7b6f73" letter-spacing="1.2" opacity="0">.</text>
+      <g font-size="14" font-weight="800" text-anchor="middle">
+        <rect x="20" y="172" width="140" height="62" rx="16" fill="#fff" stroke="#E83D55" stroke-width="1.5"/><text x="90" y="200" fill="#29252A">7 · Discover</text><text x="90" y="219" font-size="11.5" font-weight="600" fill="#7b6f73">like · pass · tap</text>
+        <rect x="186" y="172" width="140" height="62" rx="16" fill="#fff" stroke="#E83D55" stroke-width="1.5"/><text x="256" y="200" fill="#29252A">8 · It's a BakeOut!</text><text x="256" y="219" font-size="11.5" font-weight="600" fill="#7b6f73">mutual like</text>
+      </g>
+      <text x="90" y="256" text-anchor="middle" font-size="12" font-weight="700" fill="#7b6f73">nobody new →</text>
+      <text x="90" y="272" text-anchor="middle" font-size="12" font-weight="700" fill="#7b6f73">Recipes page 🍝</text>
+      <line x1="160" y1="203" x2="182" y2="203" stroke="#7b6f73" stroke-width="2" marker-end="url(#a)"/>
+      <line x1="326" y1="203" x2="352" y2="203" stroke="#7b6f73" stroke-width="2" marker-end="url(#a)"/>
+
+      <rect x="352" y="150" width="628" height="230" rx="22" fill="#FFF0F2" stroke="#E83D55" stroke-width="2" stroke-dasharray="7 6"/>
+      <text x="666" y="174" text-anchor="middle" font-size="13" font-weight="900" fill="#A71938" letter-spacing="1.5">THE KERNEL · CHERRY IN THE CHAT</text>
+
+      <g font-size="14" font-weight="800" text-anchor="middle" fill="#fff">
+        <rect x="372" y="188" width="130" height="62" rx="16" fill="#E83D55"/><text x="437" y="215">9 · Cherry</text><text x="437" y="233" font-size="11.5" font-weight="600">opens the chat</text>
+        <rect x="528" y="188" width="140" height="62" rx="16" fill="#E83D55"/><text x="598" y="215" font-size="13">10 · Getting to know</text><text x="598" y="233" font-size="11.5" font-weight="600">Cherry mostly quiet</text>
+        <rect x="694" y="188" width="130" height="62" rx="16" fill="#E83D55"/><text x="759" y="215">11 · The date</text><text x="759" y="233" font-size="11.5" font-weight="600">dish · time ✓✓</text>
+        <rect x="850" y="188" width="116" height="62" rx="16" fill="#A71938"/><text x="908" y="215">12 · Cherry</text><text x="908" y="233" font-size="11.5" font-weight="600">leaves forever</text>
+      </g>
+      <g stroke="#7b6f73" stroke-width="2">
+        <line x1="502" y1="219" x2="524" y2="219" marker-end="url(#a)"/>
+        <line x1="668" y1="219" x2="690" y2="219" marker-end="url(#a)"/>
+        <line x1="824" y1="219" x2="846" y2="219" marker-end="url(#a)"/>
+      </g>
+      <path d="M759 250 C 759 300, 598 300, 598 254" stroke="#A71938" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ar)"/>
+      <text x="590" y="318" text-anchor="middle" font-size="12" font-weight="700" fill="#A71938">not ready, or dish/time doesn't work</text>
+      <text x="590" y="334" text-anchor="middle" font-size="12" font-weight="700" fill="#A71938">→ back to chatting, no pressure</text>
+
+      <rect x="840" y="300" width="126" height="60" rx="16" fill="#FDF1D3" stroke="#f6c453" stroke-width="1.5"/>
+      <text x="903" y="326" text-anchor="middle" font-size="13.5" font-weight="800" fill="#29252A">On their own</text>
+      <text x="903" y="344" text-anchor="middle" font-size="11.5" font-weight="600" fill="#7b6f73">keep chatting</text>
+      <line x1="908" y1="250" x2="906" y2="296" stroke="#7b6f73" stroke-width="2" marker-end="url(#a)"/>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#EEF4E6;border:1.5px solid #73984A"></i>Onboarding</span>
+      <span><i style="background:#fff;border:1.5px solid #E83D55"></i>Discover &amp; match</span>
+      <span><i style="background:#E83D55"></i>Kernel: Cherry</span>
+      <span><i style="background:#FDF1D3;border:1.5px solid #f6c453"></i>Success</span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Screen by screen</h2>
+    <p class="note">Each screen's behavior, the checks we'll use during the build, and the states that matter. Red-outlined tabs are the kernel.</p>
+    <div class="tabs" id="tabs"></div>
+    <div class="panel" id="panel"></div>
+    <div class="nav"><button id="prev">← Back</button><button id="next">Next →</button></div>
+  </section>
+
+  <section class="card">
+    <h2>Cherry's rules</h2>
+    <p class="note">Cherry is a natural mutual friend, not a chatbot. These rules decide the demo's "oh, that's cool" moment.</p>
+    <div class="rules">
+      <div class="rule"><b>Speaks when…</b>the conversation stalls, someone struggles to reply, or there's a natural opening.</div>
+      <div class="rule"><b>Stays quiet when…</b>both people are actively talking and getting to know each other.</div>
+      <div class="rule"><b>Suggests the date when…</b>both are comfortable and interested, or either one asks.</div>
+      <div class="rule"><b>Never…</b>forces the conversation or the date, or pretends a date is arranged.</div>
+      <div class="rule"><b>Backs off when…</b>someone isn't ready. One gentle reminder if someone goes quiet, then it pauses.</div>
+      <div class="rule"><b>Leaves when…</b>dish, day, and time are confirmed by both and the recipe and song are shared, or when either person asks.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Look and Feel</h2>
+    <p>Warm, playful, modern, and premium, never childish or overwhelming. <span class="quote">"A cosy little space where meeting someone new is exciting rather than intimidating."</span> Rounded cards, soft shadows, subtle animations, expressive emojis, plenty of breathing space. The two 3D cherries are the identity.</p>
+    <div class="palette">
+      <div class="sw"><div style="background:#E83D55"></div><p><b>Cherry Red</b>#E83D55 · buttons, hearts</p></div>
+      <div class="sw"><div style="background:#FFF9F3"></div><p><b>Warm Cream</b>#FFF9F3 · background</p></div>
+      <div class="sw"><div style="background:#FFF0F2"></div><p><b>Soft Pink</b>#FFF0F2 · cards, bubbles</p></div>
+      <div class="sw"><div style="background:#A71938"></div><p><b>Deep Cherry</b>#A71938 · headings</p></div>
+      <div class="sw"><div style="background:#29252A"></div><p><b>Dark Charcoal</b>#29252A · text</p></div>
+      <div class="sw"><div style="background:#73984A"></div><p><b>Leaf Green</b>#73984A · accents</p></div>
+    </div>
+    <p class="note" style="margin-top:14px">Type: rounded and friendly, like Nunito (this page) or Plus Jakarta Sans. References: Hinge's simplicity, Duolingo's personality, Airbnb's polish.</p>
+  </section>
+
+  <section>
+    <h2>Decisions, boundaries, and open questions</h2>
+    <details open>
+      <summary>❓ Open questions</summary>
+      <div><ul>
+        <li><b>What "stuck" means:</b> how long a silence before Cherry steps in. <span class="tag wait">tune in build</span></li>
+        <li><b>How both confirm:</b> tap a button or reply in chat. <span class="tag wait">spec</span></li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>✅ Product decisions</summary>
+      <div><ul>
+        <li><b>Food is the personality</b>, instead of a written bio.</li>
+        <li><b>Non-cooks are welcome</b>: "can't cook but would love to learn."</li>
+        <li><b>Quiz, not form</b>: fun, 3–5 minutes, essentials only.</li>
+        <li><b>Profile data serves Cherry first</b>; no personality algorithm.</li>
+        <li><b>Real email accounts with login</b>: the team wants "a full functioning app" (Firebase preferred, for spec).</li>
+        <li><b>Real picture verification</b>, from scope.</li>
+        <li><b>Cherry is a mutual friend, not a chatbot.</b></li>
+        <li><b>A date is only real when both confirm.</b></li>
+        <li><b>Music is a suggestion</b>, not playback.</li>
+        <li><b>Friends or a partner, nothing casual.</b> Each only sees their own kind; Cherry always plans a cooking date.</li>
+        <li><b>No dead end in Discover</b>: recipes to cook instead.</li>
+        <li><b>Verification can be retried</b>, not skipped.</li>
+        <li><b>Cherry's look:</b> by gender; random for same-gender matches and other genders.</li>
+        <li><b>Reminder is in-chat</b>, not a push notification.</li>
+        <li><b>Account basics:</b> preview, edit, delete. Delete means everything is deleted, for data privacy.</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>⏸️ Deferred from the POC</summary>
+      <div><ul>
+        <li>Food filters and normal dating filters in Discover (may return later).</li>
+        <li>Recommendation or matching algorithm.</li>
+        <li>Push notifications (reminder is in-chat).</li>
+        <li>Log out, unmatch, block or report, settings. Block/report matters for a real launch's safety.</li>
+        <li>The virtual cooking date itself, e.g. video call.</li>
+        <li>Music playback or Spotify.</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>🚫 Non-goals</summary>
+      <div><ul>
+        <li>Cherry replying to every message.</li>
+        <li>Pressuring anyone into a date.</li>
+        <li>Showing or keeping the verification selfie.</li>
+        <li>Long bios.</li>
+      </ul></div>
+    </details>
+  </section>
+
+  <footer>Companion to <code>devpost/prd.md</code>, which is the canonical version. Works offline; the Nunito web font loads when online and falls back to a system rounded font.</footer>
+</div>
+
+<script>
+  const screens = [
+    { t: "Welcome", src: "Features and Behavior › Welcome Screen",
+      what: ["Two 3D cherries holding hands, one with a frying pan, one with a phone", "Headline: <span class='quote'>\"Love might just be one recipe away.\"</span>", "Subline about meeting food lovers and skipping small talk", "Big \"Let's BakeOut\" button; small \"Already have an account? Log in\""],
+      crit: ["First-time user sees only mascots, headline, subline, button, and login link", "\"Let's BakeOut\" starts sign-up; \"Log in\" goes to login"],
+      states: ["First use lands here"] },
+    { t: "Sign up & login", src: "Features and Behavior › Sign-Up and Login",
+      what: ["Email account", "Name, date of birth, gender, who they want to meet, location", "Looking for: <b>Friends</b> or a <b>Partner</b>. No casual option: <span class='quote'>\"this app is for genuine and serious people\"</span>"],
+      crit: ["New user can create an account and reach the quiz", "Under 18 by date of birth can't continue", "Returning user logs in with profile, matches, and chats intact"],
+      states: ["Under 18: blocked", "Returning user: everything as they left it"] },
+    { t: "Food quiz", src: "Features and Behavior › Food Profile Quiz",
+      what: ["One question per colourful card, emojis and illustrations", "Required: cooking relationship, food type + restrictions, cuisines + top 3, signature dish, ideal date, cooking personality, cooking time", "Optional: adventurousness slider, comfort food, music, fun prompts", "Progress indicator; Cherry pops in every few steps"],
+      crit: ["Can finish required questions and skip optional ones", "Progress indicator reflects what's left", "Cherry appears at least once mid-quiz", "Answers show correctly on the preview"],
+      states: ["Optional skipped: those sections don't appear later"] },
+    { t: "Photos & verify", src: "Features and Behavior › Photos and Verification",
+      what: ["One required photo, up to three more", "Live selfie checked for a real face and compared to the profile photo", "Explains why: so everyone knows they're talking to a genuine person"],
+      crit: ["Can't continue without a photo", "Matching selfie gives a verified badge", "Failed selfie shows why and offers a retry", "Selfie never visible to anyone", "Verification data kept only as long as needed"],
+      states: ["Verification fails: retry; can't continue unverified"] },
+    { t: "Profile preview", src: "Features and Behavior › Profile Preview",
+      what: ["Photo, name and age, city, verified badge", "Headline, e.g. <span class='quote'>\"Vinamra, 25 🍒 — The experimental chef who believes good conversations happen over good food.\"</span>", "My Food Personality card; Our Kitchen Could Look Like card; optional prompts", "\"Looks Delicious! Let's Meet Someone\""],
+      crit: ["Answers appear as profile cards, not a question list", "Skipped optional sections don't show as empty slots"],
+      states: [] },
+    { t: "Meet Cherry", src: "Features and Behavior › Meet Cherry",
+      what: ["Short animated intro, not a tutorial", "<span class='quote'>\"Hey, I'm Cherry! 🍒 I'm here to help you skip the awkward hellos…\"</span>"],
+      crit: ["Shown once after the preview, then Discover"],
+      states: [] },
+    { t: "Discover", src: "Features and Behavior › Discover",
+      what: ["One large swipeable card at a time", "Only people looking for the same thing: friends see friends, partners see partners", "Photo, name, age, badge, food personality, diet, cuisines, signature dish, cooking date preference", "Something in common, e.g. \"You both love Italian food!\"", "Swipe or Like/Pass buttons; tap for full profile"],
+      crit: ["Another real user's profile appears with all fields", "\"Something in common\" reflects a real overlap", "Buttons match swiping", "A one-sided like creates no match", "Friend-seekers never see partner-seekers, and the reverse"],
+      states: ["Liked, not matched: nothing happens yet", "Runs out of profiles: Recipes page"] },
+    { t: "Recipes", src: "Features and Behavior › Recipes",
+      what: ["Shown when Discover has nobody new", "Recipes to browse and cook while waiting", "Discover returns when someone new is available"],
+      crit: ["No new profiles → Recipes page, not an empty Discover", "Can open a recipe and see what's needed to cook it", "A new profile shows up in Discover again"],
+      states: ["Recipe source: decided in spec"] },
+    { t: "My profile", src: "Features and Behavior › My Profile: Preview, Edit, Delete",
+      what: ["<b>Preview</b> your profile as others see it, any time", "<b>Edit</b> details and answer skipped optional questions", "<b>Delete</b> your account"],
+      crit: ["Own preview reachable from inside the app", "Edits show on the profile", "Previously skipped question can be answered and appears", "Deleting returns to Welcome and removes the profile from Discover", "Deleting removes everything: profile, photos, verification data, matches, chats"],
+      states: ["Deleted account: everything deleted, out of respect for data privacy"] },
+    { t: "It's a BakeOut!", src: "Features and Behavior › The Match Moment",
+      what: ["Full-screen animation: cherries come together with both photos", "<span class='quote'>\"Looks like you've found your cooking partner!\"</span>", "\"Let's Break the Ice!\" button"],
+      crit: ["Mutual like shows the match moment to both", "Button opens that match's chat"],
+      states: [] },
+    { t: "Cherry opens the chat", k: true, src: "Features and Behavior › Cherry in the Chat › Opening the Chat",
+      what: ["Welcomes both, names something they share, asks a fun icebreaker", "<span class='quote'>\"Well, well! Looks like we've got two pasta lovers here. 🍝 So, who's actually better at cooking it?\"</span>"],
+      crit: ["Opening message refers to a real shared detail from both profiles"],
+      states: ["Cherry's look: male or female by gender; random for same-gender matches and other genders"] },
+    { t: "Getting to know", k: true, src: "Features and Behavior › When Cherry Speaks and When It Stays Quiet",
+      what: ["Speaks when the chat stalls, someone struggles, or there's an opening", "Stays quiet while both are actively talking", "One gentle in-chat reminder if someone goes quiet, then pauses"],
+      crit: ["No Cherry messages during a steady back-and-forth", "After a stall, Cherry steps in with something relevant", "After one reminder, nothing more until they return"],
+      states: ["What counts as \"stuck\": tune during build"] },
+    { t: "The date", k: true, src: "Features and Behavior › Suggesting the Date · Locking In the Date · When the Plan Doesn't Come Together",
+      what: ["Suggested when both are comfortable, or either asks", "Dish fits both people's diets, restrictions, and cooking time", "Day and time confirmed by both; recipe and song shared", "Not ready → back to casual chat. Dish rejected → 2–3 alternatives. Times clash → find overlap or another day"],
+      crit: ["Either user asking starts planning", "Dish respects both diets and restrictions", "Confirmed only when both agree to dish, day, and time", "Recipe and song appear in chat", "A decline isn't followed by an immediate re-ask"],
+      states: ["Pending until both confirm everything; Cherry never pretends"] },
+    { t: "Cherry leaves", k: true, src: "Features and Behavior › Cherry Leaves · After Cherry Leaves",
+      what: ["<span class='quote'>\"Now it's on you two how you bake this out further! 🍒\"</span>", "Leaves permanently", "Either person can ask Cherry to leave at any time", "The two keep chatting on their own"],
+      crit: ["Goodbye appears and Cherry never posts there again", "Either user can make Cherry leave", "Both can still message after Cherry leaves"],
+      states: ["Chat visible only to the two people (and Cherry while present)"] }
+  ];
+  const extras = screens.filter(s => s.t === "Recipes" || s.t === "My profile");
+  screens.splice(0, screens.length, ...screens.filter(s => !extras.includes(s)), ...extras);
+  const tabs = document.getElementById("tabs"), panel = document.getElementById("panel");
+  const prev = document.getElementById("prev"), next = document.getElementById("next");
+  let i = 0;
+  screens.forEach((s, n) => {
+    const b = document.createElement("button");
+    b.textContent = extras.includes(s) ? "+ " + s.t : (n + 1) + " · " + s.t;
+    if (s.k) b.classList.add("kern");
+    b.onclick = () => { i = n; render(); };
+    tabs.appendChild(b);
+  });
+  const list = a => "<ul>" + a.map(x => "<li>" + x + "</li>").join("") + "</ul>";
+  function render() {
+    const s = screens[i];
+    [...tabs.children].forEach((b, n) => b.classList.toggle("active", n === i));
+    panel.innerHTML =
+      "<div><h3>" + s.t + "</h3><div class='src'>prd.md › " + s.src + "</div>" +
+      "<div class='box'><div class='lbl'>What they see and do</div>" + list(s.what) + "</div></div>" +
+      "<div><div class='box crit'><div class='lbl'>How we'll know it works</div>" + list(s.crit) + "</div>" +
+      (s.states.length ? "<div class='box " + (s.open ? "open" : "states") + "'><div class='lbl'>States" + (s.open ? " · open question" : "") + "</div>" + list(s.states) + "</div>" : "") +
+      "</div>";
+    prev.disabled = i === 0; next.disabled = i === screens.length - 1;
+  }
+  prev.onclick = () => { if (i > 0) { i--; render(); } };
+  next.onclick = () => { if (i < screens.length - 1) { i++; render(); } };
+  render();
+</script>
+</body>
+</html>
