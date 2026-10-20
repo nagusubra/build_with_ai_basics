@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BakeOut — Technical Spec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E83D55; --cream: #FFF9F3; --pink: #FFF0F2; --deep: #A71938; --ink: #29252A; --leaf: #73984A;
+    --leaf-soft: #EEF4E6; --muted: #7b6f73; --line: #f1dfe2; --butter: #FDF1D3; --sky: #EAF2FB; --skyline: #6d9bd1;
+    --shadow: 0 6px 24px rgba(167, 25, 56, 0.07);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Nunito", ui-rounded, "SF Pro Rounded", system-ui, sans-serif; color: var(--ink); background: var(--cream); line-height: 1.6; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 44px 24px 90px; }
+  header { display: flex; align-items: center; gap: 18px; }
+  header img { width: 84px; height: 84px; object-fit: contain; }
+  h1 { font-size: 44px; font-weight: 900; margin: 0; }
+  h1 span { color: var(--red); }
+  .status { display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; padding: 4px 12px; border-radius: 999px; background: var(--butter); color: #8a6100; border: 1px solid #f6c453; }
+  .tagline { font-size: 18px; color: var(--muted); margin: 10px 0 0; max-width: 840px; }
+  h2 { font-size: 24px; font-weight: 800; margin: 0 0 14px; color: var(--deep); }
+  section { margin-top: 36px; }
+  .card { background: #fff; border-radius: 20px; padding: 24px 26px; box-shadow: var(--shadow); border: 1px solid var(--line); }
+  .note { color: var(--muted); font-size: 15px; }
+  code { background: var(--pink); color: var(--deep); padding: 1px 7px; border-radius: 6px; font-size: .88em; }
+  svg { width: 100%; height: auto; display: block; }
+
+  .plain p { margin: 0 0 10px; }
+  .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 14px 0; }
+  .trio div { border-radius: 16px; padding: 14px 16px; }
+  .trio b { display: block; margin-bottom: 4px; }
+  @media (max-width: 820px) { .trio { grid-template-columns: 1fr; } }
+
+  .steps { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .steps button { font: inherit; font-weight: 700; font-size: 13.5px; padding: 7px 13px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--cream); cursor: pointer; }
+  .steps button.kern { border-color: var(--red); }
+  .steps button.active { background: var(--red); border-color: var(--red); color: #fff; }
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin: 6px 0 14px; }
+  .hop { flex: 1 1 170px; border-radius: 14px; padding: 12px 14px; font-size: 14.5px; position: relative; }
+  .hop .who { font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .hop.app { background: var(--pink); } .hop.app .who { color: var(--deep); }
+  .hop.fb { background: var(--butter); } .hop.fb .who { color: #8a6100; }
+  .hop.fn { background: var(--sky); } .hop.fn .who { color: #2f5f96; }
+  .hop.ai { background: var(--leaf-soft); } .hop.ai .who { color: #4d6a2f; }
+  .refs { font-size: 13.5px; color: var(--muted); }
+  .refs b { color: var(--ink); }
+  .nav { display: flex; justify-content: space-between; margin-top: 10px; }
+  .nav button { font: inherit; font-weight: 800; border: none; background: var(--ink); color: #fff; padding: 9px 18px; border-radius: 12px; cursor: pointer; }
+  .nav button:disabled { opacity: .3; cursor: default; }
+
+  details { background: #fff; border: 1px solid var(--line); border-radius: 16px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  summary { cursor: pointer; padding: 14px 20px; font-weight: 800; list-style: none; display: flex; gap: 10px; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; margin-left: auto; font-size: 22px; color: var(--muted); }
+  details[open] summary::after { content: "–"; }
+  details > div { padding: 0 22px 18px; }
+  details ul { margin: 0; padding-left: 20px; }
+  details li { margin: 5px 0; }
+  .tag { font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 999px; margin-left: 4px; background: var(--pink); color: var(--deep); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .8px; color: var(--deep); }
+
+  .mascots { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+  @media (max-width: 820px) { .mascots { grid-template-columns: repeat(4, 1fr); } }
+  .mascots figure { margin: 0; background: var(--pink); border-radius: 14px; padding: 6px; text-align: center; }
+  .mascots img { width: 100%; height: auto; display: block; }
+  .mascots figcaption { font-size: 11px; font-weight: 700; color: var(--muted); }
+  @keyframes bob { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+  .mascots figure:hover img { animation: bob 1.1s ease-in-out infinite; }
+
+  .unknown { background: var(--butter); border-radius: 16px; padding: 16px 18px; margin-top: 12px; }
+  .unknown ol { margin: 6px 0 0; padding-left: 22px; }
+  footer { margin-top: 46px; font-size: 13px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <img src="../design/mascots/cherry_boy_planning.png" alt="">
+    <div>
+      <h1>Bake<span>Out</span> · Spec</h1>
+      <span class="status">Spec · approved</span>
+    </div>
+  </header>
+  <p class="tagline">How BakeOut is built: a Flutter app on iPhones, Firebase for accounts, data, live chat and photos, and Cherry's brain running on Firebase's servers with Gemini.</p>
+
+  <section class="card plain">
+    <h2>How this works, in plain language</h2>
+    <div class="trio">
+      <div style="background:var(--pink)"><b>📱 The app (Flutter)</b>Every screen, plus the selfie check, which runs entirely on the phone.</div>
+      <div style="background:var(--butter)"><b>🔥 Firebase</b>Login (Auth), a live shared database (Firestore), and photo files (Storage).</div>
+      <div style="background:var(--sky)"><b>🍒 Cherry's brain</b>Cloud Functions that wake up on each message or every minute, ask Gemini what to do, and write Cherry's reply.</div>
+    </div>
+    <p>Vinamra types <i>"I'm terrible at pasta 😅"</i> → it's saved to Firestore → the other phone shows it instantly → a Cloud Function sends the recent chat and both profiles to Gemini → Gemini says <b>stay quiet</b>, they're chatting happily. Two quiet minutes later, the timer notices the stall and Cherry asks about their shared love of Italian food.</p>
+    <p class="note">Only one Cherry per chat, the Gemini key never inside the app, and selfies never leave the phone.</p>
+  </section>
+
+  <section class="card">
+    <h2>Architecture</h2>
+    <svg viewBox="0 0 1000 430" role="img" aria-label="Two iPhones running the Flutter app, each with on-device ML Kit and face model. Both talk to Firebase: Auth, Firestore, Storage. Firestore events trigger Cloud Functions, which call the Gemini API and write Cherry's messages back to Firestore. A scheduled timer runs every minute.">
+      <defs>
+        <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b6f73"/></marker>
+      </defs>
+      <!-- phones -->
+      <g font-weight="800" text-anchor="middle">
+        <rect x="20" y="30" width="200" height="170" rx="26" fill="#FFF0F2" stroke="#E83D55" stroke-width="2"/>
+        <text x="120" y="60" font-size="15" fill="#29252A">📱 Vinamra's iPhone</text>
+        <text x="120" y="82" font-size="12" font-weight="600" fill="#7b6f73">Flutter app · all screens</text>
+        <rect x="40" y="100" width="160" height="80" rx="14" fill="#fff" stroke="#f1dfe2"/>
+        <text x="120" y="124" font-size="12.5" fill="#A71938">On device only</text>
+        <text x="120" y="144" font-size="11.5" font-weight="600" fill="#29252A">ML Kit live check</text>
+        <text x="120" y="162" font-size="11.5" font-weight="600" fill="#29252A">face-match model</text>
+
+        <rect x="20" y="230" width="200" height="170" rx="26" fill="#FFF0F2" stroke="#E83D55" stroke-width="2"/>
+        <text x="120" y="260" font-size="15" fill="#29252A">📱 Subu's iPhone</text>
+        <text x="120" y="282" font-size="12" font-weight="600" fill="#7b6f73">Flutter app · all screens</text>
+        <rect x="40" y="300" width="160" height="80" rx="14" fill="#fff" stroke="#f1dfe2"/>
+        <text x="120" y="324" font-size="12.5" fill="#A71938">On device only</text>
+        <text x="120" y="344" font-size="11.5" font-weight="600" fill="#29252A">ML Kit live check</text>
+        <text x="120" y="362" font-size="11.5" font-weight="600" fill="#29252A">face-match model</text>
+      </g>
+
+      <!-- firebase -->
+      <rect x="320" y="30" width="300" height="370" rx="22" fill="#FDF1D3" stroke="#f6c453" stroke-width="2"/>
+      <text x="470" y="60" text-anchor="middle" font-size="15" font-weight="900" fill="#8a6100">🔥 FIREBASE (Blaze plan)</text>
+      <g font-weight="800" text-anchor="middle">
+        <rect x="345" y="78" width="250" height="56" rx="14" fill="#fff"/>
+        <text x="470" y="102" font-size="14" fill="#29252A">Authentication</text>
+        <text x="470" y="121" font-size="11.5" font-weight="600" fill="#7b6f73">email sign-up · login</text>
+        <rect x="345" y="146" width="250" height="140" rx="14" fill="#fff"/>
+        <text x="470" y="170" font-size="14" fill="#29252A">Firestore (live database)</text>
+        <text x="470" y="192" font-size="11.5" font-weight="600" fill="#7b6f73">users · likes · matches</text>
+        <text x="470" y="210" font-size="11.5" font-weight="600" fill="#7b6f73">messages · date plans</text>
+        <text x="470" y="228" font-size="11.5" font-weight="600" fill="#7b6f73">cached recipes</text>
+        <text x="470" y="262" font-size="11.5" font-weight="700" fill="#A71938">live updates to both phones</text>
+        <rect x="345" y="298" width="250" height="56" rx="14" fill="#fff"/>
+        <text x="470" y="322" font-size="14" fill="#29252A">Storage</text>
+        <text x="470" y="341" font-size="11.5" font-weight="600" fill="#7b6f73">profile photos (never selfies)</text>
+      </g>
+
+      <!-- functions -->
+      <rect x="700" y="80" width="280" height="250" rx="22" fill="#EAF2FB" stroke="#6d9bd1" stroke-width="2"/>
+      <text x="840" y="110" text-anchor="middle" font-size="15" font-weight="900" fill="#2f5f96">🍒 CHERRY'S BRAIN</text>
+      <text x="840" y="128" text-anchor="middle" font-size="12" font-weight="700" fill="#2f5f96">Cloud Functions · TypeScript</text>
+      <g font-size="12" font-weight="700" fill="#29252A">
+        <text x="722" y="156">⚡ onLikeCreated → make match</text>
+        <text x="722" y="178">⚡ onMatchCreated → opening</text>
+        <text x="722" y="200">⚡ onMessageCreated → decide</text>
+        <text x="722" y="222">⏱ cherryTick → stalls, reminder</text>
+        <text x="722" y="244">☎ confirmDatePlan · dismissCherry</text>
+        <text x="722" y="266">☎ getMyRecipes · deleteAccount</text>
+        <text x="722" y="300" font-size="11" fill="#7b6f73">⚡ trigger  ⏱ every minute  ☎ called by app</text>
+      </g>
+
+      <!-- gemini -->
+      <rect x="760" y="356" width="160" height="56" rx="16" fill="#EEF4E6" stroke="#73984A" stroke-width="2"/>
+      <text x="840" y="380" text-anchor="middle" font-size="14" font-weight="800" fill="#29252A">✨ Gemini API</text>
+      <text x="840" y="398" text-anchor="middle" font-size="11.5" font-weight="600" fill="#4d6a2f">paid tier · key in secrets</text>
+
+      <!-- arrows -->
+      <g stroke="#7b6f73" stroke-width="2" fill="none">
+        <path d="M220 115 L 318 115" marker-end="url(#a)" marker-start="url(#a)"/>
+        <path d="M220 315 L 318 315" marker-end="url(#a)" marker-start="url(#a)"/>
+        <path d="M597 205 L 698 205" marker-end="url(#a)" marker-start="url(#a)"/>
+        <path d="M840 330 L 840 354" marker-end="url(#a)" marker-start="url(#a)"/>
+      </g>
+      <text x="269" y="106" text-anchor="middle" font-size="11" font-weight="700" fill="#7b6f73">read/write</text>
+      <text x="269" y="306" text-anchor="middle" font-size="11" font-weight="700" fill="#7b6f73">read/write</text>
+      <text x="648" y="196" text-anchor="middle" font-size="11" font-weight="700" fill="#7b6f73">events ·</text>
+      <text x="648" y="225" text-anchor="middle" font-size="11" font-weight="700" fill="#7b6f73">Cherry writes</text>
+    </svg>
+  </section>
+
+  <section class="card">
+    <h2>The core journey through the system</h2>
+    <p class="note">Each PRD step, traced through the pieces above. Red-outlined steps are the kernel.</p>
+    <div class="steps" id="steps"></div>
+    <div id="detail"></div>
+    <div class="nav"><button id="prev">← Back</button><button id="next">Next →</button></div>
+  </section>
+
+  <section class="card">
+    <h2>Stack</h2>
+    <table>
+      <tr><th>Piece</th><th>Choice</th><th>Why</th></tr>
+      <tr><td>App</td><td>Flutter 3.47.7, iOS</td><td>Team's framework; iPhones are what you have.</td></tr>
+      <tr><td>Accounts, data, photos</td><td>Firebase Auth · Firestore · Storage</td><td>Team's choice; Firestore's live updates power the chat.</td></tr>
+      <tr><td>Cherry's brain</td><td>Cloud Functions (TypeScript, Node.js), Blaze</td><td>One Cherry per chat; AI key off the phones.</td></tr>
+      <tr><td>AI</td><td>Gemini via <code>@google/genai</code> 2.30, paid</td><td>Team's choice; paid for privacy of chats.</td></tr>
+      <tr><td>Verification</td><td>ML Kit + on-device face model (<code>tflite_flutter</code>)</td><td>Team's choice; selfies never leave the phone.</td></tr>
+      <tr><td>UI helpers</td><td><code>flutter_card_swiper</code> · <code>flutter_animate</code> · <code>google_fonts</code></td><td>Swipe cards, mascot motion, Nunito.</td></tr>
+    </table>
+    <p class="note">Package versions were checked on npm and pub.dev in October 2026. Still to confirm at the start of the build: the current Gemini model name, which Node.js versions Cloud Functions accept, and the face model file and its license.</p>
+  </section>
+
+  <section class="card">
+    <h2>Mascot set</h2>
+    <p class="note">Generated from your reference art, with the backgrounds removed. Hover to preview a bounce. The source images, with the floating hearts and extras, are in <code>design/mascots/source/</code>.</p>
+    <div class="mascots" id="mascots"></div>
+  </section>
+
+  <section>
+    <h2>Details</h2>
+    <details open>
+      <summary>🔍 The useful unknown: on-device face verification</summary>
+      <div>
+        <p>In scope you expected it "should not be very hard." It's really two jobs: the <b>live check</b> (ML Kit handles this well) and <b>matching the selfie to the profile photo</b>, which needs a face model that no single Flutter library packages up.</p>
+        <div class="unknown"><b>First build step: a small trial on your own photos.</b> Evidence needed:
+          <ol>
+            <li>ML Kit detects a blink and a head turn on an iPhone.</li>
+            <li>The <code>.tflite</code> model loads and runs on iOS.</li>
+            <li>Same-person pairs score clearly above different-person pairs, so a threshold can be picked.</li>
+          </ol>
+          If (3) fails, that's a plan revision you decide on.
+        </div>
+      </div>
+    </details>
+    <details>
+      <summary>🗂 Data model (Firestore)</summary>
+      <div><ul>
+        <li><code>users/{uid}</code>: public profile: name, age, gender, interestedIn, city, lookingFor, photos, verified, cherryAvatar, food{…}, prompts</li>
+        <li><code>users/{uid}/private/account</code>: date of birth, email (owner only)</li>
+        <li><code>users/{uid}/passes</code>, <code>/recipes</code>: hidden people; cached recipes</li>
+        <li><code>likes/{from}_{to}</code></li>
+        <li><code>matches/{a}_{b}</code>: users, cherryFor, cherryState, timing fields, datePlan{status, dish, day, time, confirmedBy}</li>
+        <li><code>matches/{id}/messages</code>: text · dateCard · recipe · song · cherryGoodbye</li>
+        <li><b>Never stored:</b> verification selfies</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>🛡 Cherry's guards (in code, not just the prompt)</summary>
+      <div><ul>
+        <li>Every function stops if <code>cherryState == "left"</code>.</li>
+        <li>Never posts twice in a row.</li>
+        <li>After a declined date, no new proposal until both have chatted more.</li>
+        <li><code>cherryBusyUntil</code> lock so two triggers can't both speak.</li>
+        <li>Any card change clears both confirmations; "confirmed" only when both tap Confirm.</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>⚠️ Failure modes</summary>
+      <div><ul>
+        <li><b>Gemini slow or invalid:</b> Cherry stays quiet and retries next time; never posts a half plan.</li>
+        <li><b>Face match fails for a real person:</b> retry with tips; one tunable threshold.</li>
+        <li><b>Both phones trigger Cherry:</b> the lock lets only one speak.</li>
+        <li><b>Discover empty:</b> the Recipes page.</li>
+        <li><b>Recipe ignores an allergy:</b> restrictions sent every time, plus an allergy note; reduced, not eliminated.</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>✂️ What was simplified</summary>
+      <div><ul>
+        <li>Phone reports its own verification result (a tampered app could fake it).</li>
+        <li>Discover filters in the app, no algorithm.</li>
+        <li>One-minute timer for stalls and reminders.</li>
+        <li>Public <code>age</code>, private date of birth.</li>
+        <li>No push notifications; iPhone only.</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>▶️ How to run it</summary>
+      <div><ul>
+        <li><b>Once:</b> Firebase project on Blaze with a budget alert · enable Email/Password, Firestore, Storage · <code>firebase functions:secrets:set GEMINI_API_KEY</code> · <code>flutterfire configure</code> · <code>firebase deploy --only functions,firestore,storage</code></li>
+        <li><b>Each of you:</b> <code>cd app && flutter pub get && flutter run -d &lt;iPhone&gt;</code></li>
+        <li><b>Demo:</b> make both accounts beforehand; reinstall within 7 days of recording.</li>
+      </ul></div>
+    </details>
+    <details>
+      <summary>❓ Still open <span class="tag">tune in build</span></summary>
+      <div><ul>
+        <li>Exact "stuck" and reminder timings.</li>
+        <li>Gemini model name; Node.js runtime version.</li>
+        <li>Face model file and license.</li>
+      </ul></div>
+    </details>
+  </section>
+
+  <footer>Companion to <code>devpost/spec.md</code>, which is the canonical version. Works offline; mascot images load from <code>design/mascots/</code>.</footer>
+</div>
+
+<script>
+  const A = (t) => ["app", "📱 App", t], F = (t) => ["fb", "🔥 Firebase", t], N = (t) => ["fn", "🍒 Functions", t], G = (t) => ["ai", "✨ Gemini", t];
+  const journey = [
+    { t: "Welcome", hops: [A("Shows duo mascot, headline, buttons. Nothing loaded from network.")], prd: "Welcome Screen", files: "app/lib/screens/welcome/" },
+    { t: "Sign up", hops: [A("Basics form; blocks under 18"), F("Auth creates account"), F("Writes users/{uid} + private/account")], prd: "Sign-Up and Login", files: "screens/auth/ · services/auth_service.dart" },
+    { t: "Food quiz", hops: [A("One card per question, progress bar, cherry pop-ins"), F("Each answer saved to users/{uid}.food")], prd: "Food Profile Quiz", files: "screens/quiz/ · services/profile_service.dart" },
+    { t: "Photos & verify", hops: [A("Photos picked"), F("Uploaded to Storage"), A("ML Kit: blink + head turn"), A("Face model compares selfie ↔ main photo; selfie discarded"), F("verified: true")], prd: "Photos and Verification", files: "screens/photos/ · services/verification_service.dart · assets/models/" },
+    { t: "Preview & Meet Cherry", hops: [F("Profile read"), A("Profile cards + Cherry intro; onboardingComplete: true")], prd: "Profile Preview · Meet Cherry", files: "screens/profile/ · screens/meet_cherry/" },
+    { t: "Discover", hops: [F("Query users with same lookingFor, verified, onboarded"), A("Filter self, liked, passed, interests; compute 'something in common'"), A("Nobody left → Recipes")], prd: "Discover · Recipes", files: "screens/discover/ · services/discover_service.dart" },
+    { t: "Match", hops: [A("Like → write likes/{me}_{them}"), N("onLikeCreated finds reverse like → creates matches/{a}_{b}, assigns cherries"), A("Both phones play 'It's a BakeOut!'")], prd: "The Match Moment", files: "functions/src/matching.ts · screens/match/" },
+    { t: "Cherry opens", k: true, hops: [N("onMatchCreated"), G("Welcome naming a real shared detail + icebreaker"), F("Cherry message written"), A("Appears on both phones")], prd: "Opening the Chat", files: "functions/src/cherry/opening.ts" },
+    { t: "Getting to know", k: true, hops: [A("Human message saved"), N("onMessageCreated (lock, guards)"), G("JSON: stay_quiet / speak / propose_date"), N("cherryTick every minute: stalls + one reminder")], prd: "When Cherry Speaks and When It Stays Quiet", files: "functions/src/cherry/decide.ts · tick.ts · prompts.ts" },
+    { t: "The date", k: true, hops: [G("propose_date: dish fitting both diets, day, time"), F("dateCard message"), A("Each taps Confirm"), N("confirmDatePlan records it; card change clears confirmations")], prd: "Suggesting the Date · Locking In the Date · When the Plan Doesn't Come Together", files: "functions/src/cherry/plan.ts · widgets/DateCard" },
+    { t: "Cherry leaves", k: true, hops: [N("Both confirmed → status confirmed"), G("Recipe (with allergies) + song"), F("recipe, song, goodbye messages"), F("cherryState: left — every function ignores this chat now")], prd: "Cherry Leaves · After Cherry Leaves", files: "functions/src/cherry/plan.ts · recipes.ts" },
+    { t: "My profile", hops: [A("Preview · Edit reuses quiz cards"), A("Delete → confirm"), N("deleteAccount removes profile, photos, likes, matches, chats, Auth user"), A("Back to Welcome")], prd: "My Profile: Preview, Edit, Delete", files: "screens/profile/ · functions/src/account.ts" }
+  ];
+  const steps = document.getElementById("steps"), detail = document.getElementById("detail");
+  const prev = document.getElementById("prev"), next = document.getElementById("next");
+  let i = 0;
+  journey.forEach((s, n) => {
+    const b = document.createElement("button");
+    b.textContent = (n + 1) + " · " + s.t;
+    if (s.k) b.classList.add("kern");
+    b.onclick = () => { i = n; render(); };
+    steps.appendChild(b);
+  });
+  function render() {
+    const s = journey[i];
+    [...steps.children].forEach((b, n) => b.classList.toggle("active", n === i));
+    detail.innerHTML = '<div class="flow">' + s.hops.map((h, n) =>
+      '<div class="hop ' + h[0] + '"><div class="who">' + (n + 1) + ' · ' + h[1] + '</div>' + h[2] + '</div>').join("") + '</div>' +
+      '<div class="refs"><b>PRD:</b> prd.md › ' + s.prd + ' &nbsp; · &nbsp; <b>Files:</b> ' + s.files + '</div>';
+    prev.disabled = i === 0; next.disabled = i === journey.length - 1;
+  }
+  prev.onclick = () => { if (i > 0) { i--; render(); } };
+  next.onclick = () => { if (i < journey.length - 1) { i++; render(); } };
+  render();
+
+  const m = document.getElementById("mascots");
+  ["cherry_duo_welcome", "cherry_duo_verify", "cherry_duo_match", "cherry_duo_cooking", "cherry_boy_hello", "cherry_girl_hello", "app_icon",
+   "cherry_boy_cheer", "cherry_girl_cheer", "cherry_boy_planning", "cherry_girl_planning", "cherry_boy_goodbye", "cherry_girl_goodbye", "cherry_boy_tryagain"]
+    .forEach(n => { m.insertAdjacentHTML("beforeend", '<figure><img src="../design/mascots/' + n + '.png" alt="' + n + '"><figcaption>' + n.replace("cherry_", "") + '</figcaption></figure>'); });
+</script>
+</body>
+</html>
