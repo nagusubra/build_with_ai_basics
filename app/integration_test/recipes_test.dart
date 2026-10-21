@@ -33,13 +33,13 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     await _until(tester, find.text('No one new right now'));
-    await _until(tester, find.textContaining('⏱'));
-    List<String?> titles() =>
-        tester.widgetList<Text>(find.descendant(of: find.byType(InkWell), matching: find.byType(Text))).map((t) => t.data).toList();
-    final firstTitles = titles();
-    expect(find.textContaining('⏱'), findsWidgets);
+    await _until(tester, find.byKey(const Key('recipes-dish-of-the-day')));
+    final tiles = find.byWidgetPredicate((w) => w.key is ValueKey<String> && (w.key as ValueKey<String>).value.startsWith('recipe-tile-'));
+    await _until(tester, tiles);
+    String shown() => tester.widgetList(tiles).map((w) => (w.key as ValueKey<String>).value).join('|');
+    final firstSet = shown();
 
-    await tester.tap(find.descendant(of: find.byType(InkWell), matching: find.byType(Text)).first);
+    await tester.tap(tiles.first);
     await _until(tester, find.text('Ingredients'));
     await tester.scrollUntilVisible(find.textContaining('⚠️'), 300, scrollable: find.byType(Scrollable).last);
     expect(find.text('Steps'), findsOneWidget);
@@ -49,13 +49,9 @@ void main() {
     final newIdeas = find.byKey(const Key('recipes-new-ideas'));
     await tester.scrollUntilVisible(newIdeas, 300, scrollable: find.byType(Scrollable).last);
     await tester.tap(newIdeas);
-    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(seconds: 1));
     await tester.dragUntilVisible(find.text('No one new right now'), find.byType(Scrollable).last, const Offset(0, 400));
-    final end = DateTime.now().add(const Duration(seconds: 90));
-    bool sameSet() => titles().take(3).join('|') == firstTitles.take(3).join('|');
-    while (DateTime.now().isBefore(end) && sameSet()) {
-      await tester.pump(const Duration(milliseconds: 500));
-    }
-    expect(sameSet(), isFalse, reason: '"New ideas" should bring a new set');
+    await _until(tester, tiles);
+    expect(shown(), isNot(firstSet), reason: '"New ideas" should bring a new set');
   });
 }

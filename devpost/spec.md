@@ -181,7 +181,7 @@ PRD ref: `prd.md > Meet Cherry`.
 PRD ref: `prd.md > Discover`.
 
 ### Recipes
-Calls `getMyRecipes`, which returns about six recipes cached for this person, or generates them with Gemini from their diet, restrictions, cuisines, and cooking time. Each recipe has a title, time, ingredients, steps, and an allergy note. Tapping one opens its detail. A "New ideas" button regenerates the set. Discover is checked again whenever the tab is opened.
+*Changed at final review:* recipes now come from the bundled library (see Final-Review Additions), with no network call. The page features the Dish of the Day, then about six more recipes suited to this person's diet, restrictions, cuisines, and cooking time. Each recipe has a title, time, ingredients, steps, and an allergy note. Tapping one opens its detail. "New ideas" shows the next set. Discover is checked again whenever the tab is opened.
 PRD ref: `prd.md > Recipes`.
 
 ### Matching (server)
@@ -435,8 +435,9 @@ Implements `prd.md > Added at Final Review`.
 - **Recipe library:** `app/assets/recipes/library.json`, generated once with Gemini by `functions/scripts/build-recipe-library.mjs`. The tags are then double-checked by keyword rules (a meat word means not vegetarian; nut words add the nuts allergen, and so on) and committed. `RecipeLibrary` in the app filters by diet and restrictions and ranks by cuisines and cooking time. "Dish of the Day" is a stable daily pick from the suitable set. The `getMyRecipes` function and `users/{uid}/recipes` are retired.
 - **Cities:** a fixed list in `app/lib/data/cities.dart` with a searchable picker; `users/{uid}.city` holds one list entry.
 - **Filters:** `users/{uid}.filters = { foodTypes: [], minAge, maxAge, cities: [] }`, where empty means no limit. They're applied in `DiscoverService.candidates` by a pure `passesFilters`. The mode switch updates `users/{uid}.lookingFor`.
-- **Jack & Jill:** `cherryName('boy'|'girl')` in the app. Cherry's system prompt tells the wingman never to name itself, and `mentionsCherry` also matches "jack" and "jill".
-- **Chats list:** each match stores `readAt.{uid}` (members may update only their own entry). Tiles show the last message, wingman or date status, and an unread dot.
+- **Jack & Jill:** `Wingman` in `app/lib/widgets/mascot.dart` gives the name and poses for a person's cherry. Cherry's system prompt tells the wingman never to name itself, and `mentionsCherry` also matches "jack" and "jill", except a name that belongs to one of the two people in the chat (so "bye Jack" to a person called Jack doesn't dismiss the wingman).
+- **Daily touches:** `app/lib/data/daily.dart` gives a time-of-day greeting with one line per day; Discover shows it with the Dish of the Day, and the Recipes page features the Dish of the Day.
+- **Chats list:** each match stores `readAt.{uid}` (members may update only their own entry, and only to the server time). Each tile streams its own last message, so no server change is needed; tiles show the preview, wingman or date status, and an unread dot.
 
 ## Decisions and Open Issues
 

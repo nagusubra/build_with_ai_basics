@@ -22,6 +22,8 @@ class RecipesPage extends StatefulWidget {
 }
 
 class _RecipesPageState extends State<RecipesPage> {
+  static const _pageSize = 6;
+
   RecipeLibrary? _library;
   int _page = 0;
 
@@ -39,7 +41,8 @@ class _RecipesPageState extends State<RecipesPage> {
     final lib = _library;
     final wingman = Wingman(widget.me.cherryAvatar);
     final dish = lib?.dishOfTheDay(widget.me);
-    final recipes = (lib?.selection(widget.me, page: _page) ?? const <Recipe>[]).where((r) => r.id != dish?.id).toList();
+    final recipes =
+        (lib?.selection(widget.me, page: _page, size: _pageSize) ?? const <Recipe>[]).where((r) => r.id != dish?.id).toList();
     final filtered = widget.me.filters.activeCount > 0;
     return RefreshIndicator(
       color: BakeColors.cherryRed,
@@ -75,8 +78,8 @@ class _RecipesPageState extends State<RecipesPage> {
             child: Text('More for you', style: text.titleLarge),
           ),
           for (var i = 0; i < recipes.length; i++)
-            RecipeTile(recipe: recipes[i]).animate(key: ValueKey('${recipes[i].id}-$_page')).fadeIn(delay: (60 * i).ms).moveY(begin: 8, end: 0),
-          if (recipes.isNotEmpty)
+            RecipeTile(key: Key('recipe-tile-${recipes[i].id}'), recipe: recipes[i]).animate(key: ValueKey('${recipes[i].id}-$_page')).fadeIn(delay: (60 * i).ms).moveY(begin: 8, end: 0),
+          if (lib != null && lib.suitableFor(widget.me).length > _pageSize + 1)
             OutlinedButton.icon(
               key: const Key('recipes-new-ideas'),
               onPressed: () => setState(() => _page++),
