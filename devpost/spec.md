@@ -77,7 +77,7 @@ Why each learner choice:
 1. Create a Firebase project. Upgrade it to **Blaze** and set a budget alert.
 2. Turn on **Authentication → Email/Password**, **Firestore**, and **Storage**.
 3. Get a **paid-tier Gemini API key** from Google AI Studio. Store it as a secret, never in code: `firebase functions:secrets:set GEMINI_API_KEY`.
-4. Install the tools: `npm install -g firebase-tools`, `dart pub global activate flutterfire_cli`, then `firebase login`.
+4. Install the tools: `npm install -g firebase-tools`, `dart pub global activate flutterfire_cli`, then `firebase login`. The local emulators need **Java 21+** (`brew install openjdk@21`, then put `/opt/homebrew/opt/openjdk@21/bin` first on `PATH`), and `functions/` uses **Node 22** (`nvm use` reads `functions/.nvmrc`).
 5. In `app/`, run `flutterfire configure`. This writes `lib/firebase_options.dart`. It holds the app's public Firebase identifiers, not secrets.
 6. Deploy the server side from the repo root: `firebase deploy --only functions,firestore,storage`.
 
@@ -88,6 +88,14 @@ flutter pub get
 flutter run -d <your iPhone>
 ```
 To list connected iPhones: `flutter devices`. The phone must be unlocked, trusted, and in Developer Mode.
+
+**Local development against the emulators** (no real data touched):
+```
+cd functions && nvm use && npm install
+npm run test:rules                         # security-rules tests
+SIM=<simulator id> npm run check:chat      # two-person live chat, end to end
+cd ../app && flutter run --dart-define=USE_EMULATORS=true   # with emulators running: firebase emulators:start
+```
 
 **For the demo recording:** create both demo accounts beforehand, so the video can jump quickly past onboarding to Discover, the match, and Cherry. Record both phones; Discover will run out quickly with only two users, which shows off the Recipes page. Submission needs the short video and the public GitHub repo. No deployment beyond the above.
 

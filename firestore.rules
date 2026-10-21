@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isMember(matchId) {
+      return signedIn()
+        && request.auth.uid in get(/databases/$(database)/documents/matches/$(matchId)).data.users;
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn();
+      allow create, update: if signedIn() && request.auth.uid == uid;
+      allow delete: if false;
+
+      match /private/{doc} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+    }
+
+    // Matches are created and changed by Cloud Functions; members may only mark one as seen.
+    match /matches/{matchId} {
+      allow read: if signedIn() && request.auth.uid in resource.data.users;
+      allow update: if signedIn()
+        && request.auth.uid in resource.data.users
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seenBy'])
+        && request.resource.data.seenBy.toSet() == resource.data.get('seenBy', []).toSet().union([request.auth.uid].toSet());
+      allow create, delete: if false;
+
+      // People write plain text as themselves. Cherry and special cards come from Cloud Functions.
+      match /messages/{messageId} {
+        allow read: if isMember(matchId);
+        allow create: if isMember(matchId)
+          && request.resource.data.keys().hasOnly(['sender', 'type', 'text', 'createdAt'])
+          && request.resource.data.sender == request.auth.uid
+          && request.resource.data.type == 'text'
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 2000
+          && request.resource.data.createdAt == request.time;
+        allow update, delete: if false;
+      }
+    }
+  }
+}

@@ -9,7 +9,7 @@ Build mode: fast
 
 ## Slices
 
-- [ ] **1. The app runs on an iPhone and can tell whether a selfie matches a photo**
+- [x] **1. The app runs on an iPhone and can tell whether a selfie matches a photo**
   Becomes usable: The BakeOut Flutter app, already in BakeOut's colours, Nunito, and app icon, runs on an iPhone and opens a temporary "Verification lab" screen. You pick a profile photo, pass the live check (blink, then turn your head), and see a match score with pass or fail. Two photos can also be compared directly, without the camera.
   Why now: On-device face matching is the biggest unknown (`spec.md > Decisions and Open Issues > The useful unknown`), and the spec agreed to test it first. It needs no Firebase, so it can run while the Firebase project is being set up. Starting the app here also bootstraps the project.
   PRD ref: `prd.md > Photos and Verification`
@@ -116,4 +116,6 @@ Activity mode:
 - **Face crops are aligned by the eyes before matching.** Plain box crops squeezed different people up to about 0.6 similarity. Vision's landmarks are unreliable on the simulator's CPU-only path, so the app uses landmark eyes only when they look plausible, and otherwise estimates the eyes from the face box. Measured on the simulator: same person 0.77–0.79, different people ≤0.18, cutoff 0.5.
 - **The face model is Qualcomm AI Hub's MobileFaceNet export (Apache-2.0).** It takes two faces per call. The mechanical check uses public-domain official portraits (downloaded at test time, never committed) instead of the team's own photos; the team's selfies are checked by hand at the slice-4 checkpoint.
 - **Nunito is bundled as static TTFs through `pubspec.yaml` instead of the `google_fonts` package,** which turned out to be unnecessary.
+- **The tooling needs Java 21 and Node 22.** The current Firebase CLI's emulators need Java 21+ (Homebrew `openjdk@21` installed alongside Java 17), and `firebase-admin` 14 needs Node 22, so `functions/` pins Node 22 with `.nvmrc`. Cloud Functions will also run on Node 22. Recorded in `spec.md > Where It Runs and How Someone Tries It`.
+- **The chat check pairs the app with a scripted second person.** One simulator can't type as two people, so `functions/scripts/dev-replier.mjs` plays Tester Two against the emulators while an integration test drives Tester One through the real login and chat screens. Firestore and Storage rules are deployed to the real project.
 - **The live check on a real iPhone camera (blink and turn thresholds) moves to the slice-4 hands-on checkpoint.** It's covered by unit tests, but a simulator has no camera.

@@ -1,0 +1,16 @@
+{
+  "name": "bakeout-functions",
+  "private": true,
+  "description": "BakeOut server side: Cherry's brain, matching, recipes, account deletion.",
+  "scripts": {
+    "test:rules": "firebase emulators:exec --only firestore \"node --test test/rules.test.mjs\"",
+    "seed:dev": "node scripts/seed-dev-match.mjs",
+    "check:chat": "firebase emulators:exec --only auth,firestore \"node scripts/seed-dev-match.mjs && (node scripts/dev-replier.mjs &) && cd ../app && flutter test integration_test/chat_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^6.0.0",
+    "@google-cloud/firestore": "^9.3.1",
+    "firebase": "^13.0.0",
+    "firebase-admin": "^14.5.0"
+  }
+}
