@@ -25,6 +25,16 @@ class ChatService {
       .snapshots()
       .map((s) => s.docs.map((d) => ChatMessage.fromMap(d.id, d.data())).toList());
 
+  Stream<ChatMessage?> lastMessage(String matchId) => _db
+      .collection('matches/$matchId/messages')
+      .orderBy('createdAt', descending: true)
+      .limit(1)
+      .snapshots()
+      .map((s) => s.docs.isEmpty ? null : ChatMessage.fromMap(s.docs.first.id, s.docs.first.data()));
+
+  Future<void> markRead(String matchId, String uid) =>
+      _db.doc('matches/$matchId').update({'readAt.$uid': FieldValue.serverTimestamp()});
+
   /// Matches this person hasn't celebrated yet.
   Stream<List<ChatMatch>> unseenMatches(String uid) =>
       matchesFor(uid).map((ms) => ms.where((m) => !m.seenBy.contains(uid)).toList());

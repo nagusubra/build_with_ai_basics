@@ -5,13 +5,14 @@ import '../theme/colors.dart';
 import 'mascot.dart';
 
 /// One chat line: my messages on the right in cherry red, theirs on the left in white,
-/// and Cherry's in soft pink beside the viewer's own cherry.
+/// and the wingman's in soft pink beside the viewer's own Jack or Jill, with their name on top.
 class ChatBubble extends StatelessWidget {
-  const ChatBubble({super.key, required this.message, required this.mine, this.cherryPose});
+  const ChatBubble({super.key, required this.message, required this.mine, this.cherryPose, this.cherryName});
 
   final ChatMessage message;
   final bool mine;
   final MascotPose? cherryPose;
+  final String? cherryName;
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +34,20 @@ class ChatBubble extends StatelessWidget {
           bottomRight: Radius.circular(mine ? 4 : 18),
         ),
       ),
-      child: Text(
-        message.text,
-        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: mine ? Colors.white : BakeColors.charcoal,
-              fontWeight: FontWeight.w600,
-            ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (cherry && cherryName != null)
+            Text(cherryName!, style: const TextStyle(color: BakeColors.deepCherry, fontWeight: FontWeight.w800, fontSize: 12)),
+          Text(
+            message.text,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: mine ? Colors.white : BakeColors.charcoal,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ],
       ),
     );
 

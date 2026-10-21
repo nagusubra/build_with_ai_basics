@@ -7,7 +7,7 @@ import { loadPeople } from '../profiles';
 import { CHERRY, cherryLeaves, postAsCherry, readMatch, recentHistory, unlock } from './chat';
 import { asksForDate, mayProposeDate, planIsComplete, proposePlan, type PlanDetails } from './planState';
 import { CHERRY_SYSTEM, decidePrompt, decideSchema, planContext } from './prompts';
-import { asksCherryToLeave, cherryHasLeft, lockIsFree, lockUntil, mayConsiderSpeaking } from './rules';
+import { asksCherryToLeave, cherryHasLeft, lockIsFree, lockUntil, mayConsiderSpeaking, mightNameWingman } from './rules';
 
 export const DISMISSED_GOODBYE = "Got it — I'll give you two some space. Now it's on you two how you bake this out further! 🍒";
 
@@ -31,9 +31,11 @@ export async function onHumanMessage(db: Firestore, matchId: string, msg: HumanM
   if (msg.sender === CHERRY) return 'ignored';
   const ref = db.doc(`matches/${matchId}`);
 
+  let names: string[] = [];
   const verdict = await db.runTransaction(async (tx) => {
     const match = readMatch(await tx.get(ref));
     if (cherryHasLeft(match)) return 'gone' as const;
+    if (mightNameWingman(msg.text)) names = (await loadPeople(db, match.users)).map((p) => p.name);
     const booked = { ...match, humanMessagesSinceCherry: (match.humanMessagesSinceCherry ?? 0) + 1 };
     const update: Record<string, unknown> = {
       lastHumanMessageAt: Timestamp.fromDate(msg.createdAt ?? now),
@@ -43,8 +45,8 @@ export async function onHumanMessage(db: Firestore, matchId: string, msg: HumanM
       humanMessagesSinceDecline: FieldValue.increment(1),
     };
     const consider =
-      asksCherryToLeave(msg.text) ||
-      mayConsiderSpeaking(booked, msg.text) ||
+      asksCherryToLeave(msg.text, names) ||
+      mayConsiderSpeaking(booked, msg.text, names) ||
       asksForDate(msg.text) ||
       match.datePlan?.status === 'proposed';
     const take = consider && lockIsFree(match, now);
@@ -55,7 +57,7 @@ export async function onHumanMessage(db: Firestore, matchId: string, msg: HumanM
   if (verdict !== 'think') return verdict;
 
   try {
-    if (asksCherryToLeave(msg.text)) {
+    if (asksCherryToLeave(msg.text, names)) {
       await cherryLeaves(db, matchId, DISMISSED_GOODBYE);
       return 'left';
     }

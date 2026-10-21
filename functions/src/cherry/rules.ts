@@ -26,11 +26,21 @@ export const lockIsFree = (m: MatchState, now: Date) => !m.cherryBusyUntil || m.
 
 export const lockUntil = (now: Date) => new Date(now.getTime() + LOCK_SECONDS * 1000);
 
-export const mentionsCherry = (text: string) => /\bcherry\b/i.test(text);
+/** Names a message may use for the wingman. Jack or Jill is skipped when one of the two people has that name. */
+export function wingmanWords(peopleNames: string[] = []): string[] {
+  const taken = new Set(peopleNames.map((n) => n.trim().split(/\s+/)[0]?.toLowerCase()));
+  return ['cherry', 'jack', 'jill'].filter((w) => w === 'cherry' || !taken.has(w));
+}
 
-/** Clear requests for Cherry to go. Gemini can also decide "leave" for less direct phrasing. */
-export function asksCherryToLeave(text: string): boolean {
-  if (!mentionsCherry(text)) return false;
+/** The message could be talking to the wingman, so the people's names are worth looking up. */
+export const mightNameWingman = (text: string) => /\b(jack|jill)\b/i.test(text);
+
+export const mentionsCherry = (text: string, peopleNames: string[] = []) =>
+  new RegExp(`\\b(${wingmanWords(peopleNames).join('|')})\\b`, 'i').test(text);
+
+/** Clear requests for the wingman to go. Gemini can also decide "leave" for less direct phrasing. */
+export function asksCherryToLeave(text: string, peopleNames: string[] = []): boolean {
+  if (!mentionsCherry(text, peopleNames)) return false;
   return /\b(leave|go away|give us (some )?(space|privacy)|bye|you can go|we('| a)re good|take it from here)\b/i.test(text);
 }
 
@@ -38,9 +48,9 @@ export function asksCherryToLeave(text: string): boolean {
  * After a human message: may Cherry even consider speaking? It stays out of a flowing
  * conversation unless someone talks to it directly.
  */
-export function mayConsiderSpeaking(m: MatchState, text: string): boolean {
+export function mayConsiderSpeaking(m: MatchState, text: string, peopleNames: string[] = []): boolean {
   if (cherryHasLeft(m)) return false;
-  if (mentionsCherry(text)) return true;
+  if (mentionsCherry(text, peopleNames)) return true;
   return (m.humanMessagesSinceCherry ?? 0) >= QUIET_AFTER_CHERRY;
 }
 

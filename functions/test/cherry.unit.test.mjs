@@ -38,6 +38,15 @@ describe('when Cherry may consider speaking', () => {
     assert.equal(asksCherryToLeave('I love cherry tomatoes'), false);
     assert.equal(asksCherryToLeave('we should leave early'), false);
   });
+
+  test('Jack and Jill are the wingman too, unless one of the two people has that name', () => {
+    assert.equal(mentionsCherry('Jill, what should we cook?'), true);
+    assert.equal(asksCherryToLeave('thanks jack, we are good, take it from here'), true);
+    assert.equal(mentionsCherry('Jackfruit tacos?'), false);
+    assert.equal(asksCherryToLeave('bye Jack, see you Saturday!', ['Jack Smith', 'Priya']), false);
+    assert.equal(mentionsCherry('Jill, any ideas?', ['Jack', 'Priya']), true);
+    assert.equal(asksCherryToLeave('ok cherry you can go', ['Jack', 'Jill']), true);
+  });
 });
 
 describe('the timer', () => {

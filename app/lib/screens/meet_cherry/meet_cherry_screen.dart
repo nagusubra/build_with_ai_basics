@@ -16,7 +16,7 @@ class MeetCherryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final pose = profile.cherryAvatar == 'girl' ? MascotPose.girlHello : MascotPose.boyHello;
+    final wingman = Wingman(profile.cherryAvatar);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -24,7 +24,7 @@ class MeetCherryScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              Mascot(pose, size: 240)
+              Mascot(wingman.hello, size: 240)
                   .animate()
                   .slideX(begin: -0.6, end: 0, duration: 600.ms, curve: Curves.easeOutBack)
                   .fadeIn(),
@@ -33,8 +33,9 @@ class MeetCherryScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(color: BakeColors.softPink, borderRadius: BorderRadius.circular(22)),
                 child: Text(
-                  "Hey, I'm Cherry! 🍒 I'm here to help you skip the awkward hellos. When you find someone you like, "
-                  "I'll help you two break the ice and plan something delicious. Once you're ready, I'll leave the rest to you.",
+                  "Hey, I'm ${wingman.name}! 🍒 I'm your wingman, here to help you skip the awkward hellos. "
+                  "When you find someone you like, I'll help you two break the ice and plan something delicious. "
+                  "Once you're ready, I'll leave the rest to you.",
                   style: text.titleMedium,
                 ),
               ).animate().fadeIn(delay: 450.ms, duration: 400.ms).moveY(begin: 12, end: 0),
@@ -42,7 +43,7 @@ class MeetCherryScreen extends StatelessWidget {
               FilledButton(
                 key: const Key('meet-cherry-continue'),
                 onPressed: () => profiles.completeOnboarding(profile.uid),
-                child: const Text("Let's go! 🍒"),
+                child: Text("Let's go, ${wingman.name}! 🍒"),
               ),
             ],
           ),

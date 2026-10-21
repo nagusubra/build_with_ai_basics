@@ -46,13 +46,24 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Matches are created and changed by Cloud Functions; members may only mark one as seen.
+    // Matches are created and changed by Cloud Functions. Members may only mark one as seen
+    // (the match moment) or stamp when they last read it, each for themselves.
+    function marksSeen() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seenBy'])
+        && request.resource.data.seenBy.toSet() == resource.data.get('seenBy', []).toSet().union([request.auth.uid].toSet());
+    }
+
+    function marksRead() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['readAt'])
+        && request.resource.data.readAt.diff(resource.data.get('readAt', {})).affectedKeys().hasOnly([request.auth.uid])
+        && request.resource.data.readAt[request.auth.uid] == request.time;
+    }
+
     match /matches/{matchId} {
       allow read: if signedIn() && request.auth.uid in resource.data.users;
       allow update: if signedIn()
         && request.auth.uid in resource.data.users
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['seenBy'])
-        && request.resource.data.seenBy.toSet() == resource.data.get('seenBy', []).toSet().union([request.auth.uid].toSet());
+        && (marksSeen() || marksRead());
       allow create, delete: if false;
 
       // People write plain text as themselves. Cherry and special cards come from Cloud Functions.

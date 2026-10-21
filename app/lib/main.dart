@@ -106,7 +106,7 @@ class AuthGate extends StatelessWidget {
   final ProfileService profiles;
   final DiscoverService discover;
 
-  static const _loading = Scaffold(body: Center(child: CircularProgressIndicator(color: BakeColors.cherryRed)));
+  static const _loading = Scaffold(body: CherryLoading());
 
   @override
   Widget build(BuildContext context) {

@@ -76,6 +76,16 @@ describe('matches and messages', () => {
     await assertFails(updateDoc(doc(db, `matches/${MATCH}`), { seenBy: ['alice', 'bob'] }));
   });
 
+  test('a member can stamp when they read the chat, only for themselves and only as now', async () => {
+    const db = env.authenticatedContext('alice').firestore();
+    await assertSucceeds(updateDoc(doc(db, `matches/${MATCH}`), { 'readAt.alice': serverTimestamp() }));
+    await assertFails(updateDoc(doc(db, `matches/${MATCH}`), { 'readAt.bob': serverTimestamp() }));
+    await assertFails(updateDoc(doc(db, `matches/${MATCH}`), { 'readAt.alice': new Date(2020, 0, 1) }));
+    await assertFails(updateDoc(doc(db, `matches/${MATCH}`), { 'readAt.alice': serverTimestamp(), cherryState: 'left' }));
+    const outsider = env.authenticatedContext('mallory').firestore();
+    await assertFails(updateDoc(doc(outsider, `matches/${MATCH}`), { 'readAt.mallory': serverTimestamp() }));
+  });
+
   test('nobody can create a match from the app', async () => {
     const db = env.authenticatedContext('alice').firestore();
     await assertFails(setDoc(doc(db, 'matches/alice_mallory'), { users: ['alice', 'mallory'] }));

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../models/profile.dart';
@@ -53,8 +54,8 @@ class _VerifyScreenState extends State<VerifyScreen> {
     super.dispose();
   }
 
-  MascotPose get _tryAgainPose => widget.profile.cherryAvatar == 'girl' ? MascotPose.girlTryAgain : MascotPose.boyTryAgain;
-  MascotPose get _cheerPose => widget.profile.cherryAvatar == 'girl' ? MascotPose.girlCheer : MascotPose.boyCheer;
+  MascotPose get _tryAgainPose => Wingman(widget.profile.cherryAvatar).tryAgain;
+  MascotPose get _cheerPose => Wingman(widget.profile.cherryAvatar).cheer;
 
   Future<void> _onSelfie(String selfiePath) async {
     setState(() => _stage = _Stage.checking);
@@ -64,6 +65,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
       final result = await _verifier.compare(profilePhotoPath: main.path, selfiePath: selfiePath);
       if (result.matched) {
         setState(() => _stage = _Stage.passed);
+        HapticFeedback.heavyImpact();
         await Future<void>.delayed(const Duration(milliseconds: 1600));
         await widget.profiles.markVerified(widget.profile.uid);
         widget.onVerified?.call();
@@ -107,7 +109,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
           body: LiveCheckView(onCaptured: _onSelfie, onCancel: () => setState(() => _stage = _Stage.intro)),
         );
       case _Stage.checking:
-        return const Scaffold(body: Center(child: CircularProgressIndicator(color: BakeColors.cherryRed)));
+        return const Scaffold(body: CherryLoading(caption: 'Comparing with your photo…'));
       case _Stage.passed:
         return Scaffold(
           body: Center(

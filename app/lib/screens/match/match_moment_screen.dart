@@ -11,9 +11,17 @@ import '../../widgets/onboarding.dart';
 
 /// "It's a BakeOut! 🍒❤️" (`prd.md > The Match Moment`).
 class MatchMomentScreen extends StatelessWidget {
-  const MatchMomentScreen({super.key, required this.me, required this.them, required this.profiles, required this.onBreakTheIce});
+  const MatchMomentScreen({
+    super.key,
+    required this.me,
+    required this.them,
+    required this.wingman,
+    required this.profiles,
+    required this.onBreakTheIce,
+  });
 
   final UserProfile me;
+  final Wingman wingman;
   final UserProfile them;
   final ProfileService profiles;
   final VoidCallback onBreakTheIce;
@@ -60,6 +68,12 @@ class MatchMomentScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: text.titleLarge?.copyWith(color: BakeColors.charcoal),
                   ).animate().fadeIn(delay: 400.ms),
+                  const SizedBox(height: 6),
+                  Text(
+                    '${wingman.name} is waiting in the chat to help you two say hello.',
+                    textAlign: TextAlign.center,
+                    style: text.bodyLarge?.copyWith(color: BakeColors.muted),
+                  ).animate().fadeIn(delay: 650.ms),
                   const Spacer(),
                   FilledButton(key: const Key('break-the-ice'), onPressed: onBreakTheIce, child: const Text('Let’s Break the Ice!')),
                 ],

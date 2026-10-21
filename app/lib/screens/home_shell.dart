@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/chat_match.dart';
 import '../models/profile.dart';
@@ -10,6 +11,7 @@ import '../services/discover_service.dart';
 import '../services/functions_service.dart';
 import '../services/profile_service.dart';
 import '../theme/colors.dart';
+import '../widgets/mascot.dart';
 import 'chat/chat_list_screen.dart';
 import 'chat/chat_screen.dart';
 import 'discover/discover_screen.dart';
@@ -66,11 +68,13 @@ class _HomeShellState extends State<HomeShell> {
       if (!_celebrating.add(match.id)) continue;
       final them = await widget.profiles.load(match.otherUser(widget.me.uid));
       if (!mounted) return;
+      HapticFeedback.heavyImpact();
       await Navigator.of(context).push(MaterialPageRoute(
         fullscreenDialog: true,
         builder: (context) => MatchMomentScreen(
           me: widget.me,
           them: them,
+          wingman: Wingman(match.cherryFor[widget.me.uid] ?? widget.me.cherryAvatar),
           profiles: widget.profiles,
           onBreakTheIce: () {
             widget.chat.markSeen(match.id, widget.me.uid);
@@ -127,7 +131,7 @@ class _HomeShellState extends State<HomeShell> {
           whenEmpty: (checkAgain) => RecipesPage(me: me, onCheckAgain: checkAgain, onEditFilters: editFilters),
         ),
       ),
-      ChatListScreen(auth: widget.auth, chat: widget.chat, functions: widget.functions, myUid: widget.me.uid),
+      ChatListScreen(auth: widget.auth, chat: widget.chat, functions: widget.functions, myUid: me.uid, myCherry: me.cherryAvatar),
       MyProfileScreen(me: widget.me, profiles: widget.profiles, functions: widget.functions, auth: widget.auth),
     ];
     return Scaffold(

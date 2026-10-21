@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import '../theme/colors.dart';
+
 enum MascotPose {
   duoWelcome('cherry_duo_welcome'),
   duoMatch('cherry_duo_match'),
@@ -37,6 +39,25 @@ class Wingman {
   MascotPose get planning => isJill ? MascotPose.girlPlanning : MascotPose.boyPlanning;
   MascotPose get goodbye => isJill ? MascotPose.girlGoodbye : MascotPose.boyGoodbye;
   MascotPose get tryAgain => isJill ? MascotPose.girlTryAgain : MascotPose.boyTryAgain;
+}
+
+/// The cherries bobbing while something loads, instead of a bare spinner.
+class CherryLoading extends StatelessWidget {
+  const CherryLoading({super.key, this.caption = 'Just a moment…'});
+
+  final String caption;
+
+  @override
+  Widget build(BuildContext context) => Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Mascot(MascotPose.duoCooking, size: 120),
+            const SizedBox(height: 6),
+            Text(caption, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: BakeColors.muted)),
+          ],
+        ),
+      );
 }
 
 /// A mascot image with a gentle idle bob, so the cherries never sit perfectly still.

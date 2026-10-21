@@ -211,12 +211,13 @@ class SongCardView extends StatelessWidget {
   }
 }
 
-/// Cherry's last words, then the chat belongs to the two of them.
+/// The wingman's last words, then the chat belongs to the two of them.
 class CherryGoodbyeView extends StatelessWidget {
-  const CherryGoodbyeView({super.key, required this.message, required this.goodbyePose});
+  const CherryGoodbyeView({super.key, required this.message, required this.goodbyePose, this.name = 'Your wingman'});
 
   final ChatMessage message;
   final MascotPose goodbyePose;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +230,7 @@ class CherryGoodbyeView extends StatelessWidget {
           const SizedBox(height: 6),
           Text(message.text, textAlign: TextAlign.center, style: text.titleMedium?.copyWith(color: BakeColors.deepCherry)),
           const SizedBox(height: 10),
-          Text("Cherry has left the chat — it's just you two now 💛",
+          Text("$name has left the chat — it's just you two now 💛",
               style: text.bodyMedium?.copyWith(color: BakeColors.muted)),
         ],
       ),

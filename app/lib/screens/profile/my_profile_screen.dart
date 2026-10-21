@@ -6,6 +6,7 @@ import '../../services/functions_service.dart';
 import '../../services/profile_service.dart';
 import '../../theme/colors.dart';
 import '../../theme/theme.dart';
+import '../../widgets/mascot.dart';
 import '../auth/basics_screen.dart';
 import '../photos/photos_screen.dart';
 import '../photos/verify_screen.dart';
@@ -73,7 +74,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     final me = widget.me;
     final text = Theme.of(context).textTheme;
     if (_deleting) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator(color: BakeColors.cherryRed)));
+      return const Scaffold(body: CherryLoading(caption: 'Getting your profile…'));
     }
     return Scaffold(
       appBar: AppBar(title: const Text('My profile')),

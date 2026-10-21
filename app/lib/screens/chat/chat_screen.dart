@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../models/chat_match.dart';
 import '../../models/message.dart';
@@ -32,6 +33,22 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _input = TextEditingController();
   final _scroll = ScrollController();
+  String? _readUpTo;
+
+  @override
+  void initState() {
+    super.initState();
+    _markRead();
+  }
+
+  void _markRead() => widget.chat.markRead(widget.matchId, widget.myUid).catchError((_) {});
+
+  void _readIfNew(List<ChatMessage> messages) {
+    final lastId = messages.isEmpty ? null : messages.last.id;
+    if (lastId == null || lastId == _readUpTo) return;
+    _readUpTo = lastId;
+    if (messages.last.sender != widget.myUid) _markRead();
+  }
 
   @override
   void dispose() {
@@ -55,13 +72,12 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  bool _girlCherry(ChatMatch? match) => match?.cherryFor[widget.myUid] == 'girl';
-
-  MascotPose _cherryPose(ChatMatch? match) => _girlCherry(match) ? MascotPose.girlHello : MascotPose.boyHello;
+  Wingman _wingman(ChatMatch? match) => Wingman(match?.cherryFor[widget.myUid]);
 
   Future<void> _confirm(int version) async {
     try {
       await widget.functions.confirmDatePlan(widget.matchId, version);
+      HapticFeedback.mediumImpact();
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -71,8 +87,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _messageView(ChatMessage m, ChatMatch? match) {
-    final girl = _girlCherry(match);
-    final bubble = ChatBubble(message: m, mine: m.sender == widget.myUid, cherryPose: _cherryPose(match));
+    final wingman = _wingman(match);
+    final bubble = ChatBubble(message: m, mine: m.sender == widget.myUid, cherryPose: wingman.hello, cherryName: wingman.name);
     switch (m.type) {
       case 'dateCard':
         return Column(
@@ -85,7 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
               myUid: widget.myUid,
               otherUid: match?.otherUser(widget.myUid) ?? '',
               otherName: widget.otherName,
-              planningPose: girl ? MascotPose.girlPlanning : MascotPose.boyPlanning,
+              planningPose: wingman.planning,
               onConfirm: _confirm,
             ),
           ],
@@ -95,18 +111,18 @@ class _ChatScreenState extends State<ChatScreen> {
       case 'song':
         return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [bubble, SongCardView(message: m)]);
       case 'cherryGoodbye':
-        return CherryGoodbyeView(message: m, goodbyePose: girl ? MascotPose.girlGoodbye : MascotPose.boyGoodbye);
+        return CherryGoodbyeView(message: m, goodbyePose: wingman.goodbye, name: wingman.name);
       default:
         return bubble;
     }
   }
 
-  Future<void> _askCherryToLeave() async {
+  Future<void> _askCherryToLeave(Wingman wingman) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Ask Cherry to leave?'),
-        content: const Text("Cherry will say goodbye and won't come back to this chat."),
+        title: Text('Ask ${wingman.name} to leave?'),
+        content: Text("${wingman.name} will say goodbye and won't come back to this chat."),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Not yet')),
           TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Yes, leave')),
@@ -129,8 +145,8 @@ class _ChatScreenState extends State<ChatScreen> {
               if (match?.cherryPresent ?? false)
                 IconButton(
                   key: const Key('dismiss-cherry'),
-                  tooltip: 'Ask Cherry to leave',
-                  onPressed: _askCherryToLeave,
+                  tooltip: 'Ask ${_wingman(match).name} to leave',
+                  onPressed: () => _askCherryToLeave(_wingman(match)),
                   icon: const Text('🍒👋', style: TextStyle(fontSize: 18)),
                 ),
             ],
@@ -145,12 +161,19 @@ class _ChatScreenState extends State<ChatScreen> {
                       final messages = snap.data ?? const <ChatMessage>[];
                       if (messages.isEmpty) {
                         return Center(
-                          child: Text(
-                            'Say hello to ${widget.otherName} 👋',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: BakeColors.muted),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Mascot(_wingman(match).hello, size: 120),
+                              Text(
+                                snap.hasData ? 'Say hello to ${widget.otherName} 👋' : '${_wingman(match).name} is on the way…',
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: BakeColors.muted),
+                              ),
+                            ],
                           ),
                         );
                       }
+                      _readIfNew(messages);
                       _scrollToEnd();
                       return ListView.builder(
                         controller: _scroll,

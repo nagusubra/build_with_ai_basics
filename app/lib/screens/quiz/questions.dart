@@ -79,7 +79,7 @@ const quizQuestions = <QuizQuestion>[
   QuizQuestion(
     field: 'restrictions',
     title: 'Any dietary restrictions or allergies?',
-    subtitle: 'Cherry will never suggest a dish that clashes with these.',
+    subtitle: 'Your Jack or Jill will never suggest a dish that clashes with these.',
     kind: QuizKind.multi,
     required: false,
     options: [
