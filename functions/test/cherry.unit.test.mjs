@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 
+import { confirmPlan, mayProposeDate, noPlan, planIsComplete, proposePlan, NOT_READY_COOLDOWN } from '../lib/cherry/planState.js';
 import { asksCherryToLeave, mayConsiderSpeaking, mentionsCherry, tickAction } from '../lib/cherry/rules.js';
 import { commonGround } from '../lib/profiles.js';
 
@@ -75,6 +76,62 @@ describe('the timer', () => {
 
   test('does nothing once Cherry has left', () => {
     assert.equal(tickAction({ ...base, cherryState: 'left', lastHumanMessageAt: at(0), lastHumanBy: 'ana' }, at(60)), null);
+  });
+});
+
+describe('the date plan', () => {
+  const details = { dish: 'Mushroom risotto', dishWhy: 'veggie and nut-free', day: 'Saturday', time: '7:00 pm' };
+
+  test('a card needs a dish, a day, and a time', () => {
+    assert.equal(planIsComplete(details), true);
+    assert.equal(planIsComplete({ dish: 'Risotto', day: 'Saturday' }), false);
+    assert.equal(planIsComplete({ dish: ' ', day: 'Saturday', time: '7pm' }), false);
+  });
+
+  test('it is confirmed only once both have confirmed the current card', () => {
+    const card = proposePlan(noPlan(), details);
+    const first = confirmPlan(card, users, 'ana', card.version);
+    assert.equal(first.ok && first.bothConfirmed, false);
+    assert.equal(first.plan.status, 'proposed');
+    const second = confirmPlan(first.plan, users, 'ben', card.version);
+    assert.equal(second.ok && second.bothConfirmed, true);
+    assert.equal(second.plan.status, 'confirmed');
+  });
+
+  test('changing the card clears every confirmation', () => {
+    const card = proposePlan(noPlan(), details);
+    const half = confirmPlan(card, users, 'ana', card.version).plan;
+    const changed = proposePlan(half, { ...details, time: '8:00 pm' });
+    assert.deepEqual(changed.confirmedBy, {});
+    assert.equal(changed.version, card.version + 1);
+  });
+
+  test('a tap on an outdated card does not count', () => {
+    const first = proposePlan(noPlan(), details);
+    const second = proposePlan(first, { ...details, dish: 'Veggie tacos' });
+    assert.deepEqual(confirmPlan(second, users, 'ana', first.version), { ok: false, reason: 'outdated_card' });
+  });
+
+  test('outsiders and missing cards are refused', () => {
+    const card = proposePlan(noPlan(), details);
+    assert.deepEqual(confirmPlan(card, users, 'mallory', card.version), { ok: false, reason: 'not_member' });
+    assert.deepEqual(confirmPlan(noPlan(), users, 'ana', 0), { ok: false, reason: 'no_plan' });
+  });
+
+  test('after "not ready", no new card until they have chatted a while, unless they ask', () => {
+    const declined = { dateDeclinedAt: t0, humanMessagesSinceDecline: 2 };
+    assert.equal(mayProposeDate(declined, 'haha yeah'), false);
+    assert.equal(mayProposeDate(declined, 'ok actually, when are you free?'), true);
+    assert.equal(mayProposeDate({ ...declined, humanMessagesSinceDecline: NOT_READY_COOLDOWN }, 'haha yeah'), true);
+  });
+
+  test('never a new card once the date is confirmed', () => {
+    assert.equal(mayProposeDate({ datePlan: { status: 'confirmed', version: 1, confirmedBy: {} } }, 'plan a date!'), false);
+  });
+
+  test('the timer finishes a confirmed date before anything else', () => {
+    const m = { users, cherryState: 'active', createdAt: t0, datePlan: { status: 'confirmed', version: 1, confirmedBy: {} } };
+    assert.deepEqual(tickAction(m, at(0)), { kind: 'finish' });
   });
 });
 

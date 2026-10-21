@@ -5,10 +5,11 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { askJson, geminiKey } from '../gemini';
 import { loadPeople } from '../profiles';
 import { postAsCherry, readMatch, recentHistory, tryLock, unlock } from './chat';
+import { finishDate } from './plan';
 import { CHERRY_SYSTEM, messageSchema, reminderPrompt, stallPrompt } from './prompts';
 import { tickAction } from './rules';
 
-/** One pass over active chats: a prompt for stalled ones, one reminder for long-quiet ones. */
+/** One pass over active chats: finish confirmed dates, prompt stalled chats, remind long-quiet ones. */
 export async function runCherryTick(db: Firestore, apiKey: string, now = new Date()) {
   const active = await db.collection('matches').where('cherryState', '==', 'active').get();
   const acted: string[] = [];
@@ -21,6 +22,10 @@ export async function runCherryTick(db: Firestore, apiKey: string, now = new Dat
       continue;
     }
     try {
+      if (action.kind === 'finish') {
+        if (await finishDate(db, doc.id, apiKey)) acted.push(`${doc.id}:finish`);
+        continue;
+      }
       const people = await loadPeople(db, match.users);
       const [a, b] = people;
       const history = await recentHistory(db, doc.id, people);
@@ -29,8 +34,8 @@ export async function runCherryTick(db: Firestore, apiKey: string, now = new Dat
           ? stallPrompt(a, b, history)
           : reminderPrompt(a, b, history, people.find((p) => p.uid === action.quietUser) ?? null);
       const { message } = await askJson<{ message: string }>({ apiKey, system: CHERRY_SYSTEM, prompt, schema: messageSchema });
-      const extra = action.kind === 'reminder' ? { reminderSentAt: FieldValue.serverTimestamp() } : {};
-      if (await postAsCherry(db, doc.id, message.trim(), extra)) acted.push(`${doc.id}:${action.kind}`);
+      const matchUpdate = action.kind === 'reminder' ? { reminderSentAt: FieldValue.serverTimestamp() } : {};
+      if (await postAsCherry(db, doc.id, message.trim(), { matchUpdate })) acted.push(`${doc.id}:${action.kind}`);
     } catch (err) {
       logger.error('Cherry tick failed for chat; will retry next minute', { matchId: doc.id, err });
     } finally {

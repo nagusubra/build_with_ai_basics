@@ -6,6 +6,7 @@ import '../../services/chat_service.dart';
 import '../../services/functions_service.dart';
 import '../../theme/colors.dart';
 import '../../widgets/chat_bubble.dart';
+import '../../widgets/chat_cards.dart';
 import '../../widgets/mascot.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -54,8 +55,51 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  MascotPose _cherryPose(ChatMatch? match) =>
-      match?.cherryFor[widget.myUid] == 'girl' ? MascotPose.girlHello : MascotPose.boyHello;
+  bool _girlCherry(ChatMatch? match) => match?.cherryFor[widget.myUid] == 'girl';
+
+  MascotPose _cherryPose(ChatMatch? match) => _girlCherry(match) ? MascotPose.girlHello : MascotPose.boyHello;
+
+  Future<void> _confirm(int version) async {
+    try {
+      await widget.functions.confirmDatePlan(widget.matchId, version);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Couldn't confirm just now — please try again.")),
+      );
+    }
+  }
+
+  Widget _messageView(ChatMessage m, ChatMatch? match) {
+    final girl = _girlCherry(match);
+    final bubble = ChatBubble(message: m, mine: m.sender == widget.myUid, cherryPose: _cherryPose(match));
+    switch (m.type) {
+      case 'dateCard':
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (m.text.isNotEmpty) bubble,
+            DateCardView(
+              message: m,
+              plan: match?.datePlan ?? const DatePlan(status: 'none', version: 0),
+              myUid: widget.myUid,
+              otherUid: match?.otherUser(widget.myUid) ?? '',
+              otherName: widget.otherName,
+              planningPose: girl ? MascotPose.girlPlanning : MascotPose.boyPlanning,
+              onConfirm: _confirm,
+            ),
+          ],
+        );
+      case 'recipe':
+        return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [bubble, RecipeCardView(message: m)]);
+      case 'song':
+        return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [bubble, SongCardView(message: m)]);
+      case 'cherryGoodbye':
+        return CherryGoodbyeView(message: m, goodbyePose: girl ? MascotPose.girlGoodbye : MascotPose.boyGoodbye);
+      default:
+        return bubble;
+    }
+  }
 
   Future<void> _askCherryToLeave() async {
     final ok = await showDialog<bool>(
@@ -112,11 +156,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         controller: _scroll,
                         padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
                         itemCount: messages.length,
-                        itemBuilder: (context, i) => ChatBubble(
-                          message: messages[i],
-                          mine: messages[i].sender == widget.myUid,
-                          cherryPose: _cherryPose(match),
-                        ),
+                        itemBuilder: (context, i) => _messageView(messages[i], match),
                       );
                     },
                   ),

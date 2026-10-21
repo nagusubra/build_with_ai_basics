@@ -7,4 +7,7 @@ class FunctionsService {
   final FirebaseFunctions _fn;
 
   Future<void> dismissCherry(String matchId) => _fn.httpsCallable('dismissCherry').call({'matchId': matchId});
+
+  Future<void> confirmDatePlan(String matchId, int version) =>
+      _fn.httpsCallable('confirmDatePlan').call({'matchId': matchId, 'version': version});
 }

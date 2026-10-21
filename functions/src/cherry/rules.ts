@@ -1,4 +1,5 @@
 import { LOCK_SECONDS, QUIET_AFTER_CHERRY, REMINDER_MINUTES, STUCK_MINUTES } from '../config';
+import type { DatePlan } from './planState';
 
 /** The parts of a match document Cherry's rules read. */
 export interface MatchState {
@@ -11,6 +12,9 @@ export interface MatchState {
   reminderSentAt?: Date | null;
   humanMessagesSinceCherry?: number;
   cherryBusyUntil?: Date | null;
+  datePlan?: DatePlan;
+  dateDeclinedAt?: Date | null;
+  humanMessagesSinceDecline?: number;
 }
 
 const minutes = (n: number) => n * 60_000;
@@ -40,16 +44,18 @@ export function mayConsiderSpeaking(m: MatchState, text: string): boolean {
   return (m.humanMessagesSinceCherry ?? 0) >= QUIET_AFTER_CHERRY;
 }
 
-export type TickAction = { kind: 'stall' } | { kind: 'reminder'; quietUser: string | null } | null;
+export type TickAction = { kind: 'finish' } | { kind: 'stall' } | { kind: 'reminder'; quietUser: string | null } | null;
 
 /**
  * Timer decision for one chat.
+ * - finish: both confirmed the date but the recipe, song, or goodbye didn't go out → retry.
  * - stall: humans went quiet after their own message and Cherry hasn't spoken since → one prompt.
  * - reminder: Cherry already prompted, still nobody answered for a long while → one gentle nudge
  *   to whoever hasn't replied (or both, if nobody has said anything yet). Then Cherry waits.
  */
 export function tickAction(m: MatchState, now: Date): TickAction {
   if (cherryHasLeft(m)) return null;
+  if (m.datePlan?.status === 'confirmed') return { kind: 'finish' };
   const lastHuman = m.lastHumanMessageAt ?? null;
   const quietSince = lastHuman ?? m.createdAt ?? null;
   if (!quietSince) return null;
