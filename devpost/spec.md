@@ -430,6 +430,14 @@ build_with_ai_basics/
 - **No push notifications**, with Cherry's reminder sent in-chat (`prd.md > Product Decisions`).
 - **iPhone only**, since that's what the team has to build on and demo with.
 
+## Final-Review Additions
+Implements `prd.md > Added at Final Review`.
+- **Recipe library:** `app/assets/recipes/library.json`, generated once with Gemini by `functions/scripts/build-recipe-library.mjs`. The tags are then double-checked by keyword rules (a meat word means not vegetarian; nut words add the nuts allergen, and so on) and committed. `RecipeLibrary` in the app filters by diet and restrictions and ranks by cuisines and cooking time. "Dish of the Day" is a stable daily pick from the suitable set. The `getMyRecipes` function and `users/{uid}/recipes` are retired.
+- **Cities:** a fixed list in `app/lib/data/cities.dart` with a searchable picker; `users/{uid}.city` holds one list entry.
+- **Filters:** `users/{uid}.filters = { foodTypes: [], minAge, maxAge, cities: [] }`, where empty means no limit. They're applied in `DiscoverService.candidates` by a pure `passesFilters`. The mode switch updates `users/{uid}.lookingFor`.
+- **Jack & Jill:** `cherryName('boy'|'girl')` in the app. Cherry's system prompt tells the wingman never to name itself, and `mentionsCherry` also matches "jack" and "jill".
+- **Chats list:** each match stores `readAt.{uid}` (members may update only their own entry). Tiles show the last message, wingman or date status, and an unread dot.
+
 ## Decisions and Open Issues
 
 ### Decisions

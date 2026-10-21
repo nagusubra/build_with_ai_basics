@@ -48,7 +48,7 @@ Movement is linear through onboarding, then Discover → Match → Chat.
 
 ## Look and Feel
 - **Mood:** warm, playful, modern, and premium, never childish or overwhelming. "A cosy little space where meeting someone new is exciting rather than intimidating." The interface should look beautiful but never distract from the conversation.
-- **Identity:** the two 3D cherry mascots are the main visual identity. A male cherry on his side, a female cherry on hers (`scope.md > Inspiration & Identity`). For same-gender matches and other genders, each person's cherry is randomly male or female.
+- **Identity:** the two 3D cherry mascots are the main visual identity, named **Jack** (the boy cherry) and **Jill** (the girl cherry); together, "Jack & Jill". A male cherry on his side, a female cherry on hers (`scope.md > Inspiration & Identity`). For same-gender matches and other genders, each person's cherry is randomly male or female. Each person sees their own wingman by name (added at final review).
 - **Colours:**
   - Cherry Red `#E83D55`: primary brand colour, buttons, hearts, highlights
   - Warm Cream `#FFF9F3`: main background
@@ -232,8 +232,15 @@ The two users keep chatting in the same chat on their own.
 ## What We're Building
 Everything in **The Core Journey**, with the behaviors and acceptance criteria under **Features and Behavior**: welcome, email sign-up and login with an 18+ check, the food quiz, photos and real verification, profile preview, Meet Cherry, Discover with like/pass and real profiles, the Recipes page when Discover runs out, my profile (preview, edit, delete), mutual-like matching with the match moment, and Cherry's full chat behavior through to its permanent exit.
 
+### Added at Final Review
+Agreed with Vinamra after he tried the full app (see `checklist.md > Final Review`):
+- **Discover filters:** food preference, age range, location (Anywhere or chosen cities), and a Partner ↔ Friends mode switch that changes your own "looking for", so friends still only see friends. Non-matches are hidden; filters are saved. City is chosen from a searchable list at sign-up and in edit.
+- **Recipe library:** Recipes draws from a bundled, tagged library of about 40 recipes, filtered to your diet and allergies, instead of asking the AI each time.
+- **Jack & Jill:** the cherries' names and personality across the app.
+- **Daily touches:** a Dish of the Day and a greeting from your Jack or Jill on Discover; a Chats list with last-message previews, status, and unread dots; warm empty states and gentle haptics.
+
 ## Deferred From the POC
-- **Food filters and normal dating filters** in Discover. `scope.md > Later`; may return once the core path works.
+- **Food filters and normal dating filters** in Discover. `scope.md > Later`; may return once the core path works. *(Brought back at final review — see Added at Final Review.)*
 - **Recommendation or matching algorithm.** Real profiles appearing is enough for now.
 - **Push notifications.** Cherry's reminder is an in-chat message instead.
 - **Other account basics:** log out, unmatch, block or report, and settings. Only preview, edit, and delete were chosen for this version. Block/report matters for a real launch's safety.

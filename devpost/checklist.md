@@ -97,6 +97,15 @@ Build mode: fast
 
 ## Final Review
 
+Kick-the-tires feedback (Vinamra, after trying the full app on his iPhone): "Everything seems good". He asked for three changes:
+
+Agreed in the follow-up interview:
+
+- [ ] **Recipe library**: about 40 hand-picked recipes bundled in the app, tagged with diet, allergens, cuisine, and time. Recipes shows only ones that fit the person's diet and allergies, favouring their cuisines and cooking time; "New ideas" shows a fresh selection. No Gemini for the Recipes page (Gemini still writes the confirmed date's recipe).
+- [ ] **Discover filters**: food preference (multi), age range, location (Anywhere or chosen cities), and a **mode switch** (Partner ↔ Friends) that changes the person's own `lookingFor`, so the friends-see-friends rule stays. Filters hide non-matches and save to the account. **City is picked from a searchable list** at sign-up and in edit, so the location filter is exact.
+- [ ] **Jack & Jill**: the boy cherry is **Jack**, the girl cherry is **Jill**; together "Jack & Jill". Each person sees their own by name. Wingman messages never name themselves (the bubble label does), and "Jack", "Jill", or "Cherry" all address the wingman.
+- [ ] **Daily reasons to open**: a **Dish of the Day** from the library picked for the person, and a **greeting** from their Jack or Jill at the top of Discover.
+- [ ] **Curated polish**: Discover cards (cuisine emojis, heart burst and gentle haptic on like), Chats list (last-message preview, "Jill is here" or date status, unread dot), friendly Jack or Jill poses on every empty, loading, and error state, and haptics on match, confirm, and verified.
 - [ ] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
