@@ -14,37 +14,79 @@ if (!password) {
   process.exit(1);
 }
 
+// SAMPLE food profiles until the real quiz exists (slice 5). Marked devSample in Firestore.
 export const testers = [
-  { email: 'tester.one@bakeout.test', name: 'Tester One' },
-  { email: 'tester.two@bakeout.test', name: 'Tester Two' },
+  {
+    email: 'tester.one@bakeout.test',
+    name: 'Tester One',
+    gender: 'Man',
+    cherry: 'boy',
+    food: {
+      cookingRelationship: 'I cook when I have time',
+      foodType: 'Vegetarian',
+      restrictions: [],
+      cuisines: ['Italian', 'Indian', 'Mexican', 'Thai'],
+      topCuisines: ['Italian', 'Indian', 'Thai'],
+      signatureDish: 'Paneer butter masala',
+      comfortFood: 'Rajma chawal',
+      adventure: 8,
+      idealDate: 'Trying a completely new recipe',
+      cookingPersonality: ['The experimental chef'],
+      cookingTime: 'Around an hour',
+      musicGenres: ['Bollywood', 'Lo-fi'],
+    },
+  },
+  {
+    email: 'tester.two@bakeout.test',
+    name: 'Tester Two',
+    gender: 'Woman',
+    cherry: 'girl',
+    food: {
+      cookingRelationship: 'I love cooking and do it almost every day',
+      foodType: 'Vegetarian',
+      restrictions: ['Nut allergy'],
+      cuisines: ['Italian', 'Japanese', 'Mexican', 'Korean'],
+      topCuisines: ['Italian', 'Japanese', 'Korean'],
+      signatureDish: 'Fresh pasta from scratch',
+      comfortFood: 'Ramen',
+      adventure: 6,
+      idealDate: 'Baking something sweet',
+      cookingPersonality: ['The perfectionist'],
+      cookingTime: 'Around an hour',
+      musicGenres: ['Indie', 'Lo-fi'],
+    },
+  },
 ];
 
 initializeApp({ projectId: process.env.GCLOUD_PROJECT ?? 'studio-1391080484-497cf' });
 const auth = getAuth();
 const db = getFirestore();
 
-async function ensureUser({ email, name }) {
+async function ensureUser({ email, name, gender, cherry, food }) {
   const user = await auth.getUserByEmail(email).catch(() => auth.createUser({ email, password, displayName: name }));
-  await db.doc(`users/${user.uid}`).set({ name, devSample: true, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+  await db
+    .doc(`users/${user.uid}`)
+    .set({ name, gender, cherryAvatar: cherry, food, devSample: true, createdAt: FieldValue.serverTimestamp() }, { merge: true });
   await db.doc(`users/${user.uid}/private/account`).set({ email }, { merge: true });
-  return user.uid;
+  return { uid: user.uid, cherry };
 }
 
-const uids = [];
-for (const tester of testers) uids.push(await ensureUser(tester));
-uids.sort();
+const seeded = [];
+for (const tester of testers) seeded.push(await ensureUser(tester));
+const uids = seeded.map((s) => s.uid).sort();
 const matchId = uids.join('_');
 
-await db.doc(`matches/${matchId}`).set(
-  {
-    users: uids,
-    seenBy: [],
-    cherryState: 'active',
-    devSample: true,
-    createdAt: FieldValue.serverTimestamp(),
-  },
-  { merge: true },
-);
+// A fresh match each run, so Cherry's opening fires again.
+await db.recursiveDelete(db.doc(`matches/${matchId}`));
+await db.doc(`matches/${matchId}`).set({
+  users: uids,
+  seenBy: [],
+  cherryState: 'active',
+  cherryFor: Object.fromEntries(seeded.map((s) => [s.uid, s.cherry])),
+  humanMessagesSinceCherry: 0,
+  devSample: true,
+  createdAt: FieldValue.serverTimestamp(),
+});
 
 console.log(`Seeded ${usingEmulators ? 'emulators' : 'REAL project'}: match ${matchId}`);
 for (const t of testers) console.log(`  ${t.email}`);

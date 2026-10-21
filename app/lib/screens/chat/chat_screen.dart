@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/chat_match.dart';
 import '../../models/message.dart';
 import '../../services/chat_service.dart';
+import '../../services/functions_service.dart';
 import '../../theme/colors.dart';
 import '../../widgets/chat_bubble.dart';
 import '../../widgets/mascot.dart';
@@ -11,12 +12,14 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({
     super.key,
     required this.chat,
+    required this.functions,
     required this.matchId,
     required this.myUid,
     required this.otherName,
   });
 
   final ChatService chat;
+  final FunctionsService functions;
   final String matchId;
   final String myUid;
   final String otherName;
@@ -54,6 +57,21 @@ class _ChatScreenState extends State<ChatScreen> {
   MascotPose _cherryPose(ChatMatch? match) =>
       match?.cherryFor[widget.myUid] == 'girl' ? MascotPose.girlHello : MascotPose.boyHello;
 
+  Future<void> _askCherryToLeave() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Ask Cherry to leave?'),
+        content: const Text("Cherry will say goodbye and won't come back to this chat."),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Not yet')),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Yes, leave')),
+        ],
+      ),
+    );
+    if (ok == true) await widget.functions.dismissCherry(widget.matchId);
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<ChatMatch?>(
@@ -61,7 +79,18 @@ class _ChatScreenState extends State<ChatScreen> {
       builder: (context, matchSnap) {
         final match = matchSnap.data;
         return Scaffold(
-          appBar: AppBar(title: Text(widget.otherName)),
+          appBar: AppBar(
+            title: Text(widget.otherName),
+            actions: [
+              if (match?.cherryPresent ?? false)
+                IconButton(
+                  key: const Key('dismiss-cherry'),
+                  tooltip: 'Ask Cherry to leave',
+                  onPressed: _askCherryToLeave,
+                  icon: const Text('🍒👋', style: TextStyle(fontSize: 18)),
+                ),
+            ],
+          ),
           body: SafeArea(
             child: Column(
               children: [

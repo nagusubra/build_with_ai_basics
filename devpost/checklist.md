@@ -19,7 +19,7 @@ Build mode: fast
   Learner check: On your iPhone, open the lab, pick your own profile photo, follow the blink and head-turn prompts, and see "Match" with a score. Repeat using a photo of Subu as the profile photo and see "No match". Say whether the prompts felt clear and quick.
   Commit: `Scaffold BakeOut app and on-device verification trial`
 
-- [ ] **2. Two signed-in people can chat live in a shared match**
+- [x] **2. Two signed-in people can chat live in a shared match**
   Becomes usable: You can sign up or log in with email and a name. Two test accounts are linked into a match by a dev-only seed script, clearly labelled and removed in slice 6. Messages typed on one phone appear on the other within a second, in BakeOut-styled chat bubbles.
   Why now: Cherry needs a real two-person chat to live in. This is also the first contact with Firebase, so setup problems (project, Blaze, FlutterFire config, rules, emulators) surface now rather than later.
   PRD ref: `prd.md > Sign-Up and Login` (email account only), `prd.md > After Cherry Leaves` (two people chatting), `prd.md > States and Boundaries` (who sees what)
@@ -118,4 +118,5 @@ Activity mode:
 - **Nunito is bundled as static TTFs through `pubspec.yaml` instead of the `google_fonts` package,** which turned out to be unnecessary.
 - **The tooling needs Java 21 and Node 22.** The current Firebase CLI's emulators need Java 21+ (Homebrew `openjdk@21` installed alongside Java 17), and `firebase-admin` 14 needs Node 22, so `functions/` pins Node 22 with `.nvmrc`. Cloud Functions will also run on Node 22. Recorded in `spec.md > Where It Runs and How Someone Tries It`.
 - **The chat check pairs the app with a scripted second person.** One simulator can't type as two people, so `functions/scripts/dev-replier.mjs` plays Tester Two against the emulators while an integration test drives Tester One through the real login and chat screens. Firestore and Storage rules are deployed to the real project.
+- **Cherry runs on `gemini-3.8-flash` with low thinking**, the current GA Flash model (checked October 2026). The emulator doesn't run scheduled functions, so the timer's logic (`runCherryTick`) is exercised directly with simulated clock times in `test/cherry.emulator.test.mjs`. Thresholds are 2 minutes for a stall and 10 for the reminder, and Cherry stays quiet for 3 human messages after speaking unless named. Real-Gemini check passed: the opening named shared details, Cherry stayed quiet in a flowing chat, sent one stall prompt then one reminder, and left on request.
 - **The live check on a real iPhone camera (blink and turn thresholds) moves to the slice-4 hands-on checkpoint.** It's covered by unit tests, but a simulator has no camera.
