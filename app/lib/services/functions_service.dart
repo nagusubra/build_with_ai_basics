@@ -13,6 +13,11 @@ class FunctionsService {
   Future<void> confirmDatePlan(String matchId, int version) =>
       _fn.httpsCallable('confirmDatePlan').call({'matchId': matchId, 'version': version});
 
+  /// Deletes the account and everything belonging to it, on the server.
+  Future<void> deleteAccount() => _fn
+      .httpsCallable('deleteAccount', options: HttpsCallableOptions(timeout: const Duration(seconds: 90)))
+      .call<void>();
+
   /// Recipes written for this person; [refresh] asks Cherry for a new set.
   Future<List<Recipe>> myRecipes({bool refresh = false}) async {
     final result = await _fn

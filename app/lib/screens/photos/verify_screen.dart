@@ -19,10 +19,13 @@ enum _Stage { intro, camera, checking, passed, failed }
 /// Live selfie check against the main profile photo, entirely on the phone
 /// (`prd.md > Photos and Verification`). The selfie is deleted right after comparing.
 class VerifyScreen extends StatefulWidget {
-  const VerifyScreen({super.key, required this.profile, required this.profiles});
+  const VerifyScreen({super.key, required this.profile, required this.profiles, this.onVerified});
 
   final UserProfile profile;
   final ProfileService profiles;
+
+  /// Re-verifying from My profile: called once verified (onboarding moves on by itself).
+  final VoidCallback? onVerified;
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -63,6 +66,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
         setState(() => _stage = _Stage.passed);
         await Future<void>.delayed(const Duration(milliseconds: 1600));
         await widget.profiles.markVerified(widget.profile.uid);
+        widget.onVerified?.call();
       } else {
         setState(() {
           _stage = _Stage.failed;
@@ -131,7 +135,8 @@ class _VerifyScreenState extends State<VerifyScreen> {
           subtitle:
               "So everyone on BakeOut knows they're talking to a genuine person. You'll blink, turn your head, and look back — that's it.\n\n"
               'Your selfie stays on your phone: it’s compared with your main photo right here, then deleted. It’s never uploaded or shown to anyone.',
-          progress: 0.85,
+          progress: widget.onVerified == null ? 0.85 : null,
+          onBack: widget.onVerified == null ? null : () => Navigator.pop(context),
           top: const Center(child: Mascot(MascotPose.duoVerify, size: 200)),
           action: FilledButton(
             key: const Key('verify-start'),
@@ -141,7 +146,10 @@ class _VerifyScreenState extends State<VerifyScreen> {
           secondaryAction: kDebugMode && !_hasCamera
               ? TextButton(
                   key: const Key('verify-dev-skip'),
-                  onPressed: () => widget.profiles.markVerified(widget.profile.uid),
+                  onPressed: () async {
+                    await widget.profiles.markVerified(widget.profile.uid);
+                    widget.onVerified?.call();
+                  },
                   child: const Text('DEV ONLY: no camera here — mark verified'),
                 )
               : null,

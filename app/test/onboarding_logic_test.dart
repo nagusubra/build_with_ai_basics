@@ -90,6 +90,23 @@ void main() {
     });
   });
 
+  group('edit list summaries', () {
+    QuizQuestion q(String field) => quizQuestions.firstWhere((q) => q.field == field);
+
+    test('show the current answer, joined lists, slider levels, and typed "Other"', () {
+      expect(answerSummary(q('cuisines'), {'cuisines': ['Italian', 'Thai']}, const {}), 'Italian, Thai');
+      expect(answerSummary(q('adventure'), {'adventure': 8}, const {}), '8/10');
+      expect(answerSummary(q('foodType'), {'foodType': 'Other', 'foodTypeOther': 'Jain'}, const {}), 'Jain');
+      expect(answerSummary(q('musicGenres'), {'musicGenres': ['Lo-fi'], 'favouriteSong': 'Sunflower'}, const {}), 'Lo-fi · “Sunflower”');
+    });
+
+    test('a skipped optional answer reads as missing, so it can be added later', () {
+      expect(answerSummary(q('comfortFood'), const {}, const {}), isNull);
+      expect(answerSummary(q('prompts'), const {}, const {}), isNull);
+      expect(answerSummary(q('prompts'), const {}, const {'winMeOverWith': 'Tiramisu'}), '1 of 3 answered');
+    });
+  });
+
   group('profile headline', () {
     test('comes from the first cooking personality', () {
       final p = UserProfile.fromMap('u', {

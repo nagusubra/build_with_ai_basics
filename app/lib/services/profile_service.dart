@@ -76,7 +76,8 @@ class ProfileService {
       paths.add(path);
     }
     final old = (await load(uid)).photos;
-    await _user(uid).update({'photos': paths});
+    // New photos need a fresh selfie check, so nobody can verify and then swap in someone else.
+    await _user(uid).update({'photos': paths, 'verified': false});
     for (final p in old.where((p) => !paths.contains(p))) {
       await _storage.ref(p).delete().catchError((_) {});
     }

@@ -14,6 +14,7 @@ import 'chat/chat_list_screen.dart';
 import 'chat/chat_screen.dart';
 import 'discover/discover_screen.dart';
 import 'match/match_moment_screen.dart';
+import 'profile/my_profile_screen.dart';
 import 'recipes/recipes_page.dart';
 
 /// The app after onboarding: Discover and Chats, plus the match moment whenever a new match lands.
@@ -100,6 +101,7 @@ class _HomeShellState extends State<HomeShell> {
         ),
       ),
       ChatListScreen(auth: widget.auth, chat: widget.chat, functions: widget.functions, myUid: widget.me.uid),
+      MyProfileScreen(me: widget.me, profiles: widget.profiles, functions: widget.functions, auth: widget.auth),
     ];
     return Scaffold(
       body: IndexedStack(index: _tab, children: pages),
@@ -115,6 +117,7 @@ class _HomeShellState extends State<HomeShell> {
         destinations: const [
           NavigationDestination(key: Key('tab-discover'), icon: Icon(Icons.local_fire_department_outlined), selectedIcon: Icon(Icons.local_fire_department, color: BakeColors.cherryRed), label: 'Discover'),
           NavigationDestination(key: Key('tab-chats'), icon: Icon(Icons.chat_bubble_outline), selectedIcon: Icon(Icons.chat_bubble, color: BakeColors.cherryRed), label: 'Chats'),
+          NavigationDestination(key: Key('tab-me'), icon: Icon(Icons.person_outline), selectedIcon: Icon(Icons.person, color: BakeColors.cherryRed), label: 'Me'),
         ],
       ),
     );

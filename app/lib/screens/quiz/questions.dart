@@ -204,6 +204,24 @@ const profilePrompts = {
   'cookingDisaster': 'My most embarrassing cooking disaster…',
 };
 
+/// A short summary of a card's current answer for the edit list, or null if unanswered.
+String? answerSummary(QuizQuestion q, Map<String, dynamic> food, Map<String, String> prompts) {
+  if (q.kind == QuizKind.prompts) {
+    final n = profilePrompts.keys.where((k) => (prompts[k] ?? '').isNotEmpty).length;
+    return n == 0 ? null : '$n of ${profilePrompts.length} answered';
+  }
+  final v = food[q.field];
+  final summary = switch (v) {
+    String s when s.trim().isNotEmpty => s == 'Other' && _filled(food[q.otherField]) ? food[q.otherField] as String : s,
+    List l when l.isNotEmpty => l.join(', '),
+    num n => '$n/10',
+    _ => null,
+  };
+  final extra = q.extraTextField == null ? null : food[q.extraTextField];
+  if (summary != null && _filled(extra)) return '$summary · “$extra”';
+  return summary ?? (_filled(extra) ? '“$extra”' : null);
+}
+
 /// Whether this card's answer is enough to move on.
 bool isAnswered(QuizQuestion q, Map<String, dynamic> food) {
   if (!q.required) return true;
