@@ -39,7 +39,7 @@ Build mode: fast
   Learner check: Start a fresh test match on two devices and read Cherry's welcome. Does it sound like a friend, and does it mention something you share? Chat for a bit and notice Cherry staying quiet, then go silent and wait for its nudge. In a second test chat, ask Cherry to leave.
   Commit: `Add Cherry's opening, judgement, and stall timer`
 
-- [ ] **4. Cherry plans a cooking date both confirm, then leaves for good**
+- [x] **4. Cherry plans a cooking date both confirm, then leaves for good**
   Becomes usable: When both people seem keen, or either one asks, Cherry posts a date card with a dish that fits both diets and allergies, plus a day and time. Each person taps Confirm and sees ticks appear. If someone rejects the dish, Cherry offers 2–3 alternatives. If the time doesn't work, Cherry finds another. If someone isn't ready, Cherry backs off. Any change to the card clears the confirmations. When both have confirmed, Cherry posts the recipe (with an allergy note) and a song, says "Now it's on you two how you bake this out further! 🍒", and never posts again. The two keep chatting.
   Why now: This completes the kernel end to end, the demo's "oh, that's cool" moment, while there's plenty of time to tune Cherry from real feedback.
   PRD ref: `prd.md > Suggesting the Date`, `prd.md > Locking In the Date`, `prd.md > Cherry Leaves`, `prd.md > When the Plan Doesn't Come Together`, `prd.md > After Cherry Leaves`
@@ -91,7 +91,8 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 4: the whole kernel (chat, Cherry's judgement, the date card, and Cherry leaving) tried on two real phones, with feedback that can still reshape Cherry before onboarding and Discover are built. Also run slice 1's verification lab on a real iPhone: the live check (blink, turn, look back) plus a selfie matching your own photo and not Subu's.
+- [x] Early usable behavior explored — after slice 4: the whole kernel (chat, Cherry's judgement, the date card, and Cherry leaving) tried on two real phones, with feedback that can still reshape Cherry before onboarding and Discover are built. Also run slice 1's verification lab on a real iPhone: the live check (blink, turn, look back) plus a selfie matching your own photo and not Subu's.
+  Outcome: Vinamra tried the kernel on two simulators (Tester One and Tester Two against the real project) and reported "It seems good", with no changes requested. The real-iPhone verification check moves to slice 5's learner check, where verification runs inside real onboarding (see Revisions).
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
@@ -123,4 +124,4 @@ Activity mode:
 - **TensorFlow Lite's Swift wrapper is vendored** in `app/ios/LocalPods/TensorFlowLiteSwift`: the 11 unmodified v2.12.0 files plus the Apache-2.0 license. The upstream pod clones the whole TensorFlow repository, which filled the disk and stalled builds.
 - **Each developer signs with their own Apple team** through git-ignored `app/ios/Flutter/Signing.xcconfig` (template: `Signing.xcconfig.example`).
 - **The date card has a version number.** Each new or changed card bumps it, and Confirm sends the version the person saw, so a tap on an outdated card can't confirm a plan that has since changed. "Not ready" sets a 6-message cooldown before Cherry may propose again, unless someone asks. If finishing a confirmed date fails, the timer retries it. Real-Gemini check passed: Cherry backed off when someone wasn't ready, proposed nut-free vegetarian ravioli, offered three alternatives when it was rejected, updated the card to enchiladas, waited for both confirmations, posted a meat- and nut-free recipe with an allergy note and a lo-fi song, said "It's a date! 🎉 Now it's on you two how you bake this out further! 🍒", and stayed gone.
-- **The live check on a real iPhone camera (blink and turn thresholds) moves to the slice-4 hands-on checkpoint.** It's covered by unit tests, but a simulator has no camera.
+- **The live check on a real iPhone camera (blink and turn thresholds) moves to the slice-4 hands-on checkpoint, and then to slice 5's learner check.** At the checkpoint the phone was disconnected and the disk was nearly full, so the on-device check happens in real onboarding instead of the dev lab. It's covered by unit tests, but a simulator has no camera.
