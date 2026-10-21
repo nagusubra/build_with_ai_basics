@@ -79,7 +79,7 @@ Build mode: fast
   Learner check: After matching, swipe until Discover is empty. Browse the recipes, open one, and tap "New ideas". Do they fit your food profile?
   Commit: `Add Recipes page for when Discover runs out`
 
-- [ ] **8. You can preview, edit, and delete your profile**
+- [x] **8. You can preview, edit, and delete your profile**
   Becomes usable: My profile shows your profile as others see it, lets you edit any answer (including optional questions you skipped), and lets you delete your account. Deleting removes your profile, photos, likes, matches, and chats, then returns you to Welcome.
   Why now: These are the last PRD behaviors, and deletion depends on every kind of data the earlier slices create.
   PRD ref: `prd.md > My Profile: Preview, Edit, Delete`, `prd.md > States and Boundaries` (account deleted)
@@ -129,5 +129,13 @@ Activity mode:
 - **Recipes are generated per person and cached.** `getMyRecipes` writes 4–6 recipes from the person's diet, restrictions, cuisines, and cooking time into `users/{uid}/recipes`; "New ideas" replaces them. Discover checks for new people every time its tab is opened, and pull-to-refresh on Recipes does both. Checks passed: a vegetarian with a nut allergy got 6 meat- and nut-free recipes, cached and then replaced (real Gemini); the end-to-end UI check showed Recipes on an empty Discover, opened one, and refreshed. `getMyRecipes` is deployed.
 - **Stale sessions no longer hang the app.** A simulator kept signed in as an emulator-only account spun forever against the real project. On launch the app now checks the saved account still exists and signs out if not, and a profile that fails to load shows "Try again / Sign out" instead of an endless spinner.
 - **My profile is a third tab ("Me").** It shows the profile as others see it, an edit list with basics, photos, and every quiz card (each opens just that card; skipped optional answers read "Add an answer"), and Delete. **Changing photos clears the verified badge** until a new selfie check, so nobody can verify and then swap in someone else's photo; unverified people are hidden from Discover. `deleteAccount` removes the profile and its subcollections, Storage photos, likes both ways, every match with its messages, then the login. Checks passed: deletion emulator check (everything of the leaving account gone, nothing of anyone else touched), edit-list summary tests, and the end-to-end UI check (edit a signature dish, see it on the profile, delete, land on Welcome). `deleteAccount` is deployed.
+- **Full regression after slice 8 caught four issues, all fixed.**
+  - When someone picked one of Cherry's alternatives, Cherry sometimes asked again in chat instead of updating the card; its instructions now say to update the card right away.
+  - When both confirmed while Cherry was mid-reply, the wrap-up waited for the minute timer; confirming now waits up to 30 seconds for Cherry first.
+  - "New ideas" could repeat a recipe; Gemini is now told which titles the person has already seen.
+  - A match listener threw "permission denied" after sign-out or account deletion, and Cherry's lock crashed on a match deleted mid-run; both are now handled.
+  - Two UI tests were updated for later slices: the match moment now comes first, and lazily built lists need scrolling.
+
+  Final run, all green: analyzer; 51 app unit; 26 function unit; 21 rules; on-device face-match pipeline; matching 4; Cherry 4; date flow 5; recipes; account deletion; and the onboarding, chat, Recipes, and My profile UI checks. Fixes are deployed.
 - **The phone runs release builds.** Debug builds installed but Flutter's debugger never connected (iOS Local Network and trust prompts), so the phone uses `flutter run --release`, which runs on its own. Simulators keep debug builds.
 - **The live check on a real iPhone camera (blink and turn thresholds) moves to the slice-4 hands-on checkpoint, and then to slice 5's learner check.** At the checkpoint the phone was disconnected and the disk was nearly full, so the on-device check happens in real onboarding instead of the dev lab. **Done:** Vinamra onboarded on his iPhone (release build, real project), passed the live selfie check against his own photo, found Tester Two in Discover, liked each other with the simulator, and saw the match moment and Cherry's opening. His verdict: "This all works well and perfect!" (learner checks for slices 5 and 6). It's covered by unit tests, but a simulator has no camera.

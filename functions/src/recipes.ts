@@ -17,10 +17,12 @@ export interface Recipe {
 const RECIPES_SYSTEM = `You are Cherry 🍒, the friendly cooking companion inside BakeOut, a food-first dating app.
 You write short, reliable home recipes. Plain text in every field; no markdown.`;
 
-function recipesPrompt(p: Person): string {
+function recipesPrompt(p: Person, seen: string[]): string {
   return `${describe(p)}
 
-Write 6 recipes ${p.name} would enjoy cooking while waiting for new people to meet.
+Write 6 recipes ${p.name} would enjoy cooking while waiting for new people to meet.${
+    seen.length ? `\n- They asked for new ideas. Do NOT repeat or lightly reword any of these: ${seen.join('; ')}.` : ''
+  }
 - Every recipe MUST respect their food type and every dietary restriction or allergy listed above. Never include an ingredient they can't eat.
 - Lean towards their favourite cuisines, with one or two fun surprises.
 - Fit their happy cooking time.
@@ -63,9 +65,15 @@ export async function recipesFor(db: Firestore, uid: string, apiKey: string, ref
   }
 
   const [person] = await loadPeople(db, [uid]);
-  const { recipes } = await askJson<{ recipes: Recipe[] }>({ apiKey, system: RECIPES_SYSTEM, prompt: recipesPrompt(person), schema: recipesSchema });
-
   const old = await col.get();
+  const seen = old.docs.map((d) => d.get('title') as string).filter(Boolean);
+  const { recipes } = await askJson<{ recipes: Recipe[] }>({
+    apiKey,
+    system: RECIPES_SYSTEM,
+    prompt: recipesPrompt(person, seen),
+    schema: recipesSchema,
+  });
+
   const batch = db.batch();
   old.docs.forEach((d) => batch.delete(d.ref));
   const saved = recipes.map((r, i) => {

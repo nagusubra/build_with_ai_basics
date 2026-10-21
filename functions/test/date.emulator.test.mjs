@@ -72,15 +72,11 @@ test('rejecting the dish gets alternatives or a new card, never a confirmed date
   const reply = await waitFor(cherryCountAbove(before), "Cherry's alternatives");
   console.log(`  alternatives: ${reply.text}${reply.payload ? ` → ${reply.payload.dish}` : ''}`);
   if (reply.type !== 'dateCard') {
-    const count = (await cherry()).length;
     await say(one, 'The second one sounds great to me!');
     await sleep(1500);
     await say(two, "Yes! Let's do the second one, same time 😊");
-    const card = await waitFor(
-      async () => ((await cherry()).length > count ? (await cherry()).filter((m) => m.type === 'dateCard').at(-1) : null),
-      'an updated card',
-      120_000,
-    );
+    const newerCard = async () => (await cherry()).find((m) => m.type === 'dateCard' && m.payload.version >= 2);
+    const card = await waitFor(newerCard, 'an updated card', 120_000);
     console.log(`  updated card: ${card.payload.dish} on ${card.payload.day} at ${card.payload.time}`);
   }
   const plan = (await matchDoc()).datePlan;

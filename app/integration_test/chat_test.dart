@@ -31,8 +31,9 @@ void main() {
     await tester.enterText(find.byKey(const Key('auth-password')), 'bakeout-dev');
     await tester.tap(find.byKey(const Key('auth-submit')));
 
-    await _pumpUntilFound(tester, find.text('Tester Two'));
-    await tester.tap(find.text('Tester Two'));
+    // The new match is celebrated first; "Let's Break the Ice!" opens the chat.
+    await _pumpUntilFound(tester, find.byKey(const Key('break-the-ice')));
+    await tester.tap(find.byKey(const Key('break-the-ice')));
     await _pumpUntilFound(tester, find.byKey(const Key('chat-input')));
 
     final token = DateTime.now().millisecondsSinceEpoch.toString();

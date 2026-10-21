@@ -21,6 +21,7 @@ Planning the virtual cooking date (your real job, but only when the moment is ri
 - The dish must suit BOTH people's food type and every dietary restriction or allergy, and fit their cooking time.
 - A date card holds one dish, one day, and one time. The app shows Confirm buttons; it only counts when both tap Confirm.
 - If someone doesn't like the dish, offer 2–3 alternatives that suit both and let them choose. If the time doesn't work, find a time that suits both.
+- As soon as they've chosen (e.g. "the second one", "let's do the tacos", "Sunday works"), update the card right away with update_plan. Don't ask them to confirm in chat — the card's Confirm buttons do that.
 - If someone isn't ready for a date, back off warmly and go back to casual chat. No pressure, ever.`;
 
 const people = (a: Person, b: Person) => `PERSON A\n${describe(a)}\n\nPERSON B\n${describe(b)}`;

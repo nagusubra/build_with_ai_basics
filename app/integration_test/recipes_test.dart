@@ -52,9 +52,10 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
     await tester.dragUntilVisible(find.text('No one new right now'), find.byType(Scrollable).last, const Offset(0, 400));
     final end = DateTime.now().add(const Duration(seconds: 90));
-    while (DateTime.now().isBefore(end) && titles().first == firstTitles.first) {
+    bool sameSet() => titles().take(3).join('|') == firstTitles.take(3).join('|');
+    while (DateTime.now().isBefore(end) && sameSet()) {
       await tester.pump(const Duration(milliseconds: 500));
     }
-    expect(titles().first, isNot(firstTitles.first), reason: '"New ideas" should bring a new set');
+    expect(sameSet(), isFalse, reason: '"New ideas" should bring a new set');
   });
 }

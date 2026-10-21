@@ -64,8 +64,14 @@ export async function confirmDate(db: Firestore, matchId: string, uid: string, v
   });
   if (!result.ok || !result.bothConfirmed) return result;
 
-  // Usually free; if a decide call holds it, the every-minute timer finishes the date instead.
-  if (await tryLock(db, matchId, new Date())) {
+  // Cherry may still be answering the last message; wait briefly so the date wraps up right away.
+  // If it's still busy after that, the every-minute timer finishes the date instead.
+  let locked = await tryLock(db, matchId, new Date());
+  for (let i = 0; !locked && i < 15; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+    locked = await tryLock(db, matchId, new Date());
+  }
+  if (locked) {
     try {
       await finishDate(db, matchId, apiKey);
     } catch (err) {

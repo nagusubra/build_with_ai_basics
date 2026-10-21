@@ -49,7 +49,9 @@ class _HomeShellState extends State<HomeShell> {
   @override
   void initState() {
     super.initState();
-    _matches = widget.chat.unseenMatches(widget.me.uid).listen(_celebrate);
+    // Errors (e.g. permission denied the moment someone signs out or deletes their account)
+    // just end the celebrations; there's nothing to show.
+    _matches = widget.chat.unseenMatches(widget.me.uid).listen(_celebrate, onError: (_) {});
   }
 
   @override

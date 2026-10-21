@@ -32,15 +32,18 @@ export function readMatch(snap: DocumentSnapshot): MatchState {
 export async function tryLock(db: Firestore, matchId: string, now: Date): Promise<MatchState | null> {
   return db.runTransaction(async (tx) => {
     const ref = db.doc(`matches/${matchId}`);
-    const match = readMatch(await tx.get(ref));
+    const snap = await tx.get(ref);
+    if (!snap.exists) return null;
+    const match = readMatch(snap);
     if (cherryHasLeft(match) || !lockIsFree(match, now)) return null;
     tx.update(ref, { cherryBusyUntil: Timestamp.fromDate(lockUntil(now)) });
     return match;
   });
 }
 
+/** Releases the lock; a match deleted meanwhile (account deletion) has nothing to release. */
 export const unlock = (db: Firestore, matchId: string) =>
-  db.doc(`matches/${matchId}`).update({ cherryBusyUntil: null });
+  db.doc(`matches/${matchId}`).update({ cherryBusyUntil: null }).catch(() => undefined);
 
 export interface CherryPost {
   /** Fields to set on the match in the same write, e.g. the new `datePlan`. */
