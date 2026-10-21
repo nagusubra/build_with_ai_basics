@@ -1,3 +1,16 @@
+const _allergenNames = {
+  'nuts': 'nuts',
+  'gluten': 'gluten',
+  'dairy': 'dairy',
+  'egg': 'egg',
+  'shellfish': 'shellfish',
+  'fish': 'fish',
+  'soy': 'soy',
+  'pork': 'pork',
+  'alcohol': 'alcohol',
+  'onion_garlic': 'onion or garlic',
+};
+
 class Recipe {
   const Recipe({
     required this.id,
@@ -7,7 +20,9 @@ class Recipe {
     required this.blurb,
     required this.ingredients,
     required this.steps,
-    required this.allergyNote,
+    this.emoji = '🍽️',
+    this.diet = 'meat',
+    this.allergens = const [],
   });
 
   factory Recipe.fromMap(Map<String, dynamic> m) => Recipe(
@@ -18,7 +33,9 @@ class Recipe {
         blurb: m['blurb'] as String? ?? '',
         ingredients: List<String>.from(m['ingredients'] as List? ?? const []),
         steps: List<String>.from(m['steps'] as List? ?? const []),
-        allergyNote: m['allergyNote'] as String? ?? '',
+        emoji: m['emoji'] as String? ?? '🍽️',
+        diet: m['diet'] as String? ?? 'meat',
+        allergens: List<String>.from(m['allergens'] as List? ?? const []),
       );
 
   final String id;
@@ -28,5 +45,14 @@ class Recipe {
   final String blurb;
   final List<String> ingredients;
   final List<String> steps;
-  final String allergyNote;
+  final String emoji;
+
+  /// The most permissive diet that can eat it: vegan, vegetarian, pescatarian, or meat.
+  final String diet;
+  final List<String> allergens;
+
+  String get allergyNote {
+    final contains = allergens.map((a) => _allergenNames[a] ?? a).join(', ');
+    return '${contains.isEmpty ? '' : 'Contains $contains. '}Always double-check packaged ingredients against your own allergies.';
+  }
 }

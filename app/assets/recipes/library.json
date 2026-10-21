@@ -1,0 +1,1602 @@
+{
+  "generated": "2026-10-21",
+  "recipes": [
+    {
+      "id": "indian-tarka-dal",
+      "cuisine": "Indian",
+      "title": "Tarka Dal",
+      "emoji": "🍲",
+      "minutes": 20,
+      "blurb": "Comforting yellow lentils finished with a fragrant, crackling garlic-cumin oil drizzle.",
+      "diet": "vegan",
+      "allergens": [
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "100g red split lentils (masoor dal)",
+        "400ml water",
+        "0.5 tsp ground turmeric",
+        "1.5 tbsp vegetable oil",
+        "1 tsp cumin seeds",
+        "2 cloves garlic, finely sliced",
+        "1 green chilli, slit lengthwise",
+        "0.5 tsp salt",
+        "Fresh coriander leaves for garnish"
+      ],
+      "steps": [
+        "Rinse the lentils thoroughly until the water runs clear.",
+        "Simmer lentils with water, turmeric, and salt in a covered pot for 12 minutes until soft.",
+        "Whisk the cooked lentils lightly with a fork to create a smooth, creamy texture.",
+        "Heat the vegetable oil in a small pan over medium heat.",
+        "Add cumin seeds and let them sizzle for 30 seconds until aromatic.",
+        "Add sliced garlic and green chilli, frying until the garlic turns golden brown.",
+        "Pour the sizzling spiced oil over the cooked lentils, garnish with coriander, and serve."
+      ]
+    },
+    {
+      "id": "indian-paneer-makhani",
+      "cuisine": "Indian",
+      "title": "Paneer Makhani",
+      "emoji": "🧀",
+      "minutes": 45,
+      "blurb": "Silky, buttery tomato gravy enveloping tender cubes of fresh cottage cheese.",
+      "diet": "vegetarian",
+      "allergens": [
+        "dairy",
+        "nuts",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "200g paneer, cubed",
+        "300g ripe tomatoes, roughly chopped",
+        "1 medium yellow onion, sliced",
+        "3 cloves garlic and 1 inch ginger, minced",
+        "15g raw cashew nuts",
+        "2 tbsp butter",
+        "1 tbsp neutral oil",
+        "1 tsp garam masala",
+        "1 tsp Kashmiri red chilli powder",
+        "2 tbsp heavy cream",
+        "0.75 tsp salt"
+      ],
+      "steps": [
+        "Heat oil in a pan and sauté the onion, ginger, garlic, tomatoes, and cashews for 10 minutes.",
+        "Cool the tomato mixture slightly, then blend until completely smooth with a splash of water.",
+        "Melt butter in the same pan over medium-low heat and pour in the smooth sauce.",
+        "Stir in the Kashmiri chilli powder, garam masala, and salt, simmering for 15 minutes.",
+        "Gently slide in the paneer cubes and simmer for 5 minutes to warm through.",
+        "Stir in the heavy cream, heat for 1 minute, and serve hot."
+      ]
+    },
+    {
+      "id": "indian-goan-fish-curry",
+      "cuisine": "Indian",
+      "title": "Goan Fish Curry",
+      "emoji": "🐟",
+      "minutes": 30,
+      "blurb": "Bright and tangy coastal curry laced with rich coconut milk and warming spices.",
+      "diet": "pescatarian",
+      "allergens": [
+        "dairy",
+        "fish",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "250g firm white fish fillets (such as cod or sea bass), cut into chunks",
+        "200ml coconut milk",
+        "1 small red onion, finely chopped",
+        "2 cloves garlic, minced",
+        "1 tbsp tamarind paste",
+        "1 tsp ground coriander",
+        "0.5 tsp ground turmeric",
+        "1 tsp Kashmiri chilli powder",
+        "1 tbsp coconut oil",
+        "1 green chilli, slit",
+        "0.5 tsp salt"
+      ],
+      "steps": [
+        "Heat coconut oil in a wide pan and sauté the chopped onion until soft and translucent.",
+        "Add garlic and green chilli, cooking for 1 minute until fragrant.",
+        "Stir in the coriander, turmeric, and chilli powder, toasting the spices for 30 seconds.",
+        "Pour in the coconut milk, tamarind paste, and 50ml water, bringing the sauce to a gentle simmer.",
+        "Season with salt and carefully place the fish chunks into the bubbling liquid.",
+        "Cover and cook on low heat for 6 to 8 minutes until the fish flakes easily."
+      ]
+    },
+    {
+      "id": "indian-slow-simmered-chicken-korma",
+      "cuisine": "Indian",
+      "title": "Slow-Simmered Chicken Korma",
+      "emoji": "🍗",
+      "minutes": 55,
+      "blurb": "Richly spiced, gentle yoghurt curry loaded with juicy, tender chicken pieces.",
+      "diet": "meat",
+      "allergens": [
+        "dairy",
+        "nuts",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "350g boneless chicken thighs, cut into bite-sized pieces",
+        "1 large onion, finely sliced and fried golden",
+        "80g plain whole milk yoghurt",
+        "20g blanched almonds, blended to a paste with a little water",
+        "3 cloves garlic and 1 inch ginger, grated",
+        "2 tbsp ghee",
+        "2 green cardamom pods, cracked",
+        "1 small cinnamon stick",
+        "1 tsp ground coriander",
+        "0.5 tsp cumin powder",
+        "0.75 tsp salt"
+      ],
+      "steps": [
+        "Blend the fried onion, yoghurt, and almond paste together into a thick, uniform puree.",
+        "Melt ghee in a heavy pot over medium heat and sizzle the cardamom and cinnamon stick.",
+        "Add the grated garlic and ginger, sautéing for 1 minute until the raw aroma dissipates.",
+        "Add chicken pieces and cook for 5 minutes until browned on all sides.",
+        "Lower heat, stir in the yoghurt-onion puree, coriander, cumin, and salt.",
+        "Cover tightly and simmer on low heat for 35 minutes until the chicken is tender and sauce thickens."
+      ]
+    },
+    {
+      "id": "italian-spaghetti-aglio-e-olio",
+      "cuisine": "Italian",
+      "title": "Spaghetti Aglio e Olio",
+      "emoji": "🧄",
+      "minutes": 15,
+      "blurb": "Pantry magic at midnight: sizzling garlic, olive oil, and fiery chili pepper.",
+      "diet": "vegan",
+      "allergens": [
+        "gluten",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "200g spaghetti",
+        "4 tbsp extra-virgin olive oil",
+        "4 garlic cloves, thinly sliced",
+        "1 dried red chili, crumbled",
+        "2 tbsp fresh flat-leaf parsley, finely chopped",
+        "Fine sea salt to taste"
+      ],
+      "steps": [
+        "Bring a large pot of salted water to a rolling boil and drop in the spaghetti.",
+        "Cook pasta until barely al dente, reserving one-half cup of the cooking water.",
+        "Gently heat olive oil in a large skillet over low heat and add sliced garlic and chili.",
+        "Cook until the garlic turns lightly golden and fragrant, taking care not to burn it.",
+        "Transfer the spaghetti directly into the skillet with a splash of pasta water.",
+        "Toss vigorously over medium heat until a glossy sauce forms, then stir in parsley."
+      ]
+    },
+    {
+      "id": "italian-cacio-e-pepe",
+      "cuisine": "Italian",
+      "title": "Cacio e Pepe",
+      "emoji": "🧀",
+      "minutes": 20,
+      "blurb": "Silky, peppery cheese dreams spun from nothing more than pasta and patience.",
+      "diet": "vegetarian",
+      "allergens": [
+        "dairy",
+        "gluten"
+      ],
+      "ingredients": [
+        "200g tonnarelli or spaghetti",
+        "100g Pecorino Romano cheese, very finely grated",
+        "2 tsp whole black peppercorns, coarsely crushed",
+        "Fine sea salt for pasta water"
+      ],
+      "steps": [
+        "Boil pasta in moderately salted water, using less water than usual to concentrate starch.",
+        "Toast the coarsely crushed peppercorns in a dry skillet over medium heat until fragrant.",
+        "Ladle two splashes of starchy pasta water into the skillet with the toasted pepper.",
+        "Mix the finely grated Pecorino with a splash of warm water in a bowl to make a paste.",
+        "Transfer al dente pasta to the skillet and toss quickly to coat in peppery liquid.",
+        "Remove skillet from heat, stir in the cheese paste, and toss until a luscious cream forms."
+      ]
+    },
+    {
+      "id": "italian-spaghetti-alle-vongole",
+      "cuisine": "Italian",
+      "title": "Spaghetti alle Vongole",
+      "emoji": "🦪",
+      "minutes": 25,
+      "blurb": "Salty ocean breeze in a bowl, kissed with white wine and garlic.",
+      "diet": "pescatarian",
+      "allergens": [
+        "alcohol",
+        "gluten",
+        "onion_garlic",
+        "shellfish"
+      ],
+      "ingredients": [
+        "200g spaghetti",
+        "500g fresh clams, thoroughly purged and scrubbed",
+        "3 tbsp extra-virgin olive oil",
+        "2 garlic cloves, lightly crushed",
+        "60ml dry white wine",
+        "1 pinch red pepper flakes",
+        "2 tbsp fresh flat-leaf parsley, chopped"
+      ],
+      "steps": [
+        "Bring a pot of salted water to a boil and cook the spaghetti until firm al dente.",
+        "Heat olive oil in a wide skillet over medium heat, adding garlic and chili flakes.",
+        "Add the cleaned clams and pour in the dry white wine, immediately covering with a lid.",
+        "Steam for 3 to 4 minutes until the shells pop open, discarding any that stay shut.",
+        "Transfer the pasta directly into the clam pan along with a splash of cooking water.",
+        "Toss over high heat for one minute to emulsify the sauce, finishing with fresh parsley."
+      ]
+    },
+    {
+      "id": "italian-classic-bolognese-rag-with-tagliatelle",
+      "cuisine": "Italian",
+      "title": "Classic Bolognese Ragù with Tagliatelle",
+      "emoji": "🍝",
+      "minutes": 90,
+      "blurb": "Rich, tender meat sauce simmered slowly for Sunday-level comfort any day.",
+      "diet": "meat",
+      "allergens": [
+        "alcohol",
+        "dairy",
+        "egg",
+        "gluten",
+        "onion_garlic",
+        "pork"
+      ],
+      "ingredients": [
+        "200g egg tagliatelle",
+        "150g ground beef chuck",
+        "100g ground pork",
+        "1 small yellow onion, finely diced",
+        "1 small carrot, finely diced",
+        "1 celery rib, finely diced",
+        "2 tbsp extra-virgin olive oil",
+        "60ml dry white wine",
+        "60ml whole milk",
+        "200g canned crushed tomatoes",
+        "Salt and black pepper to taste"
+      ],
+      "steps": [
+        "Warm olive oil in a heavy saucepan and sauté onion, carrot, and celery until softened.",
+        "Add the ground beef and pork, browning thoroughly while breaking up clumps with a spoon.",
+        "Pour in the white wine and simmer gently until the alcohol aroma evaporates completely.",
+        "Stir in the milk and a pinch of salt, simmering until mostly absorbed into the meat.",
+        "Add the crushed tomatoes, reduce heat to low, cover partially, and simmer for 60 minutes.",
+        "Boil the egg tagliatelle until al dente, drain, and fold gently into the rich ragù."
+      ]
+    },
+    {
+      "id": "chinese-garlic-stir-fried-bok-choy",
+      "cuisine": "Chinese",
+      "title": "Garlic Stir-Fried Bok Choy",
+      "emoji": "🥬",
+      "minutes": 12,
+      "blurb": "Crisp, emerald greens bathed in fragrant garlic for an effortless everyday side.",
+      "diet": "vegan",
+      "allergens": [
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "300g baby bok choy, halved lengthwise",
+        "3 cloves garlic, thinly sliced",
+        "1.5 tbsp neutral cooking oil",
+        "0.5 tsp salt",
+        "0.25 tsp sugar",
+        "1 tbsp water"
+      ],
+      "steps": [
+        "Wash bok choy thoroughly and shake dry completely.",
+        "Heat cooking oil in a wok or skillet over medium-high heat.",
+        "Add sliced garlic and sizzle for twenty seconds until aromatic.",
+        "Toss in bok choy and stir-fry briskly for one minute.",
+        "Sprinkle salt, sugar, and water, then cover with lid for one minute.",
+        "Uncover, toss thirty seconds more until stems are tender-crisp, and serve immediately."
+      ]
+    },
+    {
+      "id": "chinese-tomato-and-scrambled-egg-stir-fry",
+      "cuisine": "Chinese",
+      "title": "Tomato and Scrambled Egg Stir-Fry",
+      "emoji": "🍳",
+      "minutes": 15,
+      "blurb": "Sweet, tangy, comforting eggs that taste just like a warm hug from home.",
+      "diet": "vegetarian",
+      "allergens": [
+        "egg",
+        "gluten",
+        "onion_garlic",
+        "soy"
+      ],
+      "ingredients": [
+        "4 large eggs, lightly beaten",
+        "3 medium ripe tomatoes, cut into wedges",
+        "2 scallions, cut into inch-long segments",
+        "1.5 tbsp neutral oil, divided",
+        "1 tsp sugar",
+        "0.5 tsp salt",
+        "1 tsp light soy sauce"
+      ],
+      "steps": [
+        "Season beaten eggs with a pinch of the salt.",
+        "Heat one tablespoon of oil in a skillet over high heat.",
+        "Pour in eggs, scramble gently until barely set, then transfer to a plate.",
+        "Add remaining oil to pan, toss in scallion whites and tomatoes.",
+        "Cook tomatoes over medium heat until softened and saucy, about four minutes.",
+        "Stir in sugar, remaining salt, and soy sauce.",
+        "Return scrambled eggs and scallion greens to pan, tossing gently to combine."
+      ]
+    },
+    {
+      "id": "chinese-cantonese-steamed-fish-fillets",
+      "cuisine": "Chinese",
+      "title": "Cantonese Steamed Fish Fillets",
+      "emoji": "🐟",
+      "minutes": 18,
+      "blurb": "Silky, tender white fish finished with fragrant sizzling ginger-scallion oil.",
+      "diet": "pescatarian",
+      "allergens": [
+        "alcohol",
+        "fish",
+        "gluten",
+        "onion_garlic",
+        "soy"
+      ],
+      "ingredients": [
+        "300g sea bass fillets",
+        "1 thumb fresh ginger, cut into matchsticks",
+        "2 scallions, cut into matchsticks",
+        "1 tbsp Shaoxing rice wine",
+        "2 tbsp light soy sauce",
+        "0.5 tsp sugar",
+        "2 tbsp neutral oil"
+      ],
+      "steps": [
+        "Pat fish fillets dry and place onto a heatproof steaming dish.",
+        "Scatter half the ginger matchsticks over fillets and drizzle with rice wine.",
+        "Steam over boiling water on high heat for seven to eight minutes.",
+        "Discard accumulated steaming liquid and cooked ginger strips.",
+        "Top fish with remaining fresh ginger and scallion matchsticks.",
+        "Combine soy sauce and sugar, then spoon gently around the fish.",
+        "Heat oil in small saucepan until smoking, pour over aromatics to sizzle."
+      ]
+    },
+    {
+      "id": "chinese-red-braised-pork-belly-hong-shao-rou",
+      "cuisine": "Chinese",
+      "title": "Red-Braised Pork Belly (Hong Shao Rou)",
+      "emoji": "🥩",
+      "minutes": 65,
+      "blurb": "Melt-in-your-mouth glossy pork belly glazed in sweet and savory rich amber caramel.",
+      "diet": "meat",
+      "allergens": [
+        "alcohol",
+        "gluten",
+        "onion_garlic",
+        "pork",
+        "soy"
+      ],
+      "ingredients": [
+        "400g pork belly, cut into bite-sized cubes",
+        "1 tbsp rock sugar or granulated sugar",
+        "1 tbsp neutral oil",
+        "2 slices fresh ginger",
+        "2 scallions, tied into a knot",
+        "2 tbsp Shaoxing rice wine",
+        "1.5 tbsp light soy sauce",
+        "1 tbsp dark soy sauce",
+        "1 whole star anise",
+        "300ml warm water"
+      ],
+      "steps": [
+        "Place pork cubes in cold water, bring to boil, blanch two minutes, drain.",
+        "Heat oil and sugar in a heavy pot over low heat until melted and amber.",
+        "Add blanched pork belly cubes and stir quickly to coat evenly with caramel.",
+        "Add ginger, scallion knot, star anise, and pour in Shaoxing rice wine.",
+        "Stir in both soy sauces and warm water, bringing everything to a boil.",
+        "Cover, lower heat to gentle simmer, and cook for forty-five minutes.",
+        "Remove lid, discard scallions, and reduce sauce over high heat until glossy."
+      ]
+    },
+    {
+      "id": "japanese-nasu-dengaku",
+      "cuisine": "Japanese",
+      "title": "Nasu Dengaku",
+      "emoji": "🍆",
+      "minutes": 20,
+      "blurb": "Sweet, savory broiled eggplant rounds that melt in your mouth with every bite.",
+      "diet": "vegetarian",
+      "allergens": [
+        "alcohol",
+        "egg",
+        "soy"
+      ],
+      "ingredients": [
+        "2 medium Japanese eggplants (halved lengthwise)",
+        "2 tbsp red or awase miso",
+        "1.5 tbsp mirin",
+        "1 tbsp sugar",
+        "1 tbsp sake",
+        "1 tbsp toasted sesame oil",
+        "1 tsp toasted white sesame seeds"
+      ],
+      "steps": [
+        "Score the cut flesh of each eggplant half in a light diamond pattern.",
+        "Heat sesame oil in a wide skillet over medium heat and place eggplant cut-side down for 4 minutes until golden.",
+        "Flip, cover the skillet with a lid, and cook for another 4 minutes until tender.",
+        "Whisk together the miso, mirin, sugar, and sake in a small bowl until smooth.",
+        "Brush the miso glaze generously over the scored cut surfaces of the eggplant halves.",
+        "Transfer under a hot oven broiler for 2 to 3 minutes until bubbling and lightly charred.",
+        "Garnish with toasted sesame seeds and serve warm."
+      ]
+    },
+    {
+      "id": "japanese-tamagoyaki",
+      "cuisine": "Japanese",
+      "title": "Tamagoyaki",
+      "emoji": "🍳",
+      "minutes": 15,
+      "blurb": "Sweet, fluffy golden rolled omelet layers made for a cozy morning breakfast.",
+      "diet": "pescatarian",
+      "allergens": [
+        "alcohol",
+        "egg",
+        "fish",
+        "gluten",
+        "soy"
+      ],
+      "ingredients": [
+        "4 large eggs",
+        "2 tbsp water mixed with 1/4 tsp kombu dashi powder",
+        "1 tbsp sugar",
+        "1 tsp mirin",
+        "1 tsp light soy sauce",
+        "1 tsp neutral vegetable oil"
+      ],
+      "steps": [
+        "Beat the eggs gently in a bowl with dashi mixture, sugar, mirin, and soy sauce without creating foam.",
+        "Heat a rectangular or small nonstick pan over medium-low heat and lightly oil the surface with a paper towel.",
+        "Pour a thin layer of egg mixture into the pan and tilt to spread evenly across the bottom.",
+        "When the egg is half-set, gently roll it from the far side toward you into a log.",
+        "Push the rolled log back to the far side and lightly re-oil the empty pan surface.",
+        "Pour another thin layer of egg, lifting the cooked roll so the liquid flows underneath.",
+        "Roll the log over the new layer once set, repeating until all egg mixture is used.",
+        "Transfer to a plate, let rest for two minutes, and slice into bite-sized rounds."
+      ]
+    },
+    {
+      "id": "japanese-saba-no-misoni",
+      "cuisine": "Japanese",
+      "title": "Saba no Misoni",
+      "emoji": "🐟",
+      "minutes": 25,
+      "blurb": "Tender simmered mackerel fillets bathing in a rich, deeply comforting ginger miso broth.",
+      "diet": "pescatarian",
+      "allergens": [
+        "alcohol",
+        "fish",
+        "soy"
+      ],
+      "ingredients": [
+        "2 fresh mackerel fillets (cut in half)",
+        "1 knob ginger (sliced into matchsticks)",
+        "100 ml water",
+        "2 tbsp sake",
+        "2 tbsp mirin",
+        "1 tbsp sugar",
+        "2 tbsp red miso paste"
+      ],
+      "steps": [
+        "Pour boiling water over the mackerel fillets in a colander to rinse away surface odors.",
+        "In a medium shallow saucepan, combine the water, sake, mirin, sugar, and ginger sticks.",
+        "Bring the liquid to a simmer over medium heat and stir in half of the miso paste until dissolved.",
+        "Place the mackerel fillets skin-side up into the simmering broth.",
+        "Cover with a drop-lid (otoshibuta) or parchment round and simmer gently for 10 minutes.",
+        "Dissolve the remaining miso paste directly into the broth using a ladle and cooking chopsticks.",
+        "Spoon the reduced sauce over the fillets and simmer uncovered for 3 to 4 more minutes until glazed.",
+        "Serve mackerel topped with ginger matchsticks and extra pan sauce."
+      ]
+    },
+    {
+      "id": "japanese-nikujaga",
+      "cuisine": "Japanese",
+      "title": "Nikujaga",
+      "emoji": "🥔",
+      "minutes": 50,
+      "blurb": "Sweet and savory simmered beef and potato stew full of classic home-cooked warmth.",
+      "diet": "meat",
+      "allergens": [
+        "alcohol",
+        "fish",
+        "gluten",
+        "onion_garlic",
+        "soy"
+      ],
+      "ingredients": [
+        "150g thinly sliced beef chuck or ribeye",
+        "2 medium Yukon Gold potatoes (peeled and cut into chunks)",
+        "1 medium yellow onion (sliced into thick wedges)",
+        "1 medium carrot (peeled and cut into rolling chunks)",
+        "300 ml water",
+        "1 tsp dashi powder",
+        "2 tbsp soy sauce",
+        "2 tbsp mirin",
+        "1.5 tbsp sugar",
+        "1 tbsp sake",
+        "1 tbsp vegetable oil"
+      ],
+      "steps": [
+        "Heat vegetable oil in a heavy-bottomed pot over medium heat and sauté the onion wedges for 3 minutes.",
+        "Add the sliced beef and cook briefly until it just changes color from pink to light brown.",
+        "Add the potato chunks and carrot pieces, stirring well to coat them in the rendered fat.",
+        "Pour in the water, dashi powder, sugar, mirin, and sake, then bring to a gentle boil.",
+        "Skim off any foam from the surface, reduce heat to low, and stir in the soy sauce.",
+        "Cover with a drop-lid or foil round and simmer quietly for 25 minutes until potatoes are fork-tender.",
+        "Remove the lid and simmer for another 5 minutes to reduce and thicken the sauce slightly.",
+        "Turn off the heat and let rest for 10 minutes before serving so the flavors soak in."
+      ]
+    },
+    {
+      "id": "mexican-nopales-salad",
+      "cuisine": "Mexican",
+      "title": "Nopales Salad",
+      "emoji": "🌵",
+      "minutes": 15,
+      "blurb": "Crisp, tangy cactus paddle salad bursting with lime and fresh herbal sunshine.",
+      "diet": "vegan",
+      "allergens": [
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "2 tender fresh cactus paddles (nopales), cleaned and diced",
+        "1 large ripe Roma tomato, diced",
+        "0.25 medium white onion, finely chopped",
+        "1 fresh serrano pepper, minced",
+        "0.25 cup fresh cilantro leaves, chopped",
+        "1 tablespoon fresh lime juice",
+        "1 tablespoon olive oil",
+        "0.5 teaspoon sea salt"
+      ],
+      "steps": [
+        "Bring a small pot of salted water to a boil and cook the diced nopales for 8 minutes until tender.",
+        "Drain the nopales thoroughly and rinse with cold water to remove excess cooking liquid.",
+        "In a medium bowl, combine the diced tomato, onion, serrano, and cilantro.",
+        "Add the cooled nopales, lime juice, olive oil, and sea salt.",
+        "Toss everything together gently and adjust salt before serving chilled or at room temperature."
+      ]
+    },
+    {
+      "id": "mexican-chilaquiles-rojos-con-huevos",
+      "cuisine": "Mexican",
+      "title": "Chilaquiles Rojos con Huevos",
+      "emoji": "🍳",
+      "minutes": 20,
+      "blurb": "Crispy tortilla chips bathed in warm red salsa and topped with runny eggs.",
+      "diet": "vegetarian",
+      "allergens": [
+        "dairy",
+        "egg",
+        "gluten",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "4 cups thick corn tortilla chips",
+        "3 medium Roma tomatoes",
+        "2 dried guajillo chiles, stemmed and seeded",
+        "1 clove garlic",
+        "0.25 medium white onion",
+        "2 large eggs",
+        "2 tablespoons vegetable oil",
+        "0.25 cup crumbled queso fresco",
+        "2 tablespoons Mexican crema",
+        "0.5 teaspoon salt"
+      ],
+      "steps": [
+        "Boil tomatoes and guajillo chiles in water for 8 minutes until skins split and chiles soften.",
+        "Transfer tomatoes, chiles, garlic, onion, and salt to a blender with 0.25 cup cooking liquid and blend smooth.",
+        "Heat 1 tablespoon oil in a large skillet over medium-high, pour in salsa, and simmer for 4 minutes.",
+        "Gently fold the tortilla chips into the simmering salsa until coated but still slightly crunchy.",
+        "In a separate pan, heat remaining oil and fry eggs sunny-side up.",
+        "Divide coated chips between two plates, top each with a fried egg, queso fresco, and crema."
+      ]
+    },
+    {
+      "id": "mexican-camarones-a-la-diabla",
+      "cuisine": "Mexican",
+      "title": "Camarones a la Diabla",
+      "emoji": "🍤",
+      "minutes": 30,
+      "blurb": "Juicy shrimp coated in a fiery, rich red chile sauce made for sharing.",
+      "diet": "pescatarian",
+      "allergens": [
+        "onion_garlic",
+        "shellfish"
+      ],
+      "ingredients": [
+        "0.5 pound medium shrimp, peeled and deveined",
+        "3 dried guajillo chiles, stemmed and seeded",
+        "2 dried chiles de árbol",
+        "2 medium Roma tomatoes",
+        "2 cloves garlic",
+        "0.25 medium white onion",
+        "1 tablespoon vegetable oil",
+        "0.5 teaspoon salt",
+        "Lime wedges for serving"
+      ],
+      "steps": [
+        "Toast guajillo and árbol chiles lightly in a dry pan for 1 minute, taking care not to burn.",
+        "Boil tomatoes and toasted chiles in water for 7 minutes until softened.",
+        "Blend tomatoes, chiles, garlic, onion, and salt with 0.25 cup cooking liquid until velvety smooth.",
+        "Heat vegetable oil in a large skillet over medium heat.",
+        "Add the shrimp and sear for 1 minute per side until they just begin turning pink.",
+        "Pour blended salsa over shrimp and simmer gently for 3 to 4 minutes until sauce thickens.",
+        "Serve hot with lime wedges alongside warm corn tortillas or rice."
+      ]
+    },
+    {
+      "id": "mexican-tinga-de-pollo",
+      "cuisine": "Mexican",
+      "title": "Tinga de Pollo",
+      "emoji": "🍗",
+      "minutes": 50,
+      "blurb": "Shredded chicken slowly simmered in smoky chipotle tomato sauce for pure comfort.",
+      "diet": "meat",
+      "allergens": [
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "1 whole bone-in, skinless chicken breast",
+        "3 medium Roma tomatoes",
+        "2 canned chipotle peppers in adobo sauce",
+        "1 tablespoon adobo sauce from the can",
+        "1 medium white onion, halved and thinly sliced",
+        "2 cloves garlic",
+        "1 tablespoon vegetable oil",
+        "0.5 teaspoon dried Mexican oregano",
+        "0.75 teaspoon salt"
+      ],
+      "steps": [
+        "Place chicken breast in a pot with water to cover, bring to a boil, and simmer for 25 minutes until cooked through.",
+        "Remove chicken to a plate, let cool briefly, then shred the meat into thin strips using two forks.",
+        "Blend tomatoes, chipotle peppers, adobo sauce, garlic, and salt until smooth.",
+        "Heat vegetable oil in a deep skillet over medium heat and sauté sliced onion for 5 minutes until translucent.",
+        "Pour tomato chipotle puree into the skillet and bring to a gentle simmer for 5 minutes.",
+        "Stir in the shredded chicken and Mexican oregano.",
+        "Simmer uncovered over medium-low heat for 12 minutes until sauce reduces and chicken absorbs flavors."
+      ]
+    },
+    {
+      "id": "thai-pad-pak-boong-fai-daeng",
+      "cuisine": "Thai",
+      "title": "Pad Pak Boong Fai Daeng",
+      "emoji": "🥬",
+      "minutes": 10,
+      "blurb": "Sizzling morning glory with a savoury, fiery crunch in mere minutes.",
+      "diet": "vegan",
+      "allergens": [
+        "gluten",
+        "onion_garlic",
+        "soy"
+      ],
+      "ingredients": [
+        "250g morning glory (water spinach), cut into 3-inch batons",
+        "4 cloves garlic, crushed",
+        "3 bird's eye chilies, lightly bruised",
+        "1.5 tbsp fermented yellow soybean paste",
+        "1 tbsp vegetarian mushroom stir-fry sauce",
+        "0.5 tsp sugar",
+        "2 tbsp high-heat cooking oil",
+        "2 tbsp water"
+      ],
+      "steps": [
+        "Toss the morning glory, garlic, chilies, soybean paste, mushroom sauce, and sugar together in a large bowl.",
+        "Heat oil in a wok over the highest heat until smoking hot.",
+        "Dump the entire bowl of greens and seasonings into the center of the wok all at once.",
+        "Toss vigorously for 45 to 60 seconds until the greens wilt slightly while keeping their vibrant crunch.",
+        "Splash in the water around the wok edge to create steam, toss once more, and transfer immediately to a serving plate."
+      ]
+    },
+    {
+      "id": "thai-pad-see-ew-tofu",
+      "cuisine": "Thai",
+      "title": "Pad See Ew Tofu",
+      "emoji": "🥢",
+      "minutes": 20,
+      "blurb": "Chewy charred noodles tossed with savoury greens, crispy tofu, and golden eggs.",
+      "diet": "vegetarian",
+      "allergens": [
+        "egg",
+        "gluten",
+        "onion_garlic",
+        "soy"
+      ],
+      "ingredients": [
+        "300g fresh wide flat rice noodles, separated gently",
+        "150g firm tofu, sliced into bite-sized batons",
+        "2 large eggs",
+        "2 cups Chinese broccoli (gai lan), cut into 2-inch pieces",
+        "3 cloves garlic, minced",
+        "1.5 tbsp dark sweet soy sauce",
+        "1.5 tbsp light soy sauce",
+        "1 tbsp vegetarian mushroom sauce",
+        "1 tsp sugar",
+        "2 tbsp neutral cooking oil"
+      ],
+      "steps": [
+        "Mix dark soy sauce, light soy sauce, mushroom sauce, and sugar in a small bowl.",
+        "Heat 1 tablespoon oil in a wok over medium-high heat, fry tofu until golden on both sides, then push to the side.",
+        "Add remaining oil and minced garlic, stir-frying for 15 seconds until fragrant.",
+        "Add Chinese broccoli and stir-fry for 1 minute until crisp-tender.",
+        "Push everything aside, crack eggs into the empty space, scramble lightly until mostly set, then fold into the greens and tofu.",
+        "Turn heat to high, toss in noodles and sauce mixture, spreading flat against the wok to char for 2 minutes before gently folding."
+      ]
+    },
+    {
+      "id": "thai-tom-yum-goong",
+      "cuisine": "Thai",
+      "title": "Tom Yum Goong",
+      "emoji": "🦐",
+      "minutes": 25,
+      "blurb": "Zesty, aromatic broth teeming with plump prawns and fragrant crushed Thai herbs.",
+      "diet": "pescatarian",
+      "allergens": [
+        "fish",
+        "onion_garlic",
+        "shellfish"
+      ],
+      "ingredients": [
+        "250g raw tiger prawns, peeled and deveined with tails left intact",
+        "600ml water or unsalted prawn stock",
+        "2 stalks lemongrass, bruised and sliced into 2-inch sections",
+        "4 slices fresh galangal",
+        "5 fresh kaffir lime leaves, torn",
+        "150g oyster mushrooms, torn",
+        "4 bird's eye chilies, bruised",
+        "2.5 tbsp fish sauce",
+        "3 tbsp freshly squeezed lime juice",
+        "1 small shallot, peeled and quartered"
+      ],
+      "steps": [
+        "Bring water or prawn stock to a rolling boil in a medium saucepan.",
+        "Add lemongrass, galangal, kaffir lime leaves, and shallot, simmering gently for 5 minutes to infuse the broth.",
+        "Stir in mushrooms and bruised chilies, cooking for another 2 minutes until tender.",
+        "Drop in the prawns and simmer for about 2 minutes until they turn pink and opaque.",
+        "Turn off the heat, stir in the fish sauce and lime juice, taste, and ladle into warm bowls."
+      ]
+    },
+    {
+      "id": "thai-gaeng-massaman-neua",
+      "cuisine": "Thai",
+      "title": "Gaeng Massaman Neua",
+      "emoji": "🍛",
+      "minutes": 75,
+      "blurb": "Rich, slow-simmered beef curry laced with aromatic spices, potatoes, and roasted peanuts.",
+      "diet": "meat",
+      "allergens": [
+        "dairy",
+        "fish",
+        "nuts",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "350g beef chuck, cut into 1.5-inch cubes",
+        "400ml full-fat coconut milk (divided)",
+        "150ml water",
+        "3 tbsp Massaman curry paste",
+        "1 medium waxy potato, peeled and cut into large chunks",
+        "1 small brown onion, peeled and cut into wedges",
+        "2 tbsp roasted unsalted peanuts",
+        "1.5 tbsp palm sugar, chopped",
+        "2 tbsp fish sauce",
+        "1.5 tbsp tamarind paste",
+        "1 cinnamon stick",
+        "2 cardamom pods, bruised"
+      ],
+      "steps": [
+        "Heat 100ml of thick coconut cream from the top of the can in a heavy pot over medium heat until oil separates.",
+        "Add Massaman curry paste and fry for 3 minutes until deeply aromatic and darkened.",
+        "Add beef cubes and toss to coat thoroughly in the paste for 2 minutes.",
+        "Pour in remaining coconut milk, water, cinnamon stick, and cardamom pods, bringing everything to a gentle simmer.",
+        "Cover and simmer over low heat for 45 minutes until the beef begins to tenderize.",
+        "Stir in the potato chunks, onion wedges, roasted peanuts, palm sugar, fish sauce, and tamarind paste.",
+        "Cover and continue simmering for an additional 20 minutes until potatoes and beef are meltingly tender, adjusting seasonings before serving."
+      ]
+    },
+    {
+      "id": "mediterranean-classic-spanish-pan-con-tomate",
+      "cuisine": "Mediterranean",
+      "title": "Classic Spanish Pan con Tomate",
+      "emoji": "🍅",
+      "minutes": 10,
+      "blurb": "Crispy toasted bread rubbed with juicy grated tomato and rich olive oil.",
+      "diet": "vegan",
+      "allergens": [
+        "gluten",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "4 slices crusty sourdough or rustic bread",
+        "2 ripe medium tomatoes",
+        "1 small clove garlic, peeled and halved",
+        "3 tablespoons extra-virgin olive oil",
+        "Flaky sea salt to taste"
+      ],
+      "steps": [
+        "Toast or grill the rustic bread slices until golden brown and very crisp.",
+        "Halve the tomatoes crosswise and grate the pulp into a bowl, discarding the skins.",
+        "Lightly rub the cut side of the raw garlic clove across the warm toast.",
+        "Spoon the fresh grated tomato evenly over each slice of bread.",
+        "Drizzle generously with extra-virgin olive oil and finish with a pinch of flaky salt."
+      ]
+    },
+    {
+      "id": "mediterranean-skillet-shakshuka-with-feta",
+      "cuisine": "Mediterranean",
+      "title": "Skillet Shakshuka with Feta",
+      "emoji": "🍳",
+      "minutes": 25,
+      "blurb": "Gently poached eggs resting in a warmly spiced, bubbling sweet pepper sauce.",
+      "diet": "vegetarian",
+      "allergens": [
+        "dairy",
+        "egg",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "4 large eggs",
+        "1 can (14 oz) whole peeled tomatoes, crushed by hand",
+        "1 medium red bell pepper, thinly sliced",
+        "1 small yellow onion, diced",
+        "2 cloves garlic, minced",
+        "1 teaspoon ground cumin",
+        "1 teaspoon smoked paprika",
+        "2 tablespoons olive oil",
+        "2 ounces crumbled feta cheese",
+        "Salt and freshly ground black pepper to taste"
+      ],
+      "steps": [
+        "Heat the olive oil in a skillet over medium heat and sauté the onion and bell pepper until soft.",
+        "Stir in the minced garlic, cumin, and smoked paprika, cooking for one minute until fragrant.",
+        "Pour in the crushed tomatoes, season with salt and pepper, and simmer for 10 minutes to thicken.",
+        "Make four small wells in the sauce and crack an egg into each well.",
+        "Cover the skillet and cook on low heat for 5 to 7 minutes until egg whites are set.",
+        "Scatter crumbled feta on top and serve hot straight from the skillet."
+      ]
+    },
+    {
+      "id": "mediterranean-crispy-pan-seared-sea-bass-with-lemon-herb-oil",
+      "cuisine": "Mediterranean",
+      "title": "Crispy Pan-Seared Sea Bass with Lemon Herb Oil",
+      "emoji": "🐟",
+      "minutes": 18,
+      "blurb": "Crispy-skinned fish fillets paired with bright, citrusy herbs and capers.",
+      "diet": "pescatarian",
+      "allergens": [
+        "fish",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "2 sea bass fillets (about 5-6 oz each), skin-on and scaled",
+        "2 tablespoons extra-virgin olive oil, divided",
+        "1 small clove garlic, finely grated",
+        "1 tablespoon drained capers",
+        "1 lemon, zested and juiced",
+        "2 tablespoons chopped fresh flat-leaf parsley",
+        "Salt and freshly ground black pepper to taste"
+      ],
+      "steps": [
+        "Pat the fish fillets completely dry with paper towels and score the skin lightly.",
+        "Season both sides of the fillets generously with salt and black pepper.",
+        "Whisk together one tablespoon olive oil, lemon zest, lemon juice, grated garlic, capers, and parsley.",
+        "Heat the remaining tablespoon of olive oil in a nonstick skillet over medium-high heat.",
+        "Place the fillets skin-side down, pressing gently for 30 seconds to prevent curling.",
+        "Cook for 4 to 5 minutes until skin is crisp, flip, and cook 1 to 2 minutes more.",
+        "Transfer fish to plates and spoon the fresh lemon herb oil over the top."
+      ]
+    },
+    {
+      "id": "mediterranean-slow-braised-greek-lamb-kleftiko",
+      "cuisine": "Mediterranean",
+      "title": "Slow-Braised Greek Lamb Kleftiko",
+      "emoji": "🍖",
+      "minutes": 85,
+      "blurb": "Melt-in-your-mouth tender lamb baked with oregano, sweet peppers, and lemony potatoes.",
+      "diet": "meat",
+      "allergens": [
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "1 pound boneless lamb shoulder, cut into large bite-sized chunks",
+        "2 medium waxy potatoes, peeled and cut into chunks",
+        "1 green bell pepper, cut into chunks",
+        "1 small red onion, cut into wedges",
+        "3 cloves garlic, smashed",
+        "3 tablespoons extra-virgin olive oil",
+        "1 lemon, juiced",
+        "1 tablespoon dried Greek oregano",
+        "Salt and freshly ground black pepper to taste"
+      ],
+      "steps": [
+        "Preheat the oven to 350°F (175°C) and prepare two large overlapping sheets of parchment paper.",
+        "In a large mixing bowl, toss the lamb, potatoes, bell pepper, onion, and smashed garlic together.",
+        "Pour over the olive oil and lemon juice, then season heavily with dried oregano, salt, and black pepper.",
+        "Transfer the entire mixture to the center of the parchment paper.",
+        "Fold and seal the parchment tightly into a closed parcel so no steam can escape.",
+        "Place the parchment parcel in a baking dish and bake for 75 to 80 minutes until meat is fork-tender.",
+        "Carefully unfold the parcel at the table and serve warm with its rich cooking juices."
+      ]
+    },
+    {
+      "id": "korean-quick-garlic-sesame-dubu-jorim",
+      "cuisine": "Korean",
+      "title": "Quick Garlic Sesame Dubu Jorim",
+      "emoji": "🧈",
+      "minutes": 20,
+      "blurb": "Crispy braised tofu cubes coated in a spicy, savory garlic glaze.",
+      "diet": "vegan",
+      "allergens": [
+        "gluten",
+        "onion_garlic",
+        "soy"
+      ],
+      "ingredients": [
+        "300g firm tofu, drained and cut into bite-sized cubes",
+        "1 tbsp neutral cooking oil",
+        "2 cloves garlic, minced",
+        "2 tbsp soy sauce",
+        "1 tbsp gochugaru (Korean chili flakes)",
+        "1 tbsp maple syrup or sugar",
+        "1 tsp toasted sesame oil",
+        "1 tsp toasted sesame seeds",
+        "2 scallions, thinly sliced"
+      ],
+      "steps": [
+        "Pat tofu cubes dry with paper towels to remove excess moisture.",
+        "Heat neutral oil in a nonstick skillet over medium-high heat and sear tofu for 6 to 8 minutes until golden on all sides.",
+        "Whisk together soy sauce, gochugaru, minced garlic, maple syrup, and 3 tablespoons of water in a small bowl.",
+        "Pour the sauce over the pan and simmer tofu for 3 minutes until the liquid thickens into a glossy glaze.",
+        "Remove from heat, drizzle with sesame oil, and garnish with sliced scallions and sesame seeds."
+      ]
+    },
+    {
+      "id": "korean-classic-gyeran-jjim",
+      "cuisine": "Korean",
+      "title": "Classic Gyeran Jjim",
+      "emoji": "🍳",
+      "minutes": 15,
+      "blurb": "Fluffy, cloud-like steamed eggs gently seasoned with scallions and sesame.",
+      "diet": "vegetarian",
+      "allergens": [
+        "egg",
+        "gluten",
+        "onion_garlic",
+        "soy"
+      ],
+      "ingredients": [
+        "4 large eggs",
+        "180ml water or kelp broth",
+        "1 tbsp soy sauce",
+        "1/2 tsp fine salt",
+        "1 scallion, finely chopped",
+        "1/2 tsp toasted sesame oil",
+        "1/2 tsp toasted sesame seeds"
+      ],
+      "steps": [
+        "Whisk the eggs thoroughly with water or broth, soy sauce, and salt until smooth and light.",
+        "Strain the egg mixture through a fine-mesh sieve into a small heatproof bowl or ceramic pot for extra fluffiness.",
+        "Stir in the chopped scallion and toasted sesame seeds, reserving a pinch for garnish.",
+        "Place the bowl into a steamer over boiling water, cover with a lid, and steam gently on medium-low for 10 to 12 minutes until softly set.",
+        "Carefully remove from the steamer, drizzle with toasted sesame oil, and top with remaining scallions."
+      ]
+    },
+    {
+      "id": "korean-crispy-haemul-pajeon",
+      "cuisine": "Korean",
+      "title": "Crispy Haemul Pajeon",
+      "emoji": "🥞",
+      "minutes": 20,
+      "blurb": "Savory, golden seafood pancake loaded with fresh scallions and shrimp.",
+      "diet": "pescatarian",
+      "allergens": [
+        "gluten",
+        "onion_garlic",
+        "shellfish",
+        "soy"
+      ],
+      "ingredients": [
+        "100g peeled small shrimp, patted dry",
+        "1 bunch scallions (about 8 stalks), trimmed and cut into 3-inch lengths",
+        "1/2 cup all-purpose flour",
+        "1/4 cup cornstarch",
+        "3/4 cup ice-cold water",
+        "1/2 tsp fine salt",
+        "2 tbsp vegetable oil for frying",
+        "1 tbsp soy sauce mixed with 1 tsp rice vinegar for dipping"
+      ],
+      "steps": [
+        "Whisk together all-purpose flour, cornstarch, salt, and ice-cold water in a medium bowl until just combined into a light batter.",
+        "Fold the chopped scallions and shrimp directly into the prepared batter.",
+        "Heat the vegetable oil in a large nonstick skillet over medium-high heat until hot.",
+        "Pour the batter into the skillet, spreading ingredients evenly into a round disc.",
+        "Cook for 4 to 5 minutes until the bottom is crisp and golden, then flip carefully and cook for another 3 to 4 minutes.",
+        "Transfer pancake to a cutting board, slice into wedges, and serve alongside the vinegar-soy dipping sauce."
+      ]
+    },
+    {
+      "id": "korean-slow-simmered-dakbokkeumtang",
+      "cuisine": "Korean",
+      "title": "Slow-Simmered Dakbokkeumtang",
+      "emoji": "🍗",
+      "minutes": 55,
+      "blurb": "Comforting braised spicy chicken stew with sweet carrots and tender potatoes.",
+      "diet": "meat",
+      "allergens": [
+        "alcohol",
+        "gluten",
+        "onion_garlic",
+        "soy"
+      ],
+      "ingredients": [
+        "500g bone-in chicken thighs, chopped into bite-sized pieces",
+        "1 medium potato, peeled and cut into chunks",
+        "1 medium carrot, peeled and cut into chunks",
+        "1/2 yellow onion, sliced",
+        "2 cloves garlic, minced",
+        "1 tbsp gochujang (Korean chili paste)",
+        "2 tbsp gochugaru (Korean chili flakes)",
+        "2 tbsp soy sauce",
+        "1 tbsp mirin",
+        "1 tbsp sugar",
+        "300ml water",
+        "1 scallion, sliced"
+      ],
+      "steps": [
+        "Whisk together gochujang, gochugaru, soy sauce, mirin, minced garlic, and sugar in a small bowl to make the seasoning base.",
+        "Place chicken pieces in a medium pot, add water and the seasoning paste, stirring well to dissolve the sauce.",
+        "Bring pot to a rolling boil over high heat, then lower heat to medium, cover, and simmer for 20 minutes.",
+        "Add the potato chunks, carrot chunks, and sliced onion into the simmering pot.",
+        "Cover and continue cooking over medium-low heat for 20 to 25 minutes until chicken is tender and vegetables pierce easily with a fork.",
+        "Uncover, raise heat slightly, and simmer for 5 minutes to reduce sauce to a rich gravy, then garnish with sliced scallion."
+      ]
+    },
+    {
+      "id": "french-classic-proven-al-ratatouille",
+      "cuisine": "French",
+      "title": "Classic Provençal Ratatouille",
+      "emoji": "🍆",
+      "minutes": 55,
+      "blurb": "Sun-drenched vegetables simmered slowly into pure melt-in-your-mouth comfort.",
+      "diet": "vegetarian",
+      "allergens": [
+        "egg",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "1 small eggplant, diced",
+        "1 medium zucchini, sliced",
+        "1 red bell pepper, chopped",
+        "2 ripe tomatoes, diced",
+        "1 small yellow onion, sliced",
+        "2 cloves garlic, minced",
+        "3 tablespoons olive oil",
+        "1 sprig fresh thyme",
+        "Salt and black pepper to taste"
+      ],
+      "steps": [
+        "Heat two tablespoons of olive oil in a wide heavy skillet over medium heat.",
+        "Sauté onion and garlic until soft and translucent, about five minutes.",
+        "Add bell pepper and eggplant, cooking until softened for eight minutes.",
+        "Stir in zucchini, diced tomatoes, thyme, salt, and pepper.",
+        "Reduce heat to low, cover, and gently simmer for thirty minutes.",
+        "Uncover, drizzle with remaining olive oil, and simmer ten minutes more until glossy."
+      ]
+    },
+    {
+      "id": "french-traditional-french-omelette",
+      "cuisine": "French",
+      "title": "Traditional French Omelette",
+      "emoji": "🍳",
+      "minutes": 12,
+      "blurb": "Silky, pale yellow perfection with a luscious, gently runny center.",
+      "diet": "vegetarian",
+      "allergens": [
+        "dairy",
+        "egg",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "5 large eggs",
+        "1.5 tablespoons unsalted butter",
+        "1 tablespoon heavy cream",
+        "1 tablespoon finely snipped fresh chives",
+        "Pinch of fine sea salt",
+        "Pinch of white pepper"
+      ],
+      "steps": [
+        "Crack eggs into a bowl and whisk vigorously with cream, salt, and pepper until uniform.",
+        "Melt butter in an eight-inch nonstick skillet over medium-low heat until foamy.",
+        "Pour in eggs and shake pan continuously while stirring rapidly with a silicone spatula.",
+        "When curds are creamy and barely set, smooth top and remove from heat.",
+        "Tightly roll omelette into an almond-shaped cylinder toward pan edge.",
+        "Invert seam-side down onto a warm plate, brush with residual butter, and scatter chives."
+      ]
+    },
+    {
+      "id": "french-moules-marini-re",
+      "cuisine": "French",
+      "title": "Moules Marinière",
+      "emoji": "🦪",
+      "minutes": 20,
+      "blurb": "Sweet, briny mussels swimming in a fragrant shallot and white wine broth.",
+      "diet": "pescatarian",
+      "allergens": [
+        "alcohol",
+        "dairy",
+        "onion_garlic",
+        "shellfish"
+      ],
+      "ingredients": [
+        "1 kg fresh mussels, scrubbed and debearded",
+        "150 ml dry white wine",
+        "2 shallots, finely minced",
+        "2 cloves garlic, crushed",
+        "2 tablespoons unsalted butter",
+        "3 tablespoons chopped fresh flat-leaf parsley",
+        "Freshly cracked black pepper to taste"
+      ],
+      "steps": [
+        "Melt butter in a large heavy lidded pot over medium heat.",
+        "Add minced shallots and garlic, cooking gently for three minutes until fragrant.",
+        "Pour in white wine, season with black pepper, and bring to a rapid boil.",
+        "Add cleaned mussels all at once and immediately cover with tight lid.",
+        "Steam over high heat for four to five minutes, shaking pot occasionally.",
+        "Discard any unopened shells, stir in fresh parsley, and ladle immediately into wide bowls."
+      ]
+    },
+    {
+      "id": "french-poulet-au-vinaigre",
+      "cuisine": "French",
+      "title": "Poulet au Vinaigre",
+      "emoji": "🍗",
+      "minutes": 50,
+      "blurb": "Tender chicken thighs bathed in a tangy, rich Lyonnais pan sauce.",
+      "diet": "meat",
+      "allergens": [
+        "alcohol",
+        "dairy",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "4 bone-in chicken thighs, skin-on",
+        "3 shallots, finely chopped",
+        "3 cloves garlic, peeled and smashed",
+        "80 ml aged red wine vinegar",
+        "120 ml low-sodium chicken stock",
+        "2 tablespoons tomato paste",
+        "2 tablespoons unsalted butter",
+        "1 tablespoon olive oil",
+        "Fresh tarragon sprigs",
+        "Salt and black pepper to taste"
+      ],
+      "steps": [
+        "Season chicken thighs generously on both sides with salt and pepper.",
+        "Heat olive oil in a large skillet over medium-high heat and sear chicken skin-side down for eight minutes until deep golden.",
+        "Flip chicken, cook four minutes more, then transfer to a plate.",
+        "Pour off excess fat, add shallots and whole garlic, and cook for two minutes.",
+        "Deglaze pan with red wine vinegar, scraping browned bits until liquid reduces by half.",
+        "Whisk in chicken stock and tomato paste, then return chicken to skillet with tarragon.",
+        "Cover, reduce heat to low, and simmer for twenty-five minutes until chicken is tender.",
+        "Transfer chicken to plates, whisk butter into hot sauce off heat, and spoon over."
+      ]
+    },
+    {
+      "id": "middle-eastern-warm-spiced-ful-mudammas",
+      "cuisine": "Middle Eastern",
+      "title": "Warm Spiced Ful Mudammas",
+      "emoji": "🧆",
+      "minutes": 15,
+      "blurb": "Comfort in a bowl, perfect for tearing warm flatbread and scooping greedily.",
+      "diet": "vegan",
+      "allergens": [
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "1 can (400g) fava beans, rinsed and drained",
+        "2 cloves garlic, finely minced",
+        "1/2 cup warm water",
+        "2 tbsp extra virgin olive oil",
+        "1 tsp ground cumin",
+        "1 tbsp fresh lemon juice",
+        "1/4 cup diced tomatoes",
+        "2 tbsp chopped fresh flat-leaf parsley",
+        "1/2 tsp salt"
+      ],
+      "steps": [
+        "Combine rinsed fava beans, minced garlic, cumin, salt, and water in a small saucepan.",
+        "Simmer gently over medium-low heat for 7 to 8 minutes until beans are thoroughly heated and tender.",
+        "Use the back of a fork or potato masher to crush roughly half the beans into a creamy sauce.",
+        "Stir in the fresh lemon juice and adjust salt to taste.",
+        "Transfer to two shallow bowls and garnish generously with diced tomatoes and fresh parsley.",
+        "Drizzle with extra virgin olive oil and serve immediately."
+      ]
+    },
+    {
+      "id": "middle-eastern-classic-shakshuka-with-feta",
+      "cuisine": "Middle Eastern",
+      "title": "Classic Shakshuka with Feta",
+      "emoji": "🍳",
+      "minutes": 30,
+      "blurb": "Simmered spiced peppers and runny eggs make weekend mornings instantly magical.",
+      "diet": "vegetarian",
+      "allergens": [
+        "dairy",
+        "egg",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "4 large eggs",
+        "1 tbsp olive oil",
+        "1 medium yellow onion, finely diced",
+        "1 red bell pepper, sliced into strips",
+        "2 cloves garlic, minced",
+        "1 tsp ground cumin",
+        "1 tsp smoked paprika",
+        "1 can (400g) crushed tomatoes",
+        "50g feta cheese, crumbled",
+        "Salt and black pepper to taste"
+      ],
+      "steps": [
+        "Heat olive oil in a wide skillet over medium heat.",
+        "Add the diced onion and bell pepper strips, cooking for 6 to 8 minutes until softened.",
+        "Stir in the minced garlic, cumin, and smoked paprika, cooking for 1 minute until fragrant.",
+        "Pour in the crushed tomatoes, season with salt and pepper, and simmer for 10 minutes until sauce thickens.",
+        "Use a spoon to create four small wells in the sauce and crack an egg into each well.",
+        "Scatter crumbled feta around the eggs, cover the skillet, and cook for 5 to 7 minutes until egg whites are set but yolks remain runny."
+      ]
+    },
+    {
+      "id": "middle-eastern-pan-seared-samke-harra",
+      "cuisine": "Middle Eastern",
+      "title": "Pan-Seared Samke Harra",
+      "emoji": "🐟",
+      "minutes": 20,
+      "blurb": "Zesty spiced fish bathed in garlicky cilantro sauce will wake up your dinner table.",
+      "diet": "pescatarian",
+      "allergens": [
+        "fish",
+        "nuts",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "2 sea bass or cod fillets (approx. 150g each)",
+        "2 tbsp olive oil, divided",
+        "3 cloves garlic, finely minced",
+        "1/2 cup fresh cilantro, finely chopped",
+        "1/2 tsp ground cumin",
+        "1/2 tsp ground coriander",
+        "1/4 tsp chili flakes",
+        "2 tbsp fresh lemon juice",
+        "2 tbsp toasted pine nuts",
+        "Salt and black pepper to taste"
+      ],
+      "steps": [
+        "Pat fish fillets completely dry with paper towels and season both sides with salt and black pepper.",
+        "Heat 1 tablespoon olive oil in a skillet over medium-high heat and sear fish fillets for 3 to 4 minutes per side until flaky, then transfer to warm plates.",
+        "Lower the heat to medium and add the remaining tablespoon of olive oil to the same skillet.",
+        "Add the minced garlic, cumin, coriander, and chili flakes, sautéing for 30 seconds until aromatic.",
+        "Stir in the chopped cilantro and lemon juice, cooking for 1 minute to form a bright pan sauce.",
+        "Spoon the warm sauce over the seared fillets, sprinkle with toasted pine nuts, and serve immediately."
+      ]
+    },
+    {
+      "id": "middle-eastern-slow-simmered-beef-kofta-tagine",
+      "cuisine": "Middle Eastern",
+      "title": "Slow-Simmered Beef Kofta Tagine",
+      "emoji": "🍲",
+      "minutes": 60,
+      "blurb": "Tender spiced meatballs bubbling in rich tomato broth are pure cozy perfection.",
+      "diet": "meat",
+      "allergens": [
+        "egg",
+        "gluten",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "300g ground beef",
+        "1 medium yellow onion, grated and juices pressed out",
+        "3 cloves garlic, minced, divided",
+        "1/4 cup breadcrumbs",
+        "1 small egg, beaten",
+        "1 tsp ground cumin, divided",
+        "1 tsp ground cinnamon, divided",
+        "1 tsp ground coriander",
+        "1 can (400g) crushed tomatoes",
+        "1 tbsp olive oil",
+        "Salt and black pepper to taste"
+      ],
+      "steps": [
+        "In a mixing bowl, combine ground beef, grated onion, half the minced garlic, breadcrumbs, beaten egg, half the cumin, half the cinnamon, and 1/2 teaspoon salt.",
+        "Mix with your hands until uniform, then roll into 12 evenly sized meatballs.",
+        "Heat olive oil in a heavy-bottomed pot or tagine over medium heat and brown meatballs on all sides for 6 minutes, then transfer to a plate.",
+        "Add remaining garlic, cumin, cinnamon, and coriander to the pot, stirring for 30 seconds.",
+        "Pour in crushed tomatoes, season with salt and black pepper, and bring the sauce to a gentle simmer.",
+        "Return meatballs to the sauce, cover, and simmer on low heat for 35 minutes until meatballs are meltingly tender."
+      ]
+    },
+    {
+      "id": "american-avocado-and-black-bean-skillet-tacos",
+      "cuisine": "American",
+      "title": "Avocado and Black Bean Skillet Tacos",
+      "emoji": "🌮",
+      "minutes": 15,
+      "blurb": "Crispy warm tortillas packed with creamy avocado and zesty seasoned beans.",
+      "diet": "vegan",
+      "allergens": [
+        "gluten",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "1 can (15 oz) black beans, drained and rinsed",
+        "1/2 teaspoon ground cumin",
+        "1/2 teaspoon chili powder",
+        "1 clove garlic, minced",
+        "1 tablespoon olive oil",
+        "4 small corn tortillas",
+        "1 ripe avocado, sliced",
+        "1/4 cup fresh cilantro, chopped",
+        "1 lime, cut into wedges",
+        "Salt to taste"
+      ],
+      "steps": [
+        "Warm olive oil in a skillet over medium heat and sauté minced garlic for 30 seconds.",
+        "Add black beans, cumin, chili powder, and a pinch of salt, cooking until heated through.",
+        "Lightly mash half the beans with a fork to create texture.",
+        "Warm corn tortillas in a dry pan until soft and pliable.",
+        "Fill each tortilla with seasoned beans and top with avocado slices.",
+        "Garnish with chopped cilantro and a squeeze of fresh lime juice before serving."
+      ]
+    },
+    {
+      "id": "american-stovetop-white-cheddar-mac-and-cheese",
+      "cuisine": "American",
+      "title": "Stovetop White Cheddar Mac and Cheese",
+      "emoji": "🧀",
+      "minutes": 20,
+      "blurb": "Pure nostalgic American comfort folded into a velvety, sharp cheese sauce.",
+      "diet": "vegetarian",
+      "allergens": [
+        "dairy",
+        "gluten"
+      ],
+      "ingredients": [
+        "6 oz elbow macaroni",
+        "1 1/2 tablespoons unsalted butter",
+        "1 1/2 tablespoons all-purpose flour",
+        "1 1/4 cups whole milk, warm",
+        "1 1/2 cups sharp white cheddar cheese, shredded",
+        "1/4 teaspoon dry mustard powder",
+        "Salt and freshly cracked black pepper to taste"
+      ],
+      "steps": [
+        "Boil macaroni in salted water until al dente, then drain.",
+        "Melt butter in a saucepan over medium heat, whisk in flour, and cook for 1 minute.",
+        "Slowly pour in warm milk while whisking constantly to prevent lumps.",
+        "Simmer gently for 3 to 4 minutes until the white sauce thickens.",
+        "Remove pan from heat and stir in dry mustard, salt, pepper, and shredded cheddar until melted.",
+        "Toss the cooked pasta into the cheese sauce until thoroughly coated and serve warm."
+      ]
+    },
+    {
+      "id": "american-new-england-shrimp-scampi",
+      "cuisine": "American",
+      "title": "New England Shrimp Scampi",
+      "emoji": "🍤",
+      "minutes": 18,
+      "blurb": "Plump shrimp swimming in rich garlic butter with a splash of white wine.",
+      "diet": "pescatarian",
+      "allergens": [
+        "alcohol",
+        "dairy",
+        "gluten",
+        "onion_garlic",
+        "shellfish"
+      ],
+      "ingredients": [
+        "1/2 lb large raw shrimp, peeled and deveined",
+        "5 oz linguine pasta",
+        "2 tablespoons unsalted butter",
+        "1 tablespoon olive oil",
+        "3 cloves garlic, thinly sliced",
+        "1/4 cup dry white wine",
+        "Juice of 1/2 lemon",
+        "2 tablespoons fresh parsley, finely chopped",
+        "1/4 teaspoon red pepper flakes",
+        "Salt to taste"
+      ],
+      "steps": [
+        "Cook linguine in boiling salted water until al dente, reserving 2 tablespoons pasta water before draining.",
+        "Heat olive oil and 1 tablespoon butter in a large skillet over medium heat.",
+        "Add sliced garlic and red pepper flakes, cooking for 1 minute until fragrant.",
+        "Add shrimp in a single layer and sear for 1 to 2 minutes per side until pink.",
+        "Pour in white wine and lemon juice, simmering for 2 minutes to reduce slightly.",
+        "Stir in remaining butter, reserved pasta water, cooked pasta, and parsley, tossing well."
+      ]
+    },
+    {
+      "id": "american-classic-american-meatloaf-with-glaze",
+      "cuisine": "American",
+      "title": "Classic American Meatloaf with Glaze",
+      "emoji": "🥩",
+      "minutes": 60,
+      "blurb": "Tender homestyle beef meatloaf brushed with a sticky sweet ketchup glaze.",
+      "diet": "meat",
+      "allergens": [
+        "dairy",
+        "egg",
+        "gluten",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "3/4 lb lean ground beef",
+        "1/3 cup seasoned breadcrumbs",
+        "1/4 cup whole milk",
+        "1 large egg, beaten",
+        "1/4 cup yellow onion, finely minced",
+        "1 clove garlic, minced",
+        "1 tablespoon Worcestershire sauce",
+        "3 tablespoons ketchup",
+        "1 tablespoon brown sugar",
+        "1/2 teaspoon salt",
+        "1/4 teaspoon black pepper"
+      ],
+      "steps": [
+        "Preheat the oven to 375°F (190°C) and line a small baking sheet with parchment paper.",
+        "Combine breadcrumbs and milk in a large bowl, letting it sit for 5 minutes.",
+        "Add ground beef, egg, minced onion, garlic, Worcestershire sauce, salt, and pepper to the bowl.",
+        "Gently mix ingredients by hand until just combined without overworking the meat.",
+        "Shape the mixture into two small oblong loaves on the prepared baking sheet.",
+        "Whisk ketchup and brown sugar together, then brush generously over both loaves.",
+        "Bake for 40 to 45 minutes until the internal temperature reaches 160°F (71°C), resting 5 minutes before serving."
+      ]
+    },
+    {
+      "id": "british-classic-welsh-rarebit",
+      "cuisine": "British",
+      "title": "Classic Welsh Rarebit",
+      "emoji": "🧀",
+      "minutes": 15,
+      "blurb": "Gloriously bubbling, tangy cheesy toast to banish any rainy day chill.",
+      "diet": "vegetarian",
+      "allergens": [
+        "alcohol",
+        "dairy",
+        "egg",
+        "gluten"
+      ],
+      "ingredients": [
+        "150g mature Cheddar cheese, grated",
+        "1 tbsp butter",
+        "1 tbsp plain flour",
+        "50ml dark ale or stout",
+        "1 tsp English mustard",
+        "1 tsp Worcestershire sauce (vegetarian)",
+        "1 egg yolk",
+        "2 thick slices rustic white bread"
+      ],
+      "steps": [
+        "Melt the butter in a small saucepan, stir in flour, and cook for 1 minute.",
+        "Gradually whisk in the ale until smooth and slightly thickened.",
+        "Stir in the grated cheese, mustard, and Worcestershire sauce until melted into a thick paste.",
+        "Remove from heat, let cool slightly for a minute, then beat in the egg yolk.",
+        "Toast the bread slices lightly on both sides under a preheated hot grill.",
+        "Spread the cheese mixture generously over the toasts, right to the edges.",
+        "Grill for 3 to 4 minutes until deeply golden, bubbling, and blistered."
+      ]
+    },
+    {
+      "id": "british-traditional-shepherd-s-pie",
+      "cuisine": "British",
+      "title": "Traditional Shepherd's Pie",
+      "emoji": "🥧",
+      "minutes": 75,
+      "blurb": "Rich minced lamb baked beneath a craggy, golden mashed potato crown.",
+      "diet": "meat",
+      "allergens": [
+        "alcohol",
+        "dairy",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "350g minced lamb",
+        "1 brown onion, finely diced",
+        "1 medium carrot, finely diced",
+        "1 clove garlic, minced",
+        "1 tbsp tomato purée",
+        "100ml red wine",
+        "250ml lamb or beef stock",
+        "1 sprig fresh rosemary, chopped",
+        "1/2 tsp fresh thyme leaves",
+        "50g frozen peas",
+        "500g Maris Piper potatoes, peeled and cubed",
+        "30g butter",
+        "40ml whole milk",
+        "Salt and black pepper to taste"
+      ],
+      "steps": [
+        "Boil potatoes in salted water for 15 minutes until tender, drain, and mash with butter and milk.",
+        "In a skillet, brown the minced lamb over medium-high heat, draining excess fat if necessary.",
+        "Add the diced onion, carrot, and garlic, cooking for 5 minutes until softened.",
+        "Stir in tomato purée, herbs, and red wine, simmering until the liquid reduces by half.",
+        "Pour in the stock, bring to a simmer, and cook uncovered for 20 minutes until saucy.",
+        "Stir in the peas, season generously with salt and pepper, and transfer into a baking dish.",
+        "Top with mashed potatoes, roughing the surface with a fork, and bake at 200°C for 25 minutes until golden."
+      ]
+    },
+    {
+      "id": "british-smoked-haddock-kedgeree",
+      "cuisine": "British",
+      "title": "Smoked Haddock Kedgeree",
+      "emoji": "🍳",
+      "minutes": 20,
+      "blurb": "Fragrant spiced rice with flaked smoked fish and jammy boiled eggs.",
+      "diet": "pescatarian",
+      "allergens": [
+        "dairy",
+        "egg",
+        "fish",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "200g undyed smoked haddock fillet",
+        "150ml milk",
+        "1 tbsp butter",
+        "1 small onion, finely chopped",
+        "1 clove garlic, minced",
+        "1 tbsp mild curry powder",
+        "250g pre-cooked basmati rice",
+        "2 large eggs",
+        "2 tbsp fresh parsley, chopped",
+        "1/2 lemon, cut into wedges"
+      ],
+      "steps": [
+        "Simmer smoked haddock in milk in a shallow pan for 5 minutes until flaking easily.",
+        "Drain haddock, reserve 2 tbsp cooking milk, discard the skin, and flake the fish.",
+        "Boil eggs in a separate pot for 6 minutes, peel, and halve.",
+        "Melt butter in a skillet and sauté chopped onion and garlic until translucent.",
+        "Stir in curry powder and cook for 1 minute until fragrant.",
+        "Add pre-cooked rice, flaked haddock, and reserved milk, tossing gently until heated through.",
+        "Garnish with parsley and egg halves, and serve warm with lemon wedges."
+      ]
+    },
+    {
+      "id": "british-mushy-pea-and-mint-toast",
+      "cuisine": "British",
+      "title": "Mushy Pea and Mint Toast",
+      "emoji": "🌱",
+      "minutes": 15,
+      "blurb": "Bright, comforting crushed peas elevated with zesty lemon on crunchy toast.",
+      "diet": "vegan",
+      "allergens": [
+        "gluten",
+        "onion_garlic"
+      ],
+      "ingredients": [
+        "300g frozen garden peas",
+        "1 small shallot, finely diced",
+        "1 clove garlic, minced",
+        "1 tbsp olive oil",
+        "8 fresh mint leaves, finely chopped",
+        "1/2 lemon, zested and juiced",
+        "2 thick slices sourdough bread",
+        "Flaky sea salt and black pepper to taste"
+      ],
+      "steps": [
+        "Boil the frozen peas in salted water for 3 minutes, then drain thoroughly.",
+        "Heat olive oil in a small pan and gently sauté the shallot and garlic for 3 minutes without browning.",
+        "Add the drained peas to the pan and roughly crush them with a potato masher or fork.",
+        "Stir in the chopped mint, lemon zest, lemon juice, salt, and black pepper.",
+        "Toast the sourdough slices until crisp and golden brown.",
+        "Mound the warm crushed pea mixture generously onto the toasted bread slices.",
+        "Drizzle with a drop of extra olive oil and finish with a pinch of flaky salt."
+      ]
+    }
+  ]
+}

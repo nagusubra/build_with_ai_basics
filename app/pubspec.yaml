@@ -37,6 +37,7 @@ flutter:
   assets:
     - assets/mascots/
     - assets/models/mobile_facenet.tflite
+    - assets/recipes/library.json
 
   fonts:
     - family: Nunito

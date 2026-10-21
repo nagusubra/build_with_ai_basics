@@ -99,7 +99,7 @@ class _HomeShellState extends State<HomeShell> {
           me: widget.me,
           discover: widget.discover,
           profiles: widget.profiles,
-          whenEmpty: (checkAgain) => RecipesPage(functions: widget.functions, onCheckAgain: checkAgain),
+          whenEmpty: (checkAgain) => RecipesPage(me: widget.me, onCheckAgain: checkAgain),
         ),
       ),
       ChatListScreen(auth: widget.auth, chat: widget.chat, functions: widget.functions, myUid: widget.me.uid),

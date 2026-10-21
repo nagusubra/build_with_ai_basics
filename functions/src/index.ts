@@ -9,5 +9,4 @@ export { cherryOpening } from './cherry/opening';
 export { confirmDatePlan, dismissCherry } from './cherry/plan';
 export { cherryTick } from './cherry/tick';
 export { onLikeCreated } from './matching';
-export { getMyRecipes } from './recipes';
 export { deleteAccount } from './account';

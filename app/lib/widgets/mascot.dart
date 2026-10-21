@@ -23,6 +23,22 @@ enum MascotPose {
   String get asset => 'assets/mascots/$file.png';
 }
 
+/// Jack (the boy cherry) and Jill (the girl cherry): a person's own wingman, by name and pose.
+class Wingman {
+  const Wingman(this.cherry);
+
+  /// "boy" or "girl"; anything else is Jack.
+  final String? cherry;
+
+  bool get isJill => cherry == 'girl';
+  String get name => isJill ? 'Jill' : 'Jack';
+  MascotPose get hello => isJill ? MascotPose.girlHello : MascotPose.boyHello;
+  MascotPose get cheer => isJill ? MascotPose.girlCheer : MascotPose.boyCheer;
+  MascotPose get planning => isJill ? MascotPose.girlPlanning : MascotPose.boyPlanning;
+  MascotPose get goodbye => isJill ? MascotPose.girlGoodbye : MascotPose.boyGoodbye;
+  MascotPose get tryAgain => isJill ? MascotPose.girlTryAgain : MascotPose.boyTryAgain;
+}
+
 /// A mascot image with a gentle idle bob, so the cherries never sit perfectly still.
 class Mascot extends StatelessWidget {
   const Mascot(this.pose, {super.key, this.size = 220, this.bob = true});

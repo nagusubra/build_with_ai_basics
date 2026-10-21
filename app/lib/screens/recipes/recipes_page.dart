@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../models/profile.dart';
 import '../../models/recipe.dart';
-import '../../services/functions_service.dart';
+import '../../services/recipe_library.dart';
 import '../../theme/colors.dart';
 import '../../theme/theme.dart';
 import '../../widgets/mascot.dart';
 
-/// Shown when Discover has nobody new: recipes to cook while you wait (`prd.md > Recipes`).
+/// Shown when Discover has nobody new: recipes from the bundled library, picked for this person
+/// (`prd.md > Recipes`, `prd.md > Added at Final Review`). No network, no AI.
 class RecipesPage extends StatefulWidget {
-  const RecipesPage({super.key, required this.functions, this.onCheckAgain});
+  const RecipesPage({super.key, required this.me, this.onCheckAgain});
 
-  final FunctionsService functions;
+  final UserProfile me;
   final Future<void> Function()? onCheckAgain;
 
   @override
@@ -18,67 +21,47 @@ class RecipesPage extends StatefulWidget {
 }
 
 class _RecipesPageState extends State<RecipesPage> {
-  List<Recipe>? _recipes;
-  bool _loading = true;
-  String? _error;
+  RecipeLibrary? _library;
+  int _page = 0;
 
   @override
   void initState() {
     super.initState();
-    _load();
-  }
-
-  Future<void> _load({bool refresh = false}) async {
-    setState(() {
-      _loading = true;
-      _error = null;
+    RecipeLibrary.load().then((lib) {
+      if (mounted) setState(() => _library = lib);
     });
-    try {
-      final recipes = await widget.functions.myRecipes(refresh: refresh);
-      if (mounted) setState(() => _recipes = recipes);
-    } catch (_) {
-      if (mounted) setState(() => _error = "Cherry couldn't cook up recipes just now. Pull down to try again.");
-    } finally {
-      if (mounted) setState(() => _loading = false);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    final recipes = _recipes ?? const <Recipe>[];
+    final lib = _library;
+    final wingman = Wingman(widget.me.cherryAvatar);
+    final recipes = lib?.selection(widget.me, page: _page) ?? const <Recipe>[];
     return RefreshIndicator(
       color: BakeColors.cherryRed,
-      onRefresh: () async {
-        await widget.onCheckAgain?.call();
-        await _load();
-      },
+      onRefresh: () async => widget.onCheckAgain?.call(),
       child: ListView(
         padding: const EdgeInsets.fromLTRB(18, 8, 18, 28),
         children: [
-          const Center(child: Mascot(MascotPose.duoCooking, size: 170)),
+          const Center(child: Mascot(MascotPose.duoCooking, size: 160)),
           Text('No one new right now', textAlign: TextAlign.center, style: text.headlineSmall),
           const SizedBox(height: 4),
           Text(
-            'While you wait, here are a few recipes picked for you. Pull down to check for new people.',
+            '${wingman.name} picked a few recipes for you while you wait. Pull down to check for new people.',
             textAlign: TextAlign.center,
             style: text.bodyLarge?.copyWith(color: BakeColors.muted),
           ),
           const SizedBox(height: 16),
-          if (_loading && recipes.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(30),
-              child: Center(child: CircularProgressIndicator(color: BakeColors.cherryRed)),
-            ),
-          if (_error != null) Text(_error!, textAlign: TextAlign.center, style: const TextStyle(color: BakeColors.deepCherry)),
-          for (final r in recipes) _RecipeTile(recipe: r),
+          if (lib == null)
+            const Padding(padding: EdgeInsets.all(30), child: Center(child: CircularProgressIndicator(color: BakeColors.cherryRed))),
+          for (var i = 0; i < recipes.length; i++)
+            RecipeTile(recipe: recipes[i]).animate(key: ValueKey('${recipes[i].id}-$_page')).fadeIn(delay: (60 * i).ms).moveY(begin: 8, end: 0),
           if (recipes.isNotEmpty)
             OutlinedButton.icon(
               key: const Key('recipes-new-ideas'),
-              onPressed: _loading ? null : () => _load(refresh: true),
-              icon: _loading
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.auto_awesome),
+              onPressed: () => setState(() => _page++),
+              icon: const Icon(Icons.auto_awesome),
               label: const Text('New ideas'),
             ),
         ],
@@ -87,8 +70,8 @@ class _RecipesPageState extends State<RecipesPage> {
   }
 }
 
-class _RecipeTile extends StatelessWidget {
-  const _RecipeTile({required this.recipe});
+class RecipeTile extends StatelessWidget {
+  const RecipeTile({super.key, required this.recipe});
 
   final Recipe recipe;
 
@@ -104,13 +87,21 @@ class _RecipeTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(BakeShapes.cardRadius),
           onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => RecipeDetailScreen(recipe: recipe))),
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(BakeShapes.cardRadius),
               border: Border.all(color: BakeColors.line),
             ),
             child: Row(
               children: [
+                Container(
+                  width: 54,
+                  height: 54,
+                  decoration: BoxDecoration(color: BakeColors.softPink, borderRadius: BorderRadius.circular(16)),
+                  alignment: Alignment.center,
+                  child: Text(recipe.emoji, style: const TextStyle(fontSize: 28)),
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,8 +109,10 @@ class _RecipeTile extends StatelessWidget {
                       Text(recipe.title, style: text.titleMedium),
                       const SizedBox(height: 2),
                       Text('${recipe.cuisine} · ⏱ ${recipe.minutes} min', style: text.bodyMedium?.copyWith(color: BakeColors.deepCherry)),
-                      const SizedBox(height: 4),
-                      Text(recipe.blurb, style: text.bodyMedium?.copyWith(color: BakeColors.muted)),
+                      if (recipe.blurb.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(recipe.blurb, style: text.bodyMedium?.copyWith(color: BakeColors.muted)),
+                      ],
                     ],
                   ),
                 ),
@@ -146,11 +139,14 @@ class RecipeDetailScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(22, 4, 22, 32),
         children: [
+          Text(recipe.emoji, style: const TextStyle(fontSize: 54)),
           Text(recipe.title, style: text.headlineMedium),
           const SizedBox(height: 4),
-          Text('⏱ ${recipe.minutes} minutes', style: text.titleMedium?.copyWith(color: BakeColors.deepCherry)),
-          const SizedBox(height: 8),
-          Text(recipe.blurb, style: text.bodyLarge?.copyWith(color: BakeColors.muted)),
+          Text('⏱ ${recipe.minutes} minutes · for two', style: text.titleMedium?.copyWith(color: BakeColors.deepCherry)),
+          if (recipe.blurb.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(recipe.blurb, style: text.bodyLarge?.copyWith(color: BakeColors.muted)),
+          ],
           const SizedBox(height: 20),
           Text('Ingredients', style: text.titleLarge),
           for (final i in recipe.ingredients) Padding(padding: const EdgeInsets.only(top: 6), child: Text('• $i', style: text.bodyLarge)),
