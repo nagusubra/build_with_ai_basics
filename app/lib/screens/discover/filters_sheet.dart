@@ -95,18 +95,21 @@ class _FiltersSheetState extends State<_FiltersSheet> {
       maxChildSize: 0.95,
       builder: (context, scroll) => Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 18, 12, 0),
+            child: Row(
+              children: [
+                Expanded(child: Text('Who would you like to meet?', style: text.titleLarge)),
+                TextButton(key: const Key('filters-reset'), onPressed: _reset, child: const Text('Reset')),
+              ],
+            ),
+          ),
           Expanded(
             child: ListView(
               key: const Key('filters-list'),
               controller: scroll,
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
               children: [
-                Row(
-                  children: [
-                    Expanded(child: Text('Who would you like to meet?', style: text.titleLarge)),
-                    TextButton(key: const Key('filters-reset'), onPressed: _reset, child: const Text('Reset')),
-                  ],
-                ),
                 section('I’m here for', 'Switching also changes who can see you. Friends only ever meet friends.'),
                 SegmentedButton<String>(
                   showSelectedIcon: false,
