@@ -27,7 +27,7 @@ PRD ref: `prd.md > The Core Journey`.
 2. **Sign up** → Firebase Authentication creates the account → the app writes the public profile to Firestore `users/{uid}` and the date of birth to `users/{uid}/private/account`. Under 18 is blocked in the app before the account is created.
 3. **Food quiz** → answers are saved to `users/{uid}.food` as each card is answered, so nothing is lost if the app closes.
 4. **Photos** → uploaded to Storage under `users/{uid}/photos/`; their paths are saved on the profile.
-5. **Verification** → on the phone only: ML Kit watches the camera for a blink and a head turn, then the face-recognition model compares the selfie with the main profile photo → on success the app sets `verified: true`. The selfie is never uploaded or saved.
+5. **Verification** → on the phone only: Apple's Vision framework watches the camera for a blink and a head turn, then the face-recognition model compares the selfie with the main profile photo → on success the app sets `verified: true`. The selfie is never uploaded or saved.
 6. **Profile preview and Meet Cherry** → the profile is read from Firestore and shown; `onboardingComplete: true` is set.
 7. **Discover** → the app reads profiles with the same `lookingFor` value, verified and onboarded, and skips anyone already liked or passed. It works out "something in common" by comparing the two food profiles.
 8. **Like** → the app writes `likes/{me}_{them}` → a Cloud Function checks whether `likes/{them}_{me}` exists → if so, it creates `matches/{id}` and assigns each person's cherry → both phones see the new match and play the "It's a BakeOut!" moment.
@@ -47,11 +47,11 @@ PRD ref: `prd.md > The Core Journey`.
 | Photos | `firebase_storage` | 14.0.0 | https://firebase.google.com/docs/storage/flutter/start |
 | Calling server functions | `cloud_functions` | 7.0.0 | https://firebase.google.com/docs/functions/callable |
 | Camera and photo picking | `camera`, `image_picker` | 0.12.1, 1.2.4 | https://pub.dev/packages/camera |
-| Live face check | `google_mlkit_face_detection` | 0.15.1 | https://pub.dev/packages/google_mlkit_face_detection |
-| Face comparison | `tflite_flutter` running a MobileFaceNet-style model | 0.12.1 | https://pub.dev/packages/tflite_flutter |
+| Live face check | Apple Vision (built into iOS), through a small Swift channel in `AppDelegate.swift` | iOS 15.5+ | https://developer.apple.com/documentation/vision |
+| Face comparison | `tflite_flutter` running Qualcomm AI Hub's MobileFaceNet (Apache-2.0) | 0.12.1 | https://pub.dev/packages/tflite_flutter, https://huggingface.co/qualcomm/MobileFaceNet |
 | Swipe cards | `flutter_card_swiper` | 7.2.0 | https://pub.dev/packages/flutter_card_swiper |
 | Animations | `flutter_animate` | 4.5.2 | https://pub.dev/packages/flutter_animate |
-| Fonts | `google_fonts` (Nunito, bundled) | 9.0.0 | https://pub.dev/packages/google_fonts |
+| Fonts | Nunito static TTFs bundled as app fonts (SIL OFL) | — | https://fonts.google.com/specimen/Nunito |
 | Cherry's brain | Cloud Functions for Firebase (2nd gen), TypeScript on Node.js | `firebase-functions` 7.4.0 | https://firebase.google.com/docs/functions |
 | AI model | Gemini API via `@google/genai`, paid tier | 2.30.0 | https://ai.google.dev/gemini-api/docs |
 | Command-line tools | Firebase CLI | 15.34.0 | https://firebase.google.com/docs/cli |
@@ -61,13 +61,12 @@ Why each learner choice:
 - **Firebase Auth, Firestore, Storage:** the team's choice ("auth set-up is super easy"). Firestore's live updates are what make a two-person chat work.
 - **Cloud Functions for Cherry:** agreed so there's exactly one Cherry per chat and the AI key stays off the phones. Accepted tradeoff: the Blaze pay-as-you-go plan, which needs a card.
 - **Gemini, paid tier:** the team's choice ("for now let's use Gemini"). Paid so chats and profiles aren't used to improve Google's products, in line with "we respect data privacy for people." Accepted tradeoff: small usage cost, with a budget alert.
-- **On-device verification (ML Kit + face model):** the team's choice. Selfies never leave the phone. Accepted tradeoff: more setup, less accuracy than a cloud service, and the phone reports its own result.
+- **On-device verification (Apple Vision + face model):** the team's choice. Selfies never leave the phone. Accepted tradeoff: more setup, less accuracy than a cloud service, and the phone reports its own result. Originally ML Kit; swapped to Vision during slice 1 (see `checklist.md > Revisions`).
 - **Gemini writes recipes:** the team's choice ("not the main thing for the app"). Accepted tradeoff: an AI-written recipe could get an allergy wrong.
 
 **Unverified, check early in the build:**
 - The exact current Gemini model name. Use the current fast "Flash" model; confirm the name on the Gemini models page.
 - Which Node.js versions Cloud Functions currently accept. Node 20.15 is installed here.
-- Which MobileFaceNet `.tflite` file to use, and its license.
 - Whether `tflite_flutter` 0.12.1 builds cleanly for iOS with Xcode 26.4.
 
 ## Where It Runs and How Someone Tries It
@@ -102,7 +101,7 @@ From `prd.md > Look and Feel`. Lives in `app/lib/theme/`.
   - `deepCherry #A71938`: headings, accents
   - `charcoal #29252A`: body text
   - `leafGreen #73984A`: small accents, the verified badge, progress fill
-- **Typography:** Nunito, bundled through `google_fonts` so it doesn't depend on the network. Headings weight 800–900, slightly larger and playful. Body weight 400–600.
+- **Typography:** Nunito, bundled as static TTFs in `app/assets/fonts/` so it doesn't depend on the network. Headings weight 800–900, slightly larger and playful. Body weight 400–600.
 - **Shapes and space:** corners 20–24 px on cards and 16 px on buttons, soft low-opacity shadows tinted toward deep cherry, generous padding. One idea per screen.
 - **Motion with `flutter_animate`:** mascots gently bob or sway when idle; pop in with scale and fade during the quiz; the two cherries slide together for the match moment, with a heart and confetti burst drawn as separate animated pieces. Cherry's goodbye slides and fades out. Keep every animation short and subtle; never block a tap.
 - **Tone of copy:** warm, playful food language with the emojis written in the PRD. Never pushy.
@@ -147,8 +146,8 @@ PRD ref: `prd.md > Food Profile Quiz`.
 
 ### Photos and Verification
 - **Photos:** pick or take 1–4 photos with `image_picker`, upload to Storage, and save the paths.
-- **Live check:** the `camera` stream feeds ML Kit face detection with classification turned on. The person is asked to blink (eye-open probability drops, then recovers) and turn their head (yaw angle passes about ±20°). Exactly one face must be visible throughout.
-- **Match:** take the final frame and the main profile photo, find and crop the face in each with ML Kit, resize to the model's input, compute an embedding for each with the TFLite model, and compare them with cosine similarity against a threshold kept in one constant. Pass → `verified: true` and `verifiedAt`. Fail → the try-again screen explains why ("we couldn't see one clear face" or "this didn't match your photo") and retries.
+- **Live check:** the `camera` stream feeds Apple Vision face detection (`FaceVision` in `face_vision.dart`, backed by `AppDelegate.swift`). Eye openness comes from each eye's height-to-width ratio in Vision's landmarks. The person is asked to look at the camera, blink, turn their head (yaw passes about ±20°), and look back. Exactly one face must be visible throughout.
+- **Match:** take the final frame and the main profile photo, find the face in each with Vision, and align it by the eyes to the model's 112×112 training layout. Real landmark eyes are used when they look plausible; otherwise the eyes are estimated from the face box. Compute both embeddings with the TFLite model in one call, and compare them with cosine similarity against a threshold kept in one constant (`faceMatchThreshold`, 0.5). Pass → `verified: true` and `verifiedAt`. Fail → the try-again screen explains why ("we couldn't see one clear face" or "this didn't match your photo") and retries.
 - **Privacy:** the selfie frames live only in memory and are discarded after the check. Nothing is uploaded.
 
 PRD ref: `prd.md > Photos and Verification`.
@@ -321,7 +320,10 @@ build_with_ai_basics/
 │   │   │   ├── profile_service.dart       # read/write profile, photos upload
 │   │   │   ├── discover_service.dart      # candidate query, filters, likes/passes, common ground
 │   │   │   ├── chat_service.dart          # match + message streams, send message
-│   │   │   ├── verification_service.dart  # ML Kit live check + face embedding compare
+│   │   │   ├── verification_service.dart  # eye-aligned face crops + MobileFaceNet compare
+│   │   │   ├── face_vision.dart           # Apple Vision channel: faces, yaw, eye openness, eye centres
+│   │   │   ├── face_math.dart             # similarity, threshold, eye alignment
+│   │   │   ├── liveness_tracker.dart      # face → blink → turn → look back
 │   │   │   └── functions_service.dart     # confirmDatePlan, dismissCherry, getMyRecipes, deleteAccount
 │   │   ├── screens/
 │   │   │   ├── welcome/
@@ -389,13 +391,13 @@ build_with_ai_basics/
 - **Data use:** paid-tier content isn't used to improve Google's products, per the Gemini API terms. *Re-read the current terms when creating the key.*
 - **Docs:** https://ai.google.dev/gemini-api/docs, https://ai.google.dev/gemini-api/docs/structured-output, https://ai.google.dev/gemini-api/terms
 
-### ML Kit Face Detection (on device)
+### Apple Vision Face Detection (on device)
 - Free, no key, no network.
 - Used with classification (eye-open probabilities) and head angles.
 - **Docs:** https://developers.google.com/ml-kit/vision/face-detection
 
 ### Face embedding model (on device)
-- A MobileFaceNet-style `.tflite` file bundled in the app: about 112×112 face crop in, a vector of numbers out.
+- `app/assets/models/mobile_facenet.tflite`, Qualcomm AI Hub's MobileFaceNet export (release v0.64.0, Apache-2.0). Takes two 112×112 faces at once and returns a 128-number embedding for each. Source and shapes are in `app/assets/models/README.md`.
 - Free, no key.
 - *Source file and license to be chosen and checked in the first build step.*
 
@@ -429,7 +431,7 @@ build_with_ai_basics/
 - Firebase Auth, Firestore, and Storage.
 - Cherry runs in Cloud Functions on Blaze.
 - Gemini, paid tier.
-- On-device ML Kit live check plus on-device face comparison.
+- On-device live check plus on-device face comparison; the live check uses Apple Vision instead of ML Kit (agreed in slice 1, so the app still runs on simulators).
 - Gemini writes the recipes.
 - Date card with Confirm buttons.
 - Mascots as generated 3D-style images based on the team's reference art, animated as whole images in Flutter.
@@ -440,13 +442,14 @@ build_with_ai_basics/
 - The `cherryBusyUntil` lock.
 - A one-minute scheduled timer.
 - Public and private profile split.
-- `flutter_card_swiper`, `flutter_animate`, and `google_fonts`.
+- `flutter_card_swiper` and `flutter_animate`; Nunito bundled directly instead of through `google_fonts`.
+- Eye alignment for face crops, with a box-based eye estimate as fallback.
 
 ### The useful unknown
-**On-device face verification.** In `2-scope` the team expected it "should not be very hard as there are a lot of libraries." In this session we separated it into two jobs: the live check, which ML Kit covers well, and matching the selfie to the profile photo, which needs a face-recognition model that no single Flutter library packages up. **Agreed investigation:** the first build step is a small trial on the team's own photos, before the screens are built around it.
+**On-device face verification.** In `2-scope` the team expected it "should not be very hard as there are a lot of libraries." In this session we separated it into two jobs: the live check, which a face detector covers well, and matching the selfie to the profile photo, which needs a face-recognition model that no single Flutter library packages up. **Agreed investigation:** the first build step is a small trial on the team's own photos, before the screens are built around it.
 
 Evidence needed from the trial:
-1. ML Kit detects a blink and a head turn on an iPhone.
+1. The face detector picks up a blink and a head turn on an iPhone.
 2. The chosen `.tflite` model loads and runs on iOS.
 3. Same-person pairs score clearly above different-person pairs, so a threshold can be picked.
 
@@ -455,5 +458,5 @@ If (3) fails, that's a plan revision the team decides on.
 ### Still open
 - **"Stuck" and reminder timings:** the exact `STUCK_MINUTES` and `REMINDER_MINUTES` values. Tune during the build (carried from `prd.md > Open Questions`).
 - **Gemini model name and Node.js runtime version:** confirm at the start of the build.
-- **Face model file and license:** pick during the verification trial.
+- **Live check on a real iPhone:** blink and turn thresholds are verified in unit tests but not yet on a device camera. Check at the slice-4 hands-on checkpoint.
 - **Where `design/` assets live long-term:** copied into `app/assets/mascots/` in the build; `design/` stays as the source.

@@ -103,7 +103,7 @@
 
   <section class="card">
     <h2>Architecture</h2>
-    <svg viewBox="0 0 1000 430" role="img" aria-label="Two iPhones running the Flutter app, each with on-device ML Kit and face model. Both talk to Firebase: Auth, Firestore, Storage. Firestore events trigger Cloud Functions, which call the Gemini API and write Cherry's messages back to Firestore. A scheduled timer runs every minute.">
+    <svg viewBox="0 0 1000 430" role="img" aria-label="Two iPhones running the Flutter app, each with on-device Apple Vision and face model. Both talk to Firebase: Auth, Firestore, Storage. Firestore events trigger Cloud Functions, which call the Gemini API and write Cherry's messages back to Firestore. A scheduled timer runs every minute.">
       <defs>
         <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b6f73"/></marker>
       </defs>
@@ -114,7 +114,7 @@
         <text x="120" y="82" font-size="12" font-weight="600" fill="#7b6f73">Flutter app · all screens</text>
         <rect x="40" y="100" width="160" height="80" rx="14" fill="#fff" stroke="#f1dfe2"/>
         <text x="120" y="124" font-size="12.5" fill="#A71938">On device only</text>
-        <text x="120" y="144" font-size="11.5" font-weight="600" fill="#29252A">ML Kit live check</text>
+        <text x="120" y="144" font-size="11.5" font-weight="600" fill="#29252A">Apple Vision live check</text>
         <text x="120" y="162" font-size="11.5" font-weight="600" fill="#29252A">face-match model</text>
 
         <rect x="20" y="230" width="200" height="170" rx="26" fill="#FFF0F2" stroke="#E83D55" stroke-width="2"/>
@@ -122,7 +122,7 @@
         <text x="120" y="282" font-size="12" font-weight="600" fill="#7b6f73">Flutter app · all screens</text>
         <rect x="40" y="300" width="160" height="80" rx="14" fill="#fff" stroke="#f1dfe2"/>
         <text x="120" y="324" font-size="12.5" fill="#A71938">On device only</text>
-        <text x="120" y="344" font-size="11.5" font-weight="600" fill="#29252A">ML Kit live check</text>
+        <text x="120" y="344" font-size="11.5" font-weight="600" fill="#29252A">Apple Vision live check</text>
         <text x="120" y="362" font-size="11.5" font-weight="600" fill="#29252A">face-match model</text>
       </g>
 
@@ -193,7 +193,7 @@
       <tr><td>Accounts, data, photos</td><td>Firebase Auth · Firestore · Storage</td><td>Team's choice; Firestore's live updates power the chat.</td></tr>
       <tr><td>Cherry's brain</td><td>Cloud Functions (TypeScript, Node.js), Blaze</td><td>One Cherry per chat; AI key off the phones.</td></tr>
       <tr><td>AI</td><td>Gemini via <code>@google/genai</code> 2.30, paid</td><td>Team's choice; paid for privacy of chats.</td></tr>
-      <tr><td>Verification</td><td>ML Kit + on-device face model (<code>tflite_flutter</code>)</td><td>Team's choice; selfies never leave the phone.</td></tr>
+      <tr><td>Verification</td><td>Apple Vision + MobileFaceNet on device (<code>tflite_flutter</code>)</td><td>Team's choice; selfies never leave the phone. Swapped from ML Kit in slice 1 so simulators still work.</td></tr>
       <tr><td>UI helpers</td><td><code>flutter_card_swiper</code> · <code>flutter_animate</code> · <code>google_fonts</code></td><td>Swipe cards, mascot motion, Nunito.</td></tr>
     </table>
     <p class="note">Package versions were checked on npm and pub.dev in October 2026. Still to confirm at the start of the build: the current Gemini model name, which Node.js versions Cloud Functions accept, and the face model file and its license.</p>
@@ -210,10 +210,10 @@
     <details open>
       <summary>🔍 The useful unknown: on-device face verification</summary>
       <div>
-        <p>In scope you expected it "should not be very hard." It's really two jobs: the <b>live check</b> (ML Kit handles this well) and <b>matching the selfie to the profile photo</b>, which needs a face model that no single Flutter library packages up.</p>
+        <p>In scope you expected it "should not be very hard." It's really two jobs: the <b>live check</b> (a face detector handles this well) and <b>matching the selfie to the profile photo</b>, which needs a face model that no single Flutter library packages up.</p>
         <div class="unknown"><b>First build step: a small trial on your own photos.</b> Evidence needed:
           <ol>
-            <li>ML Kit detects a blink and a head turn on an iPhone.</li>
+            <li>The face detector picks up a blink and a head turn on an iPhone.</li>
             <li>The <code>.tflite</code> model loads and runs on iOS.</li>
             <li>Same-person pairs score clearly above different-person pairs, so a threshold can be picked.</li>
           </ol>
@@ -290,7 +290,7 @@
     { t: "Welcome", hops: [A("Shows duo mascot, headline, buttons. Nothing loaded from network.")], prd: "Welcome Screen", files: "app/lib/screens/welcome/" },
     { t: "Sign up", hops: [A("Basics form; blocks under 18"), F("Auth creates account"), F("Writes users/{uid} + private/account")], prd: "Sign-Up and Login", files: "screens/auth/ · services/auth_service.dart" },
     { t: "Food quiz", hops: [A("One card per question, progress bar, cherry pop-ins"), F("Each answer saved to users/{uid}.food")], prd: "Food Profile Quiz", files: "screens/quiz/ · services/profile_service.dart" },
-    { t: "Photos & verify", hops: [A("Photos picked"), F("Uploaded to Storage"), A("ML Kit: blink + head turn"), A("Face model compares selfie ↔ main photo; selfie discarded"), F("verified: true")], prd: "Photos and Verification", files: "screens/photos/ · services/verification_service.dart · assets/models/" },
+    { t: "Photos & verify", hops: [A("Photos picked"), F("Uploaded to Storage"), A("Apple Vision: blink + head turn"), A("Face model compares selfie ↔ main photo; selfie discarded"), F("verified: true")], prd: "Photos and Verification", files: "screens/photos/ · services/verification_service.dart · assets/models/" },
     { t: "Preview & Meet Cherry", hops: [F("Profile read"), A("Profile cards + Cherry intro; onboardingComplete: true")], prd: "Profile Preview · Meet Cherry", files: "screens/profile/ · screens/meet_cherry/" },
     { t: "Discover", hops: [F("Query users with same lookingFor, verified, onboarded"), A("Filter self, liked, passed, interests; compute 'something in common'"), A("Nobody left → Recipes")], prd: "Discover · Recipes", files: "screens/discover/ · services/discover_service.dart" },
     { t: "Match", hops: [A("Like → write likes/{me}_{them}"), N("onLikeCreated finds reverse like → creates matches/{a}_{b}, assigns cherries"), A("Both phones play 'It's a BakeOut!'")], prd: "The Match Moment", files: "functions/src/matching.ts · screens/match/" },
