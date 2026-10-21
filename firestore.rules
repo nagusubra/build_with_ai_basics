@@ -19,6 +19,31 @@ service cloud.firestore {
       match /private/{doc} {
         allow read, write: if signedIn() && request.auth.uid == uid;
       }
+
+      // People someone passed on in Discover: theirs alone.
+      match /passes/{other} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+
+      // Recipes written for them by Cloud Functions; theirs to read.
+      match /recipes/{recipe} {
+        allow read: if signedIn() && request.auth.uid == uid;
+        allow write: if false;
+      }
+    }
+
+    // A like is created by the liker, about someone else, at the id "{from}_{to}".
+    // Only the liker can see it, so nobody learns who liked them before a match.
+    match /likes/{likeId} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['from', 'to', 'createdAt'])
+        && request.resource.data.from == request.auth.uid
+        && request.resource.data.to is string
+        && request.resource.data.to != request.auth.uid
+        && likeId == request.auth.uid + '_' + request.resource.data.to
+        && request.resource.data.createdAt == request.time;
+      allow read: if signedIn() && resource.data.from == request.auth.uid;
+      allow update, delete: if false;
     }
 
     // Matches are created and changed by Cloud Functions; members may only mark one as seen.

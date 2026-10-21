@@ -9,6 +9,7 @@ import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 
 import { confirmDate } from '../lib/cherry/plan.js';
 import { runCherryTick } from '../lib/cherry/tick.js';
+import { testerMatch } from './testers.mjs';
 
 const apiKey = readFileSync(new URL('../.secret.local', import.meta.url), 'utf8').match(/GEMINI_API_KEY=(.*)/)?.[1]?.trim();
 initializeApp({ projectId: 'studio-1391080484-497cf' });
@@ -38,12 +39,7 @@ const cherryCountAbove = (n) => async () => ((await cherry()).length > n ? (awai
 
 before(async () => {
   assert.ok(apiKey, 'Put your Gemini key in functions/.secret.local as GEMINI_API_KEY=...');
-  const seeded = (await db.collection('matches').where('devSample', '==', true).get()).docs[0];
-  matchId = seeded.id;
-  const users = seeded.get('users');
-  const names = await Promise.all(users.map(async (u) => (await db.doc(`users/${u}`).get()).get('name')));
-  one = users[names.indexOf('Tester One')];
-  two = users[names.indexOf('Tester Two')];
+  ({ matchId, one, two } = await testerMatch(db));
   await waitFor(cherryCountAbove(0), "Cherry's opening");
 });
 

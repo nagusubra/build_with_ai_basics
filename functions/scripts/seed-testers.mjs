@@ -1,5 +1,5 @@
-// DEV ONLY — creates two labelled test accounts and a match between them so the chat
-// and Cherry can be built before Discover exists. Removed in slice 6.
+// DEV ONLY — creates two labelled, fully onboarded test accounts with SAMPLE food profiles
+// (marked devSample). `--match` also has them like each other so the real matching runs.
 //
 // Emulators:  FIRESTORE_EMULATOR_HOST and FIREBASE_AUTH_EMULATOR_HOST set (emulators:exec does this).
 // Real project: DEV_PASSWORD and GOOGLE_OAUTH_ACCESS_TOKEN (e.g. from `gcloud auth print-access-token`)
@@ -15,7 +15,7 @@ if (!password) {
   process.exit(1);
 }
 
-// SAMPLE food profiles until the real quiz exists (slice 5). Marked devSample in Firestore.
+// SAMPLE food profiles. Marked devSample in Firestore.
 export const testers = [
   {
     email: 'tester.one@bakeout.test',
@@ -129,20 +129,22 @@ async function ensureUser({ email, name, gender, cherry, food }) {
 
 const seeded = [];
 for (const tester of testers) seeded.push(await ensureUser(tester));
-const uids = seeded.map((s) => s.uid).sort();
-const matchId = uids.join('_');
+const [one, two] = seeded.map((s) => s.uid);
+const matchId = [one, two].sort().join('_');
 
-// A fresh match each run, so Cherry's opening fires again.
+// Clean slate: no old match, likes, or passes between the testers.
 await db.recursiveDelete(db.doc(`matches/${matchId}`));
-await db.doc(`matches/${matchId}`).set({
-  users: uids,
-  seenBy: [],
-  cherryState: 'active',
-  cherryFor: Object.fromEntries(seeded.map((s) => [s.uid, s.cherry])),
-  humanMessagesSinceCherry: 0,
-  devSample: true,
-  createdAt: FieldValue.serverTimestamp(),
-});
+for (const [a, b] of [[one, two], [two, one]]) {
+  await db.doc(`likes/${a}_${b}`).delete();
+  await db.doc(`users/${a}/passes/${b}`).delete();
+}
 
-console.log(`Seeded ${usingEmulators ? 'emulators' : 'REAL project'}: match ${matchId}`);
+// --match: the testers like each other, so the real matching function (onLikeCreated) creates
+// the match and Cherry opens it. Used by the emulator checks; on the real project, like in the app.
+if (process.argv.includes('--match')) {
+  await db.doc(`likes/${one}_${two}`).set({ from: one, to: two, createdAt: FieldValue.serverTimestamp() });
+  await db.doc(`likes/${two}_${one}`).set({ from: two, to: one, createdAt: FieldValue.serverTimestamp() });
+}
+
+console.log(`Seeded ${usingEmulators ? 'emulators' : 'REAL project'} testers${process.argv.includes('--match') ? ' (liking each other)' : ''}`);
 for (const t of testers) console.log(`  ${t.email}`);

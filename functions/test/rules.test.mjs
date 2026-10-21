@@ -82,6 +82,39 @@ describe('matches and messages', () => {
   });
 });
 
+describe('likes and passes', () => {
+  const like = (from, to) => ({ from, to, createdAt: serverTimestamp() });
+
+  test('you can like someone as yourself, at the right id', async () => {
+    const db = env.authenticatedContext('alice').firestore();
+    await assertSucceeds(setDoc(doc(db, 'likes/alice_bob'), like('alice', 'bob')));
+  });
+
+  test('you cannot like as someone else, like yourself, or use a mismatched id', async () => {
+    const db = env.authenticatedContext('alice').firestore();
+    await assertFails(setDoc(doc(db, 'likes/bob_carol'), like('bob', 'carol')));
+    await assertFails(setDoc(doc(db, 'likes/alice_alice'), like('alice', 'alice')));
+    await assertFails(setDoc(doc(db, 'likes/alice_carol'), like('alice', 'bob')));
+  });
+
+  test('nobody can see who liked them', async () => {
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'likes/alice_bob'), { from: 'alice', to: 'bob' }));
+    await assertSucceeds(getDoc(doc(env.authenticatedContext('alice').firestore(), 'likes/alice_bob')));
+    await assertFails(getDoc(doc(env.authenticatedContext('bob').firestore(), 'likes/alice_bob')));
+  });
+
+  test('passes are private to the person who passed', async () => {
+    await assertSucceeds(setDoc(doc(env.authenticatedContext('alice').firestore(), 'users/alice/passes/bob'), { createdAt: serverTimestamp() }));
+    await assertFails(getDoc(doc(env.authenticatedContext('bob').firestore(), 'users/alice/passes/bob')));
+  });
+
+  test('recipes are written only by Cloud Functions', async () => {
+    const db = env.authenticatedContext('alice').firestore();
+    await assertFails(setDoc(doc(db, 'users/alice/recipes/r1'), { title: 'Fake' }));
+    await assertSucceeds(getDocs(collection(db, 'users/alice/recipes')));
+  });
+});
+
 describe('profile photos', () => {
   const jpeg = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]);
   const image = { contentType: 'image/jpeg' };

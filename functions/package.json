@@ -10,12 +10,13 @@
     "build": "tsc",
     "test": "npm run build && node --test test/*.unit.test.mjs",
     "test:rules": "firebase emulators:exec --only firestore,storage \"node --test test/rules.test.mjs\"",
-    "check:cherry": "npm run build && firebase emulators:exec --only auth,firestore,functions \"node scripts/seed-dev-match.mjs && node --test --test-concurrency=1 test/cherry.emulator.test.mjs\"",
-    "check:date": "npm run build && firebase emulators:exec --only auth,firestore,functions \"node scripts/seed-dev-match.mjs && node --test --test-concurrency=1 test/date.emulator.test.mjs\"",
+    "check:cherry": "npm run build && firebase emulators:exec --only auth,firestore,functions \"node scripts/seed-testers.mjs --match && node --test --test-concurrency=1 test/cherry.emulator.test.mjs\"",
+    "check:date": "npm run build && firebase emulators:exec --only auth,firestore,functions \"node scripts/seed-testers.mjs --match && node --test --test-concurrency=1 test/date.emulator.test.mjs\"",
     "check:onboarding": "firebase emulators:exec --only auth,firestore,storage \"cd ../app && flutter test integration_test/onboarding_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\"",
-    "seed:dev": "node scripts/seed-dev-match.mjs",
+    "seed:dev": "node scripts/seed-testers.mjs --match",
     "seed:real": "sh scripts/seed-real.sh",
-    "check:chat": "firebase emulators:exec --only auth,firestore \"node scripts/seed-dev-match.mjs && (node scripts/dev-replier.mjs &) && cd ../app && flutter test integration_test/chat_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\""
+    "check:chat": "firebase emulators:exec --only auth,firestore,functions \"node scripts/seed-testers.mjs --match && (node scripts/dev-replier.mjs &) && cd ../app && flutter test integration_test/chat_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\"",
+    "check:matching": "npm run build && firebase emulators:exec --only auth,firestore,functions \"node --test --test-concurrency=1 test/matching.emulator.test.mjs\""
   },
   "dependencies": {
     "@google-cloud/firestore": "^9.3.1",

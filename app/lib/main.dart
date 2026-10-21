@@ -7,11 +7,12 @@ import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
 import 'models/profile.dart';
-import 'screens/chat/chat_list_screen.dart';
+import 'screens/home_shell.dart';
 import 'screens/onboarding_flow.dart';
 import 'screens/welcome/welcome_screen.dart';
 import 'services/auth_service.dart';
 import 'services/chat_service.dart';
+import 'services/discover_service.dart';
 import 'services/functions_service.dart';
 import 'services/profile_service.dart';
 import 'theme/colors.dart';
@@ -50,6 +51,7 @@ class BakeOutApp extends StatelessWidget {
         chat: ChatService(),
         functions: FunctionsService(),
         profiles: ProfileService(),
+        discover: DiscoverService(),
       ),
     );
   }
@@ -57,12 +59,20 @@ class BakeOutApp extends StatelessWidget {
 
 /// Signed out → Welcome. Signed in → the next unfinished onboarding step, then the app.
 class AuthGate extends StatelessWidget {
-  const AuthGate({super.key, required this.auth, required this.chat, required this.functions, required this.profiles});
+  const AuthGate({
+    super.key,
+    required this.auth,
+    required this.chat,
+    required this.functions,
+    required this.profiles,
+    required this.discover,
+  });
 
   final AuthService auth;
   final ChatService chat;
   final FunctionsService functions;
   final ProfileService profiles;
+  final DiscoverService discover;
 
   static const _loading = Scaffold(body: Center(child: CircularProgressIndicator(color: BakeColors.cherryRed)));
 
@@ -83,7 +93,14 @@ class AuthGate extends StatelessWidget {
             if (nextStep(profile) != OnboardingStep.done) {
               return OnboardingFlow(profile: profile, profiles: profiles);
             }
-            return ChatListScreen(auth: auth, chat: chat, functions: functions, myUid: user.uid);
+            return HomeShell(
+              me: profile,
+              auth: auth,
+              chat: chat,
+              functions: functions,
+              profiles: profiles,
+              discover: discover,
+            );
           },
         );
       },

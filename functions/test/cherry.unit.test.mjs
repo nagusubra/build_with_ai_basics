@@ -135,6 +135,27 @@ describe('the date plan', () => {
   });
 });
 
+describe('matching', () => {
+  test('match ids are the same whichever way round', async () => {
+    const { matchIdFor } = await import('../lib/matching.js');
+    assert.equal(matchIdFor('b', 'a'), matchIdFor('a', 'b'));
+    assert.equal(matchIdFor('a', 'b'), 'a_b');
+  });
+
+  test('each person keeps their own cherry across genders', async () => {
+    const { assignCherries } = await import('../lib/matching.js');
+    const got = assignCherries({ uid: 'a', gender: 'Man', cherryAvatar: 'boy' }, { uid: 'b', gender: 'Woman', cherryAvatar: 'girl' }, () => true);
+    assert.deepEqual(got, { a: 'boy', b: 'girl' });
+  });
+
+  test('same-gender matches get a coin flip for each person', async () => {
+    const { assignCherries } = await import('../lib/matching.js');
+    const flips = [true, false];
+    const got = assignCherries({ uid: 'a', gender: 'Woman', cherryAvatar: 'girl' }, { uid: 'b', gender: 'Woman', cherryAvatar: 'girl' }, () => flips.shift());
+    assert.deepEqual(got, { a: 'boy', b: 'girl' });
+  });
+});
+
 describe('common ground', () => {
   test('finds real overlaps, most specific first', () => {
     const a = { topCuisines: ['Italian', 'Indian', 'Thai'], cuisines: ['Italian', 'Indian', 'Thai', 'Mexican'], foodType: 'Vegetarian', idealDate: 'Trying a new recipe' };

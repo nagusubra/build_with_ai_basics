@@ -25,6 +25,13 @@ class ChatService {
       .snapshots()
       .map((s) => s.docs.map((d) => ChatMessage.fromMap(d.id, d.data())).toList());
 
+  /// Matches this person hasn't celebrated yet.
+  Stream<List<ChatMatch>> unseenMatches(String uid) =>
+      matchesFor(uid).map((ms) => ms.where((m) => !m.seenBy.contains(uid)).toList());
+
+  Future<void> markSeen(String matchId, String uid) =>
+      _db.doc('matches/$matchId').update({'seenBy': FieldValue.arrayUnion([uid])});
+
   Future<String> displayName(String uid) async {
     final doc = await _db.doc('users/$uid').get();
     return doc.data()?['name'] as String? ?? 'Someone';

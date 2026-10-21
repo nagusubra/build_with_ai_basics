@@ -8,6 +8,7 @@ import { initializeApp } from 'firebase-admin/app';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 
 import { runCherryTick } from '../lib/cherry/tick.js';
+import { testerMatch } from './testers.mjs';
 
 const apiKey = readFileSync(new URL('../.secret.local', import.meta.url), 'utf8').match(/GEMINI_API_KEY=(.*)/)?.[1]?.trim();
 initializeApp({ projectId: 'studio-1391080484-497cf' });
@@ -35,10 +36,7 @@ const say = (uid, text) =>
 
 before(async () => {
   assert.ok(apiKey, 'Put your Gemini key in functions/.secret.local as GEMINI_API_KEY=...');
-  const seeded = await db.collection('matches').where('devSample', '==', true).get();
-  assert.equal(seeded.size, 1, 'expected the dev seed match');
-  matchId = seeded.docs[0].id;
-  users = seeded.docs[0].get('users');
+  ({ matchId, users } = await testerMatch(db));
 });
 
 test('Cherry opens the chat once, naming something they really share', async () => {
