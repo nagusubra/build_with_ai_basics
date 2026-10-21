@@ -6,7 +6,6 @@ import '../../services/chat_service.dart';
 import '../../services/functions_service.dart';
 import '../../theme/colors.dart';
 import '../../widgets/mascot.dart';
-import '../dev/verification_lab_screen.dart';
 import 'chat_screen.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -29,20 +28,13 @@ class ChatListScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Chats'),
         actions: [
-          // DEV ONLY until onboarding (slice 5) and My profile (slice 8) exist.
+          // DEV ONLY: log out is deferred in the PRD; kept for switching test accounts.
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_horiz),
             onSelected: (choice) {
-              if (choice == 'lab') {
-                Navigator.of(context).push(MaterialPageRoute(builder: (_) => const VerificationLabScreen()));
-              } else if (choice == 'signout') {
-                auth.signOut();
-              }
+              if (choice == 'signout') auth.signOut();
             },
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'lab', child: Text('Verification lab (dev)')),
-              PopupMenuItem(value: 'signout', child: Text('Sign out (dev)')),
-            ],
+            itemBuilder: (_) => const [PopupMenuItem(value: 'signout', child: Text('Sign out (dev)'))],
           ),
         ],
       ),

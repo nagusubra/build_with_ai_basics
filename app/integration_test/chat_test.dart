@@ -24,9 +24,9 @@ void main() {
     await FirebaseAuth.instance.signOut();
     await tester.pumpWidget(const BakeOutApp());
 
-    await _pumpUntilFound(tester, find.text('Already have an account? Log in'));
-    await tester.tap(find.text('Already have an account? Log in'));
-    await tester.pump();
+    await _pumpUntilFound(tester, find.byKey(const Key('welcome-login')));
+    await tester.tap(find.byKey(const Key('welcome-login')));
+    await _pumpUntilFound(tester, find.byKey(const Key('auth-email')));
     await tester.enterText(find.byKey(const Key('auth-email')), 'tester.one@bakeout.test');
     await tester.enterText(find.byKey(const Key('auth-password')), 'bakeout-dev');
     await tester.tap(find.byKey(const Key('auth-submit')));

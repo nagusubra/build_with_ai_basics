@@ -12,11 +12,12 @@ class AuthService {
   Stream<User?> get changes => _auth.authStateChanges();
   User? get currentUser => _auth.currentUser;
 
-  Future<void> signUp({required String name, required String email, required String password}) async {
+  /// Creates the account; the basics form fills in the profile next.
+  Future<void> signUp({required String email, required String password}) async {
     final credential = await _auth.createUserWithEmailAndPassword(email: email.trim(), password: password);
     final uid = credential.user!.uid;
-    await _db.doc('users/$uid').set({'name': name.trim(), 'createdAt': FieldValue.serverTimestamp()});
-    await _db.doc('users/$uid/private/account').set({'email': email.trim()});
+    await _db.doc('users/$uid').set({'createdAt': FieldValue.serverTimestamp()}, SetOptions(merge: true));
+    await _db.doc('users/$uid/private/account').set({'email': email.trim()}, SetOptions(merge: true));
   }
 
   Future<void> logIn({required String email, required String password}) =>

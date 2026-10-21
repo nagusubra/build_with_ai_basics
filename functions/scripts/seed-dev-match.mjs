@@ -104,9 +104,25 @@ if (usingEmulators) {
 
 async function ensureUser({ email, name, gender, cherry, food }) {
   const user = { uid: await accountUid(email, name) };
-  await db
-    .doc(`users/${user.uid}`)
-    .set({ name, gender, cherryAvatar: cherry, food, devSample: true, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+  await db.doc(`users/${user.uid}`).set(
+    {
+      name,
+      age: 26,
+      gender,
+      interestedIn: ['Everyone'],
+      city: 'Edinburgh',
+      lookingFor: 'partner',
+      cherryAvatar: cherry,
+      food,
+      quizDone: true,
+      verified: true,
+      previewSeen: true,
+      onboardingComplete: true,
+      devSample: true,
+      createdAt: FieldValue.serverTimestamp(),
+    },
+    { merge: true },
+  );
   await db.doc(`users/${user.uid}/private/account`).set({ email }, { merge: true });
   return { uid: user.uid, cherry };
 }

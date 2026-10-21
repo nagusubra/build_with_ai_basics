@@ -3,6 +3,7 @@ import { after, before, beforeEach, describe, test } from 'node:test';
 
 import { assertFails, assertSucceeds, initializeTestEnvironment } from '@firebase/rules-unit-testing';
 import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { deleteObject, getBytes, ref, uploadBytes } from 'firebase/storage';
 
 const MATCH = 'alice_bob';
 let env;
@@ -13,6 +14,7 @@ before(async () => {
   env = await initializeTestEnvironment({
     projectId: 'demo-bakeout-rules',
     firestore: { rules: readFileSync(new URL('../../firestore.rules', import.meta.url), 'utf8') },
+    storage: { rules: readFileSync(new URL('../../storage.rules', import.meta.url), 'utf8') },
   });
 });
 
@@ -77,6 +79,38 @@ describe('matches and messages', () => {
   test('nobody can create a match from the app', async () => {
     const db = env.authenticatedContext('alice').firestore();
     await assertFails(setDoc(doc(db, 'matches/alice_mallory'), { users: ['alice', 'mallory'] }));
+  });
+});
+
+describe('profile photos', () => {
+  const jpeg = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3]);
+  const image = { contentType: 'image/jpeg' };
+
+  test('the owner can upload and delete their own photos', async () => {
+    const storage = env.authenticatedContext('alice').storage();
+    await assertSucceeds(uploadBytes(ref(storage, 'users/alice/photos/1.jpg'), jpeg, image));
+    await assertSucceeds(deleteObject(ref(storage, 'users/alice/photos/1.jpg')));
+  });
+
+  test("nobody can upload into someone else's photos", async () => {
+    const storage = env.authenticatedContext('bob').storage();
+    await assertFails(uploadBytes(ref(storage, 'users/alice/photos/1.jpg'), jpeg, image));
+  });
+
+  test('only images are accepted', async () => {
+    const storage = env.authenticatedContext('alice').storage();
+    await assertFails(uploadBytes(ref(storage, 'users/alice/photos/notes.txt'), new Uint8Array([1]), { contentType: 'text/plain' }));
+  });
+
+  test('signed-in people can view photos; signed-out visitors cannot', async () => {
+    await assertSucceeds(uploadBytes(ref(env.authenticatedContext('alice').storage(), 'users/alice/photos/2.jpg'), jpeg, image));
+    await assertSucceeds(getBytes(ref(env.authenticatedContext('bob').storage(), 'users/alice/photos/2.jpg')));
+    await assertFails(getBytes(ref(env.unauthenticatedContext().storage(), 'users/alice/photos/2.jpg')));
+  });
+
+  test('nothing else in storage is writable', async () => {
+    const storage = env.authenticatedContext('alice').storage();
+    await assertFails(uploadBytes(ref(storage, 'selfies/alice.jpg'), jpeg, image));
   });
 });
 
