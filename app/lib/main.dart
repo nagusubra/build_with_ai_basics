@@ -17,6 +17,7 @@ import 'services/functions_service.dart';
 import 'services/profile_service.dart';
 import 'theme/colors.dart';
 import 'theme/theme.dart';
+import 'widgets/mascot.dart';
 
 /// `flutter run --dart-define=USE_EMULATORS=true` talks to the local Firebase emulators.
 const useEmulators = bool.fromEnvironment('USE_EMULATORS');
@@ -35,6 +36,7 @@ Future<void> initFirebase() async {
     FirebaseFunctions.instance.useFunctionsEmulator('localhost', 5001);
     await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
   }
+  await AuthService().dropStaleSession();
 }
 
 class BakeOutApp extends StatelessWidget {
@@ -52,6 +54,36 @@ class BakeOutApp extends StatelessWidget {
         functions: FunctionsService(),
         profiles: ProfileService(),
         discover: DiscoverService(),
+      ),
+    );
+  }
+}
+
+class _ProfileLoadError extends StatelessWidget {
+  const _ProfileLoadError({required this.auth, required this.onRetry});
+
+  final AuthService auth;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Mascot(MascotPose.boyTryAgain, size: 170),
+              Text("We couldn't load your profile", textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineSmall),
+              const SizedBox(height: 8),
+              const Text('Check your connection, then try again.', textAlign: TextAlign.center, style: TextStyle(color: BakeColors.muted)),
+              const SizedBox(height: 24),
+              FilledButton(onPressed: onRetry, child: const Text('Try again')),
+              TextButton(key: const Key('profile-error-signout'), onPressed: auth.signOut, child: const Text('Sign out')),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -84,24 +116,47 @@ class AuthGate extends StatelessWidget {
         if (snap.connectionState == ConnectionState.waiting) return _loading;
         final user = snap.data;
         if (user == null) return WelcomeScreen(auth: auth);
-        return StreamBuilder<UserProfile>(
-          key: ValueKey(user.uid),
-          stream: profiles.profile(user.uid),
-          builder: (context, profileSnap) {
-            final profile = profileSnap.data;
-            if (profile == null) return _loading;
-            if (nextStep(profile) != OnboardingStep.done) {
-              return OnboardingFlow(profile: profile, profiles: profiles);
-            }
-            return HomeShell(
-              me: profile,
-              auth: auth,
-              chat: chat,
-              functions: functions,
-              profiles: profiles,
-              discover: discover,
-            );
-          },
+        return _SignedIn(key: ValueKey(user.uid), uid: user.uid, gate: this);
+      },
+    );
+  }
+}
+
+class _SignedIn extends StatefulWidget {
+  const _SignedIn({super.key, required this.uid, required this.gate});
+
+  final String uid;
+  final AuthGate gate;
+
+  @override
+  State<_SignedIn> createState() => _SignedInState();
+}
+
+class _SignedInState extends State<_SignedIn> {
+  late Stream<UserProfile> _profile = widget.gate.profiles.profile(widget.uid);
+
+  @override
+  Widget build(BuildContext context) {
+    final g = widget.gate;
+    return StreamBuilder<UserProfile>(
+      stream: _profile,
+      builder: (context, snap) {
+        if (snap.hasError) {
+          return _ProfileLoadError(
+            auth: g.auth,
+            onRetry: () => setState(() => _profile = g.profiles.profile(widget.uid)),
+          );
+        }
+        final profile = snap.data;
+        if (profile == null) return AuthGate._loading;
+        if (nextStep(profile) != OnboardingStep.done) return OnboardingFlow(profile: profile, profiles: g.profiles);
+        return HomeShell(
+          me: profile,
+          auth: g.auth,
+          chat: g.chat,
+          functions: g.functions,
+          profiles: g.profiles,
+          discover: g.discover,
         );
       },
     );

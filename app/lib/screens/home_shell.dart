@@ -10,11 +10,11 @@ import '../services/discover_service.dart';
 import '../services/functions_service.dart';
 import '../services/profile_service.dart';
 import '../theme/colors.dart';
-import '../widgets/mascot.dart';
 import 'chat/chat_list_screen.dart';
 import 'chat/chat_screen.dart';
 import 'discover/discover_screen.dart';
 import 'match/match_moment_screen.dart';
+import 'recipes/recipes_page.dart';
 
 /// The app after onboarding: Discover and Chats, plus the match moment whenever a new match lands.
 class HomeShell extends StatefulWidget {
@@ -41,6 +41,7 @@ class HomeShell extends StatefulWidget {
 
 class _HomeShellState extends State<HomeShell> {
   int _tab = 0;
+  int _discoverVisit = 0;
   StreamSubscription<List<ChatMatch>>? _matches;
   final _celebrating = <String>{};
 
@@ -91,17 +92,11 @@ class _HomeShellState extends State<HomeShell> {
       Scaffold(
         appBar: AppBar(title: const Text('Discover')),
         body: DiscoverScreen(
+          key: ValueKey(_discoverVisit),
           me: widget.me,
           discover: widget.discover,
           profiles: widget.profiles,
-          whenEmpty: ListView(
-            children: [
-              const SizedBox(height: 80),
-              const Center(child: Mascot(MascotPose.duoCooking, size: 200)),
-              Center(child: Text('No one new right now', style: Theme.of(context).textTheme.titleLarge)),
-              const Center(child: Text('Pull down to check again.', style: TextStyle(color: BakeColors.muted))),
-            ],
-          ),
+          whenEmpty: (checkAgain) => RecipesPage(functions: widget.functions, onCheckAgain: checkAgain),
         ),
       ),
       ChatListScreen(auth: widget.auth, chat: widget.chat, functions: widget.functions, myUid: widget.me.uid),
@@ -112,7 +107,11 @@ class _HomeShellState extends State<HomeShell> {
         selectedIndex: _tab,
         backgroundColor: Colors.white,
         indicatorColor: BakeColors.softPink,
-        onDestinationSelected: (i) => setState(() => _tab = i),
+        onDestinationSelected: (i) => setState(() {
+          // Coming back to Discover checks for new people.
+          if (i == 0 && _tab != 0) _discoverVisit++;
+          _tab = i;
+        }),
         destinations: const [
           NavigationDestination(key: Key('tab-discover'), icon: Icon(Icons.local_fire_department_outlined), selectedIcon: Icon(Icons.local_fire_department, color: BakeColors.cherryRed), label: 'Discover'),
           NavigationDestination(key: Key('tab-chats'), icon: Icon(Icons.chat_bubble_outline), selectedIcon: Icon(Icons.chat_bubble, color: BakeColors.cherryRed), label: 'Chats'),

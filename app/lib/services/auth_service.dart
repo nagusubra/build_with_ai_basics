@@ -24,6 +24,19 @@ class AuthService {
       _auth.signInWithEmailAndPassword(email: email.trim(), password: password);
 
   Future<void> signOut() => _auth.signOut();
+
+  /// Signs out a saved session whose account no longer exists (deleted, or from another
+  /// backend). Network trouble is ignored — the session may be fine.
+  Future<void> dropStaleSession() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+    try {
+      await user.reload();
+    } on FirebaseAuthException catch (e) {
+      const stale = {'user-not-found', 'user-disabled', 'user-token-expired', 'invalid-user-token'};
+      if (stale.contains(e.code)) await _auth.signOut();
+    }
+  }
 }
 
 /// Turns Firebase's error codes into something a person can act on.

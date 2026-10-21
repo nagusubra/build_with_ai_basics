@@ -18,8 +18,8 @@ class DiscoverScreen extends StatefulWidget {
   final DiscoverService discover;
   final ProfileService profiles;
 
-  /// Shown when there's nobody new (the Recipes page).
-  final Widget whenEmpty;
+  /// Shown when there's nobody new (the Recipes page); given a way to check for new people.
+  final Widget Function(Future<void> Function() checkAgain) whenEmpty;
 
   @override
   State<DiscoverScreen> createState() => _DiscoverScreenState();
@@ -77,7 +77,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   Widget build(BuildContext context) {
     final people = _people;
     if (people == null) return const Center(child: CircularProgressIndicator(color: BakeColors.cherryRed));
-    if (_left <= 0) return RefreshIndicator(onRefresh: _load, child: widget.whenEmpty);
+    if (_left <= 0) return widget.whenEmpty(_load);
 
     return Column(
       children: [

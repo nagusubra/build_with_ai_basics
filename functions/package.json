@@ -16,7 +16,9 @@
     "seed:dev": "node scripts/seed-testers.mjs --match",
     "seed:real": "sh scripts/seed-real.sh",
     "check:chat": "firebase emulators:exec --only auth,firestore,functions \"node scripts/seed-testers.mjs --match && (node scripts/dev-replier.mjs &) && cd ../app && flutter test integration_test/chat_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\"",
-    "check:matching": "npm run build && firebase emulators:exec --only auth,firestore,functions \"node --test --test-concurrency=1 test/matching.emulator.test.mjs\""
+    "check:matching": "npm run build && firebase emulators:exec --only auth,firestore,functions \"node --test --test-concurrency=1 test/matching.emulator.test.mjs\"",
+    "check:recipes": "npm run build && firebase emulators:exec --only firestore \"node --test test/recipes.emulator.test.mjs\"",
+    "check:recipes-ui": "npm run build && firebase emulators:exec --only auth,firestore,functions,storage \"node scripts/seed-testers.mjs --match && cd ../app && flutter test integration_test/recipes_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\""
   },
   "dependencies": {
     "@google-cloud/firestore": "^9.3.1",
