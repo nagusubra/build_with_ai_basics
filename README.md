@@ -1,8 +1,20 @@
 # Build With AI: Basics
 
-Workspace for the Devpost Learn hackathon. The skill pack is installed. The app is not started.
+Workspace for the Devpost Learn hackathon. Our app is **BakeOut**, a food-first dating app for iPhone (Flutter in `app/`, Firebase and Cloud Functions in `functions/`). The plan lives in `devpost/`.
 
 **Deadline:** Monday, October 26, 2026, 5:00 pm Eastern Time.
+
+## Run BakeOut on your Mac and iPhone
+
+You need Xcode (signed in to your Apple ID under Xcode > Settings > Accounts), Flutter, and the Firebase CLI (`npm install -g firebase-tools`). Your Google account must be a member of the Firebase project; ask a teammate to add you under Project settings > Users and permissions.
+
+```sh
+firebase login
+sh app/scripts/setup.sh      # Firebase config + your own Apple signing (all git-ignored)
+cd app && flutter run --release
+```
+
+The setup script downloads the app's Firebase config and finds your Apple team, giving your copy its own bundle ID so it signs under your account. Run it once per Mac; `--refresh` redoes it. The first time the app is installed, trust your developer certificate on the iPhone under Settings > General > VPN & Device Management.
 
 ## Next session
 

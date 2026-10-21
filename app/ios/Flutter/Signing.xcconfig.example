@@ -1,4 +1,6 @@
-// Copy to Signing.xcconfig (git-ignored) and put your own Apple team ID here.
-// Find it in Xcode > Settings > Accounts, or in your Apple Development certificate.
+// Written for you by app/scripts/setup.sh; this is what it looks like. Git-ignored as Signing.xcconfig.
+// DEVELOPMENT_TEAM: your Apple team ID (Xcode > Settings > Accounts).
+// BAKEOUT_BUNDLE_ID: a bundle ID your team can own; the original com.bakeout.bakeout belongs to one team.
 DEVELOPMENT_TEAM = YOURTEAMID
 CODE_SIGN_STYLE = Automatic
+BAKEOUT_BUNDLE_ID = com.bakeout.bakeout.yourteamid
