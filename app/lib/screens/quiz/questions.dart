@@ -7,6 +7,16 @@ class QuizOption {
   final String emoji;
 }
 
+/// The emoji the quiz shows next to [label] (a diet, cuisine, and so on), if any.
+String? emojiFor(String label) {
+  for (final q in quizQuestions) {
+    for (final o in q.options) {
+      if (o.label.toLowerCase() == label.toLowerCase()) return o.emoji;
+    }
+  }
+  return null;
+}
+
 class QuizQuestion {
   const QuizQuestion({
     required this.field,

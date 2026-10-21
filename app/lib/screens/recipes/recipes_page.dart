@@ -11,10 +11,11 @@ import '../../widgets/mascot.dart';
 /// Shown when Discover has nobody new: recipes from the bundled library, picked for this person
 /// (`prd.md > Recipes`, `prd.md > Added at Final Review`). No network, no AI.
 class RecipesPage extends StatefulWidget {
-  const RecipesPage({super.key, required this.me, this.onCheckAgain});
+  const RecipesPage({super.key, required this.me, this.onCheckAgain, this.onEditFilters});
 
   final UserProfile me;
   final Future<void> Function()? onCheckAgain;
+  final VoidCallback? onEditFilters;
 
   @override
   State<RecipesPage> createState() => _RecipesPageState();
@@ -37,24 +38,42 @@ class _RecipesPageState extends State<RecipesPage> {
     final text = Theme.of(context).textTheme;
     final lib = _library;
     final wingman = Wingman(widget.me.cherryAvatar);
-    final recipes = lib?.selection(widget.me, page: _page) ?? const <Recipe>[];
+    final dish = lib?.dishOfTheDay(widget.me);
+    final recipes = (lib?.selection(widget.me, page: _page) ?? const <Recipe>[]).where((r) => r.id != dish?.id).toList();
+    final filtered = widget.me.filters.activeCount > 0;
     return RefreshIndicator(
       color: BakeColors.cherryRed,
       onRefresh: () async => widget.onCheckAgain?.call(),
       child: ListView(
         padding: const EdgeInsets.fromLTRB(18, 8, 18, 28),
         children: [
-          const Center(child: Mascot(MascotPose.duoCooking, size: 160)),
+          const Center(child: Mascot(MascotPose.duoCooking, size: 150)),
           Text('No one new right now', textAlign: TextAlign.center, style: text.headlineSmall),
           const SizedBox(height: 4),
           Text(
-            '${wingman.name} picked a few recipes for you while you wait. Pull down to check for new people.',
+            filtered
+                ? 'Your filters might be hiding people. ${wingman.name} picked a few recipes for you meanwhile.'
+                : '${wingman.name} picked a few recipes for you while you wait. Pull down to check for new people.',
             textAlign: TextAlign.center,
             style: text.bodyLarge?.copyWith(color: BakeColors.muted),
           ),
+          if (filtered && widget.onEditFilters != null)
+            Center(
+              child: TextButton.icon(
+                key: const Key('recipes-edit-filters'),
+                onPressed: widget.onEditFilters,
+                icon: const Icon(Icons.tune_rounded),
+                label: const Text('Change filters'),
+              ),
+            ),
           const SizedBox(height: 16),
           if (lib == null)
             const Padding(padding: EdgeInsets.all(30), child: Center(child: CircularProgressIndicator(color: BakeColors.cherryRed))),
+          if (dish != null) _DishOfTheDay(recipe: dish).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.97, 0.97)),
+          if (recipes.isNotEmpty) Padding(
+            padding: const EdgeInsets.only(top: 6, bottom: 10),
+            child: Text('More for you', style: text.titleLarge),
+          ),
           for (var i = 0; i < recipes.length; i++)
             RecipeTile(recipe: recipes[i]).animate(key: ValueKey('${recipes[i].id}-$_page')).fadeIn(delay: (60 * i).ms).moveY(begin: 8, end: 0),
           if (recipes.isNotEmpty)
@@ -65,6 +84,58 @@ class _RecipesPageState extends State<RecipesPage> {
               label: const Text('New ideas'),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _DishOfTheDay extends StatelessWidget {
+  const _DishOfTheDay({required this.recipe});
+
+  final Recipe recipe;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: BakeColors.softPink,
+        borderRadius: BorderRadius.circular(BakeShapes.cardRadius),
+        child: InkWell(
+          key: const Key('recipes-dish-of-the-day'),
+          borderRadius: BorderRadius.circular(BakeShapes.cardRadius),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => RecipeDetailScreen(recipe: recipe))),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('DISH OF THE DAY', style: text.labelLarge?.copyWith(color: BakeColors.deepCherry, letterSpacing: 1.2, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Text(recipe.emoji, style: const TextStyle(fontSize: 44)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(recipe.title, style: text.titleLarge),
+                          Text('${recipe.cuisine} · ⏱ ${recipe.minutes} min', style: text.bodyMedium?.copyWith(color: BakeColors.deepCherry)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                if (recipe.blurb.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(recipe.blurb, style: text.bodyLarge),
+                ],
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

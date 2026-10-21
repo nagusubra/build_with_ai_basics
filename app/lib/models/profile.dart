@@ -16,6 +16,7 @@ class UserProfile {
     this.quizDone = false,
     this.previewSeen = false,
     this.onboardingComplete = false,
+    this.filters = const DiscoverFilters(),
   });
 
   factory UserProfile.fromMap(String uid, Map<String, dynamic>? d) => UserProfile(
@@ -34,6 +35,7 @@ class UserProfile {
         quizDone: d?['quizDone'] as bool? ?? false,
         previewSeen: d?['previewSeen'] as bool? ?? false,
         onboardingComplete: d?['onboardingComplete'] as bool? ?? false,
+        filters: DiscoverFilters.fromMap((d?['filters'] as Map?)?.cast<String, dynamic>()),
       );
 
   final String uid;
@@ -60,6 +62,9 @@ class UserProfile {
   final bool previewSeen;
   final bool onboardingComplete;
 
+  /// Who this person wants to see in Discover, on top of the matching rules.
+  final DiscoverFilters filters;
+
   bool get hasBasics => name != null && age != null && gender != null && lookingFor != null;
 
   List<String> foodList(String key) => List<String>.from(food[key] as List? ?? const []);
@@ -67,6 +72,45 @@ class UserProfile {
     final v = food[key];
     return v is String && v.trim().isNotEmpty ? v : null;
   }
+}
+
+/// Discover filters (`spec.md > Final-Review Additions`). Empty lists mean "any".
+class DiscoverFilters {
+  const DiscoverFilters({this.foodTypes = const [], this.minAge = ageFloor, this.maxAge = ageCeiling, this.cities = const []});
+
+  factory DiscoverFilters.fromMap(Map<String, dynamic>? m) => DiscoverFilters(
+        foodTypes: List<String>.from(m?['foodTypes'] as List? ?? const []),
+        minAge: ((m?['minAge'] as num?)?.toInt() ?? ageFloor).clamp(ageFloor, ageCeiling),
+        maxAge: ((m?['maxAge'] as num?)?.toInt() ?? ageCeiling).clamp(ageFloor, ageCeiling),
+        cities: List<String>.from(m?['cities'] as List? ?? const []),
+      );
+
+  static const ageFloor = 18;
+
+  /// The top of the age slider, meaning "and older".
+  static const ageCeiling = 70;
+
+  final List<String> foodTypes;
+  final int minAge;
+  final int maxAge;
+  final List<String> cities;
+
+  int get activeCount =>
+      (foodTypes.isNotEmpty ? 1 : 0) + (minAge > ageFloor || maxAge < ageCeiling ? 1 : 0) + (cities.isNotEmpty ? 1 : 0);
+
+  Map<String, dynamic> toMap() => {'foodTypes': foodTypes, 'minAge': minAge, 'maxAge': maxAge, 'cities': cities};
+
+  /// Changes whenever the filters do; used to reload Discover.
+  String get signature => '${foodTypes.join(',')}|$minAge-$maxAge|${cities.join(',')}';
+}
+
+/// Whether [person] gets through [f].
+bool passesFilters(DiscoverFilters f, UserProfile person) {
+  if (f.foodTypes.isNotEmpty && !f.foodTypes.contains(person.foodText('foodType'))) return false;
+  final age = person.age;
+  if (age != null && (age < f.minAge || (f.maxAge < DiscoverFilters.ageCeiling && age > f.maxAge))) return false;
+  if (f.cities.isNotEmpty && !f.cities.contains(person.city)) return false;
+  return true;
 }
 
 /// Full years between [dateOfBirth] and [today].

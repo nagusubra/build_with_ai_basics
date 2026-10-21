@@ -47,7 +47,8 @@ class DiscoverService {
 
   final FirebaseFirestore _db;
 
-  /// Verified, onboarded people with the same goal whom I haven't liked, passed, or matched.
+  /// Verified, onboarded people with the same goal whom I haven't liked, passed, or matched,
+  /// and who get through my filters.
   Future<List<UserProfile>> candidates(UserProfile me) async {
     final results = await Future.wait([
       _db
@@ -68,7 +69,7 @@ class DiscoverService {
     return results[0]
         .docs
         .map((d) => UserProfile.fromMap(d.id, d.data()))
-        .where((p) => !seen.contains(p.uid) && compatible(me, p))
+        .where((p) => !seen.contains(p.uid) && compatible(me, p) && passesFilters(me.filters, p))
         .toList();
   }
 

@@ -46,7 +46,10 @@ void main() {
     // Basics: an under-18 birthday is refused, then an adult one is accepted.
     await _until(tester, find.byKey(const Key('basics-name')));
     await tester.enterText(find.byKey(const Key('basics-name')), 'Priya');
-    await tester.enterText(find.byKey(const Key('basics-city')), 'Glasgow');
+    await _tap(tester, find.byKey(const Key('basics-city')));
+    await _until(tester, find.byKey(const Key('city-search')));
+    await tester.enterText(find.byKey(const Key('city-search')), 'glas');
+    await _tap(tester, find.byKey(const Key('city-Glasgow, UK')));
     await _tap(tester, find.byKey(const Key('gender-Woman')));
     await _tap(tester, find.byKey(const Key('meet-Men')));
     await _tap(tester, find.byKey(const Key('looking-partner')));

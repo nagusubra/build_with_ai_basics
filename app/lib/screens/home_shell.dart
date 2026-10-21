@@ -13,6 +13,7 @@ import '../theme/colors.dart';
 import 'chat/chat_list_screen.dart';
 import 'chat/chat_screen.dart';
 import 'discover/discover_screen.dart';
+import 'discover/filters_sheet.dart';
 import 'match/match_moment_screen.dart';
 import 'profile/my_profile_screen.dart';
 import 'recipes/recipes_page.dart';
@@ -91,15 +92,39 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    final me = widget.me;
+    void editFilters() => showDiscoverFilters(context, me: me, profiles: widget.profiles);
+    final activeFilters = me.filters.activeCount;
     final pages = [
       Scaffold(
-        appBar: AppBar(title: const Text('Discover')),
+        appBar: AppBar(
+          title: const Text('Discover'),
+          actions: [
+            ActionChip(
+              key: const Key('discover-mode'),
+              label: Text(me.lookingFor == 'friends' ? '🤝 Friends' : '💞 Partner'),
+              onPressed: editFilters,
+            ),
+            IconButton(
+              key: const Key('discover-filters'),
+              tooltip: 'Filters',
+              onPressed: editFilters,
+              icon: Badge(
+                isLabelVisible: activeFilters > 0,
+                label: Text('$activeFilters'),
+                backgroundColor: BakeColors.cherryRed,
+                child: const Icon(Icons.tune_rounded),
+              ),
+            ),
+            const SizedBox(width: 6),
+          ],
+        ),
         body: DiscoverScreen(
           key: ValueKey(_discoverVisit),
-          me: widget.me,
+          me: me,
           discover: widget.discover,
           profiles: widget.profiles,
-          whenEmpty: (checkAgain) => RecipesPage(me: widget.me, onCheckAgain: checkAgain),
+          whenEmpty: (checkAgain) => RecipesPage(me: me, onCheckAgain: checkAgain, onEditFilters: editFilters),
         ),
       ),
       ChatListScreen(auth: widget.auth, chat: widget.chat, functions: widget.functions, myUid: widget.me.uid),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../data/cities.dart';
 import '../../models/profile.dart';
 import '../../services/profile_service.dart';
 import '../../theme/colors.dart';
+import '../../widgets/city_picker.dart';
 import '../../widgets/onboarding.dart';
 
 const genders = ['Man', 'Woman', 'Non-binary', 'Other'];
@@ -27,7 +29,7 @@ class BasicsScreen extends StatefulWidget {
 class _BasicsScreenState extends State<BasicsScreen> {
   final _form = GlobalKey<FormState>();
   late final _name = TextEditingController(text: widget.existing?.name);
-  late final _city = TextEditingController(text: widget.existing?.city);
+  late String? _city = cities.contains(widget.existing?.city) ? widget.existing?.city : null;
   DateTime? _dob;
   late String? _gender = widget.existing?.gender;
   late final Set<String> _meet = {...?widget.existing?.interestedIn};
@@ -48,7 +50,6 @@ class _BasicsScreenState extends State<BasicsScreen> {
   @override
   void dispose() {
     _name.dispose();
-    _city.dispose();
     super.dispose();
   }
 
@@ -68,6 +69,7 @@ class _BasicsScreenState extends State<BasicsScreen> {
     setState(() => _error = null);
     if (!_form.currentState!.validate()) return;
     if (_dob == null) return setState(() => _error = 'Add your date of birth.');
+    if (_city == null) return setState(() => _error = 'Pick your city from the list.');
     if (!isAdult(_dob!, DateTime.now())) {
       return setState(() => _error = 'BakeOut is for people aged 18 and over.');
     }
@@ -82,7 +84,7 @@ class _BasicsScreenState extends State<BasicsScreen> {
         dateOfBirth: _dob!,
         gender: _gender!,
         interestedIn: _meet.toList(),
-        city: _city.text,
+        city: _city!,
         lookingFor: _lookingFor!,
         keepCherry: widget.existing?.gender == _gender ? widget.existing?.cherryAvatar : null,
       );
@@ -130,12 +132,14 @@ class _BasicsScreenState extends State<BasicsScreen> {
                   : '${dob.day}/${dob.month}/${dob.year}  ·  ${ageOn(dob, DateTime.now())} years old'),
             ),
             const SizedBox(height: 12),
-            TextFormField(
+            OutlinedButton.icon(
               key: const Key('basics-city'),
-              controller: _city,
-              textCapitalization: TextCapitalization.words,
-              decoration: bakeField('City'),
-              validator: (v) => (v ?? '').trim().isEmpty ? 'Which city are you in?' : null,
+              onPressed: () async {
+                final picked = await pickCity(context);
+                if (picked != null) setState(() => _city = picked);
+              },
+              icon: const Icon(Icons.place_outlined),
+              label: Text(_city ?? 'City'),
             ),
             const SizedBox(height: 20),
             Text('I am', style: text.titleMedium),
