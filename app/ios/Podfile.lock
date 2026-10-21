@@ -25,25 +25,27 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
+  - TensorFlowLiteSwift (from `LocalPods/TensorFlowLiteSwift`)
   - tflite_flutter (from `.symlinks/plugins/tflite_flutter/ios`)
 
 SPEC REPOS:
   trunk:
     - TensorFlowLiteC
-    - TensorFlowLiteSwift
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
+  TensorFlowLiteSwift:
+    :path: LocalPods/TensorFlowLiteSwift
   tflite_flutter:
     :path: ".symlinks/plugins/tflite_flutter/ios"
 
 SPEC CHECKSUMS:
   Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   TensorFlowLiteC: 20785a69299185a379ba9852b6625f00afd7984a
-  TensorFlowLiteSwift: 3a4928286e9e35bdd3e17970f48e53c80d25e793
+  TensorFlowLiteSwift: 21a06962310107a406915621b47f27cc39324f97
   tflite_flutter: 64b192e11352fe36943ab6656e1d49207f1a5595
 
-PODFILE CHECKSUM: 07de65af562856e27e5951c84a3a6721564f5f7f
+PODFILE CHECKSUM: 22c8fa982a9d6d3780787ba25e6f65d2a6ead7bf
 
 COCOAPODS: 1.16.2

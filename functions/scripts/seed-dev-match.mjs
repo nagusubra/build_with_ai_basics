@@ -2,7 +2,8 @@
 // and Cherry can be built before Discover exists. Removed in slice 6.
 //
 // Emulators:  FIRESTORE_EMULATOR_HOST and FIREBASE_AUTH_EMULATOR_HOST set (emulators:exec does this).
-// Real project: needs Google application-default credentials and DEV_PASSWORD set.
+// Real project: DEV_PASSWORD and GOOGLE_OAUTH_ACCESS_TOKEN (e.g. from `gcloud auth print-access-token`)
+// set; see `npm run seed:real`, which keeps the password in the git-ignored .dev-testers.local.
 import { initializeApp } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
@@ -58,12 +59,51 @@ export const testers = [
   },
 ];
 
-initializeApp({ projectId: process.env.GCLOUD_PROJECT ?? 'studio-1391080484-497cf' });
-const auth = getAuth();
-const db = getFirestore();
+const projectId = process.env.GCLOUD_PROJECT ?? 'studio-1391080484-497cf';
+const token = process.env.GOOGLE_OAUTH_ACCESS_TOKEN;
+if (!usingEmulators && !token) {
+  console.error('Set GOOGLE_OAUTH_ACCESS_TOKEN to seed the real project (npm run seed:real does this).');
+  process.exit(1);
+}
+
+// The real project uses your gcloud login: Firestore via an OAuth client, accounts via the
+// Identity Toolkit REST API. The emulators use the Admin SDK directly.
+let db;
+let accountUid;
+if (usingEmulators) {
+  initializeApp({ projectId });
+  db = getFirestore();
+  const auth = getAuth();
+  accountUid = async (email, name) =>
+    (await auth.getUserByEmail(email).catch(() => auth.createUser({ email, password, displayName: name }))).uid;
+} else {
+  const { Firestore } = await import('@google-cloud/firestore');
+  const { OAuth2Client } = await import('google-auth-library');
+  const authClient = new OAuth2Client();
+  authClient.setCredentials({ access_token: token });
+  db = new Firestore({ projectId, authClient });
+
+  const base = `https://identitytoolkit.googleapis.com/v1/projects/${projectId}`;
+  const headers = { Authorization: `Bearer ${token}`, 'x-goog-user-project': projectId, 'Content-Type': 'application/json' };
+  const call = async (path, body) => {
+    const res = await fetch(`${base}/${path}`, { method: 'POST', headers, body: JSON.stringify(body) });
+    const json = await res.json();
+    if (!res.ok) throw new Error(`${path}: ${json.error?.message ?? res.status}`);
+    return json;
+  };
+  accountUid = async (email, name) => {
+    const found = await call('accounts:lookup', { email: [email] });
+    const existing = found.users?.[0]?.localId;
+    if (existing) {
+      await call('accounts:update', { localId: existing, password, displayName: name });
+      return existing;
+    }
+    return (await call('accounts', { email, password, displayName: name })).localId;
+  };
+}
 
 async function ensureUser({ email, name, gender, cherry, food }) {
-  const user = await auth.getUserByEmail(email).catch(() => auth.createUser({ email, password, displayName: name }));
+  const user = { uid: await accountUid(email, name) };
   await db
     .doc(`users/${user.uid}`)
     .set({ name, gender, cherryAvatar: cherry, food, devSample: true, createdAt: FieldValue.serverTimestamp() }, { merge: true });

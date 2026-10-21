@@ -6,6 +6,8 @@
 .env.*
 !.env.example
 .secret.local
+.dev-testers.local
+app/ios/Flutter/Signing.xcconfig
 
 .DS_Store
 node_modules/
