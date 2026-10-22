@@ -1,10 +1,9 @@
-import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:flutter_litert/flutter_litert.dart';
 import 'package:image/image.dart' as img;
-import 'package:tflite_flutter/tflite_flutter.dart';
 
 import 'face_math.dart';
 import 'face_vision.dart';
@@ -35,19 +34,28 @@ class VerificationService {
 
   Interpreter? _interpreter;
 
-  Future<Interpreter> _model() async => _interpreter ??= await Interpreter.fromAsset(_modelAsset);
+  Future<Interpreter> _model() async {
+    if (_interpreter != null) return _interpreter!;
+    // A no-op on iOS and Android; loads the self-hosted TFLite.js runtime in the browser.
+    await initializeWeb(
+      tfJsScriptUrl: 'tflite/tf-core.js',
+      tfBackendScriptUrls: ['tflite/tf-backend-cpu.js'],
+      tfliteScriptUrl: 'tflite/tf-tflite.min.js',
+    );
+    return _interpreter = await Interpreter.fromAsset(_modelAsset);
+  }
 
   Future<FaceMatchResult> compare({
-    required String profilePhotoPath,
-    required String selfiePath,
+    required Uint8List profilePhotoBytes,
+    required Uint8List selfieBytes,
   }) async {
-    final photo = await _faceTensor(profilePhotoPath, requireSingleFace: false);
+    final photo = await _faceTensor(profilePhotoBytes, requireSingleFace: false);
     if (photo.problem != null) {
       return FaceMatchResult.failed(
         photo.problem == FaceProblem.unreadableImage ? FaceProblem.unreadableImage : FaceProblem.noFaceInPhoto,
       );
     }
-    final selfie = await _faceTensor(selfiePath, requireSingleFace: true);
+    final selfie = await _faceTensor(selfieBytes, requireSingleFace: true);
     if (selfie.problem != null) {
       return FaceMatchResult.failed(
         selfie.problem == FaceProblem.noFaceInPhoto ? FaceProblem.noFaceInSelfie : selfie.problem!,
@@ -70,22 +78,16 @@ class VerificationService {
   /// Finds the face, aligns it by the eyes, and packs it as the model expects:
   /// channels-first RGB, 112×112, values 0–1.
   Future<({Float32List? tensor, FaceProblem? problem})> _faceTensor(
-    String path, {
+    Uint8List bytes, {
     required bool requireSingleFace,
   }) async {
-    final decoded = img.decodeImage(await File(path).readAsBytes());
+    final decoded = img.decodeImage(bytes);
     if (decoded == null) return (tensor: null, problem: FaceProblem.unreadableImage);
     final upright = img.bakeOrientation(decoded);
 
     // Detect on the upright copy so face coordinates and pixels agree.
-    final uprightFile = File('${Directory.systemTemp.path}/bakeout_face_${DateTime.now().microsecondsSinceEpoch}.jpg');
-    await uprightFile.writeAsBytes(img.encodeJpg(upright, quality: 92));
-    final List<DetectedFace> faces;
-    try {
-      faces = await FaceVision.detectInFile(uprightFile.path);
-    } finally {
-      await uprightFile.delete();
-    }
+    final uprightBytes = img.encodeJpg(upright, quality: 92);
+    final faces = await FaceVision.detectInBytes(uprightBytes);
 
     if (faces.isEmpty) return (tensor: null, problem: FaceProblem.noFaceInPhoto);
     if (requireSingleFace && faces.length > 1) {

@@ -11,6 +11,7 @@ app/ios/Flutter/Signing.xcconfig
 
 # Firebase app config, generated per person by app/scripts/setup.sh.
 app/ios/Runner/GoogleService-Info.plist
+app/android/app/google-services.json
 app/lib/firebase_options.dart
 
 .DS_Store

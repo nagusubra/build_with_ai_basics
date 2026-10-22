@@ -1,12 +1,10 @@
-import 'dart:io';
-
-import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../models/profile.dart';
+import '../../services/camera_support.dart';
 import '../../services/profile_service.dart';
 import '../../services/verification_service.dart';
 import '../../theme/colors.dart';
@@ -41,8 +39,8 @@ class _VerifyScreenState extends State<VerifyScreen> {
   @override
   void initState() {
     super.initState();
-    availableCameras().then((c) {
-      if (mounted) setState(() => _hasCamera = c.isNotEmpty);
+    cameraAvailable().then((ok) {
+      if (mounted) setState(() => _hasCamera = ok);
     }).catchError((_) {
       if (mounted) setState(() => _hasCamera = false);
     });
@@ -57,12 +55,11 @@ class _VerifyScreenState extends State<VerifyScreen> {
   MascotPose get _tryAgainPose => Wingman(widget.profile.cherryAvatar).tryAgain;
   MascotPose get _cheerPose => Wingman(widget.profile.cherryAvatar).cheer;
 
-  Future<void> _onSelfie(String selfiePath) async {
+  Future<void> _onSelfie(Uint8List selfie) async {
     setState(() => _stage = _Stage.checking);
-    File? main;
     try {
-      main = await widget.profiles.downloadPhoto(widget.profile.photos.first);
-      final result = await _verifier.compare(profilePhotoPath: main.path, selfiePath: selfiePath);
+      final main = await widget.profiles.downloadPhoto(widget.profile.photos.first);
+      final result = await _verifier.compare(profilePhotoBytes: main, selfieBytes: selfie);
       if (result.matched) {
         setState(() => _stage = _Stage.passed);
         HapticFeedback.heavyImpact();
@@ -86,9 +83,6 @@ class _VerifyScreenState extends State<VerifyScreen> {
         _stage = _Stage.failed;
         _reason = 'Something went wrong while checking. Please try again.';
       });
-    } finally {
-      await File(selfiePath).delete().catchError((_) => File(selfiePath));
-      await main?.delete().catchError((_) => main!);
     }
   }
 

@@ -46,7 +46,10 @@ void main() {
       for (var j = i + 1; j < names.length; j++) {
         final a = names[i], b = names[j];
         final same = a.split('_').first == b.split('_').first;
-        final result = await service.compare(profilePhotoPath: photos[a]!, selfiePath: photos[b]!);
+        final result = await service.compare(
+          profilePhotoBytes: await File(photos[a]!).readAsBytes(),
+          selfieBytes: await File(photos[b]!).readAsBytes(),
+        );
         expect(result.problem, isNull, reason: '$a vs $b: ${result.problem}');
         report.writeln('${same ? 'SAME' : 'diff'}  $a vs $b  ${result.similarity!.toStringAsFixed(3)}');
         if (result.matched != same) wrong.add('$a vs $b');

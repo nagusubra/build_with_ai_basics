@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,18 +20,34 @@ class PhotosScreen extends StatefulWidget {
   State<PhotosScreen> createState() => _PhotosScreenState();
 }
 
+/// A picked photo, kept as bytes so the same screen works on iOS, Android and the web.
+class _Picked {
+  _Picked(this.file, this.bytes);
+
+  final XFile file;
+  final Uint8List bytes;
+}
+
 class _PhotosScreenState extends State<PhotosScreen> {
   static const _max = 4;
   final _picker = ImagePicker();
-  final _picked = <File>[];
+  final _picked = <_Picked>[];
   bool _busy = false;
   String? _error;
 
   Future<void> _add() async {
     final files = await _picker.pickMultiImage(maxWidth: 1440, imageQuality: 85, limit: _max - _picked.length);
     if (files.isEmpty) return;
-    setState(() => _picked.addAll(files.take(_max - _picked.length).map((f) => File(f.path))));
+    final room = _max - _picked.length;
+    final added = <_Picked>[];
+    for (final file in files.take(room)) {
+      added.add(_Picked(file, await file.readAsBytes()));
+    }
+    if (!mounted) return;
+    setState(() => _picked.addAll(added));
   }
+
+  void _remove(int i) => setState(() => _picked.removeAt(i));
 
   void _makeMain(int i) => setState(() => _picked.insert(0, _picked.removeAt(i)));
 
@@ -41,7 +57,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
       _error = null;
     });
     try {
-      await widget.profiles.uploadPhotos(widget.profile.uid, _picked);
+      await widget.profiles.uploadPhotos(widget.profile.uid, _picked.map((p) => p.file).toList());
       widget.onDone?.call();
     } catch (_) {
       if (mounted) setState(() => _error = 'Upload failed — check your connection and try again.');
@@ -83,7 +99,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.file(_picked[i], fit: BoxFit.cover),
+                        Image.memory(_picked[i].bytes, fit: BoxFit.cover),
                         if (i == 0)
                           const Positioned(
                             left: 8,
@@ -94,7 +110,7 @@ class _PhotosScreenState extends State<PhotosScreen> {
                           right: 4,
                           top: 4,
                           child: IconButton.filledTonal(
-                            onPressed: () => setState(() => _picked.removeAt(i)),
+                            onPressed: () => _remove(i),
                             icon: const Icon(Icons.close, size: 18),
                           ),
                         ),

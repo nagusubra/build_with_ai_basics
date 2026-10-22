@@ -1,7 +1,8 @@
-import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../models/profile.dart';
@@ -67,12 +68,15 @@ class ProfileService {
   Future<void> markQuizDone(String uid) => _user(uid).update({'quizDone': true});
 
   /// Uploads profile photos in order (first = main) and replaces the list on the profile.
-  Future<List<String>> uploadPhotos(String uid, List<File> files) async {
+  Future<List<String>> uploadPhotos(String uid, List<XFile> files) async {
     final stamp = DateTime.now().millisecondsSinceEpoch;
     final paths = <String>[];
     for (var i = 0; i < files.length; i++) {
       final path = 'users/$uid/photos/${stamp}_$i.jpg';
-      await _storage.ref(path).putFile(files[i], SettableMetadata(contentType: 'image/jpeg'));
+      await _storage.ref(path).putData(
+        await files[i].readAsBytes(),
+        SettableMetadata(contentType: _contentType(files[i])),
+      );
       paths.add(path);
     }
     final old = (await load(uid)).photos;
@@ -84,13 +88,20 @@ class ProfileService {
     return paths;
   }
 
+  /// Storage only accepts images, so keep the real type when the browser or the
+  /// picker tells us one, and fall back to JPEG.
+  String _contentType(XFile file) {
+    final type = file.mimeType;
+    if (type != null && type.startsWith('image/')) return type;
+    return 'image/jpeg';
+  }
+
   Future<String> photoUrl(String path) => _urls[path] ??= _storage.ref(path).getDownloadURL();
 
-  /// The main photo as a local file, for comparing with the selfie on the phone.
-  Future<File> downloadPhoto(String path) async {
-    final file = File('${Directory.systemTemp.path}/bakeout_main_${path.hashCode}.jpg');
-    await _storage.ref(path).writeToFile(file);
-    return file;
+  /// The main photo as bytes, for comparing with the selfie on the device.
+  Future<Uint8List> downloadPhoto(String path) async {
+    final data = await _storage.ref(path).getData();
+    return data ?? Uint8List(0);
   }
 
   Future<void> markVerified(String uid) =>

@@ -33,4 +33,19 @@ void main() {
     expect(face.leftEyeOpen, isNull);
     expect(face.yaw, isNull);
   });
+
+  test('an openness the backend measured itself wins over the raw ratio', () {
+    final face = DetectedFace.fromChannel({
+      'x': 0.0,
+      'y': 0.0,
+      'width': 1.0,
+      'height': 1.0,
+      'leftEyeOpen': 0.9,
+      'rightEyeOpen': 0.1,
+      'leftEyeRatio': openEyeRatio,
+      'rightEyeRatio': closedEyeRatio,
+    });
+    expect(face.leftEyeOpen, 0.9);
+    expect(face.rightEyeOpen, 0.1);
+  });
 }
