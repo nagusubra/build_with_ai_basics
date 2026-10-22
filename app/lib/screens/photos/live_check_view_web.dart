@@ -62,7 +62,6 @@ class LiveCheckView extends StatefulWidget {
 
 class _LiveCheckViewState extends State<LiveCheckView> {
   final _tracker = LivenessTracker();
-  bool _busy = false;
   bool _capturing = false;
   String? _error;
 
@@ -83,36 +82,49 @@ class _LiveCheckViewState extends State<LiveCheckView> {
   }
 
   void _onFrame(JSString payload) {
-    if (_busy || _capturing || !mounted) return;
-    _busy = true;
-    try {
-      final decoded = jsonDecode(payload.toDart) as List<dynamic>;
-      final faces = decoded
-          .map((e) => DetectedFace.fromChannel((e as Map<dynamic, dynamic>).cast<Object?, Object?>()))
-          .toList();
-      final face = faces.length == 1 ? faces.first : null;
-      _tracker.update(FaceSnapshot(
-        faceCount: faces.length,
-        leftEyeOpen: face?.leftEyeOpen,
-        rightEyeOpen: face?.rightEyeOpen,
-        headYaw: face?.yaw,
-      ));
-      setState(() {});
-      if (_tracker.passed) _capture();
-    } finally {
-      _busy = false;
-    }
+    if (_capturing || !mounted) return;
+    final before = _visibleState;
+    final decoded = jsonDecode(payload.toDart) as List<dynamic>;
+    final faces = decoded
+        .map((e) => DetectedFace.fromChannel((e as Map<dynamic, dynamic>).cast<Object?, Object?>()))
+        .toList();
+    final face = faces.length == 1 ? faces.first : null;
+    _tracker.update(FaceSnapshot(
+      faceCount: faces.length,
+      leftEyeOpen: face?.leftEyeOpen,
+      rightEyeOpen: face?.rightEyeOpen,
+      headYaw: face?.yaw,
+    ));
+    // Frames arrive many times a second, so only rebuild when the screen changes.
+    if (_visibleState != before) setState(() {});
+    if (_tracker.passed) _capture();
   }
+
+  String get _visibleState => '${_tracker.prompt}|${_tracker.warning}|${_tracker.progress}|$_capturing';
 
   Future<void> _capture() async {
     if (_capturing) return;
-    _capturing = true;
+    setState(() => _capturing = true);
     try {
       final base64 = (await _visionCaptureStill().toDart)!;
       widget.onCaptured(base64Decode(base64.toDart));
     } catch (e) {
-      if (mounted) setState(() => _error = 'That photo could not be taken. Please try again.');
+      if (!mounted) return;
+      setState(() {
+        _capturing = false;
+        _error = 'That photo could not be taken. Please try again.';
+      });
     }
+  }
+
+  Future<void> _retry() async {
+    _visionStopCamera();
+    _tracker.reset();
+    setState(() {
+      _error = null;
+      _capturing = false;
+    });
+    await _start();
   }
 
   @override
@@ -127,7 +139,14 @@ class _LiveCheckViewState extends State<LiveCheckView> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text(_error!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_error!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 16),
+              FilledButton(onPressed: _retry, child: const Text('Try again')),
+            ],
+          ),
         ),
       );
     }

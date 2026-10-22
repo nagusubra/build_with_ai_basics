@@ -17,9 +17,11 @@ abstract final class FaceVision {
   static Future<List<DetectedFace>> detectInBytes(Uint8List bytes) =>
       backend.detectInBytes(bytes);
 
-  /// Detects faces in a live camera frame that is already upright.
+  /// Detects faces in a live camera frame.
   ///
   /// Not available on the web, where frames come from the browser camera instead.
-  static Future<List<DetectedFace>> detectInFrame(CameraImage frame) =>
-      backend.detectInFrame(frame);
+  /// Android hands over frames in the sensor's own orientation, so [rotationDegrees]
+  /// says how far to turn the frame upright. iOS frames already are.
+  static Future<List<DetectedFace>> detectInFrame(CameraImage frame, {int rotationDegrees = 0}) =>
+      backend.detectInFrame(frame, rotationDegrees: rotationDegrees);
 }

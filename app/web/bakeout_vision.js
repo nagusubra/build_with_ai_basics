@@ -25,6 +25,7 @@
     onFrame: null,
     running: false,
     lastVideoTime: -1,
+    lastDetect: 0,
     loading: null,
   };
 
@@ -83,6 +84,11 @@
       .then(function (made) {
         state.imageLandmarker = made[0];
         state.videoLandmarker = made[1];
+      })
+      .catch(function (error) {
+        // Forget the failed attempt so a later try can start clean.
+        state.loading = null;
+        throw error;
       });
     return state.loading;
   }
@@ -166,9 +172,10 @@
   /** Head yaw in degrees, taken from the transformation matrix MediaPipe returns. */
   function yawFrom(matrix) {
     if (!matrix || !matrix.data || matrix.data.length < 16) return 0;
+    // MediaPipe hands the matrix over column-major: d[0..2] is the first column,
+    // so d[2] is the lower-left term a yaw rotation puts its sine into.
     var d = matrix.data;
-    var r00 = d[0], r10 = d[4], r20 = d[8];
-    var yaw = Math.atan2(-r20, Math.sqrt(r00 * r00 + r10 * r10));
+    var yaw = Math.atan2(-d[2], Math.sqrt(d[0] * d[0] + d[1] * d[1]));
     return yaw * 180 / Math.PI;
   }
 
@@ -222,6 +229,8 @@
 
   /** Opens the front camera and streams detected faces to the callback. */
   function startCamera(video, onFrame) {
+    // Leaving and re-entering the check would otherwise leave the old camera running.
+    stopCamera();
     return init().then(function () {
       state.video = video;
       state.onFrame = onFrame;
@@ -241,7 +250,12 @@
       return video.play().then(function () {
         state.running = true;
         state.lastVideoTime = -1;
+        state.lastDetect = 0;
         requestAnimationFrame(loop);
+      }, function (error) {
+        // Don't leave the camera light on when playback is refused.
+        stopCamera();
+        throw error;
       });
     });
   }
@@ -252,10 +266,14 @@
     var video = state.video;
     if (!video || video.readyState < 2 || !state.videoLandmarker) return;
     if (video.currentTime === state.lastVideoTime) return;
+    // Reading every frame pegs the main thread on machines without a GPU delegate.
+    var now = performance.now();
+    if (now - state.lastDetect < 40) return;
+    state.lastDetect = now;
     state.lastVideoTime = video.currentTime;
     var result;
     try {
-      result = state.videoLandmarker.detectForVideo(video, performance.now());
+      result = state.videoLandmarker.detectForVideo(video, now);
     } catch (e) {
       return;
     }
@@ -274,7 +292,10 @@
       state.stream.getTracks().forEach(function (track) { track.stop(); });
       state.stream = null;
     }
-    if (state.video) state.video.srcObject = null;
+    if (state.video) {
+      state.video.srcObject = null;
+      state.video = null;
+    }
   }
 
   /** One still frame from the running camera, as base64 JPEG. */
@@ -287,11 +308,15 @@
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
       canvas.toBlob(function (blob) {
+        if (!blob) {
+          reject(new Error('Could not read the camera frame'));
+          return;
+        }
         blob.arrayBuffer().then(function (buffer) {
           resolve(bytesToBase64(new Uint8Array(buffer)));
-        });
+        }, reject);
       }, 'image/jpeg', 0.92);
     });
   }

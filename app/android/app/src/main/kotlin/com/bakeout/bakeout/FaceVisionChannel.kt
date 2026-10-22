@@ -61,16 +61,19 @@ class FaceVisionChannel(messenger: BinaryMessenger) : MethodChannel.MethodCallHa
                 val bytes = call.argument<ByteArray>("bytes")
                 val width = call.argument<Int>("width")
                 val height = call.argument<Int>("height")
+                val rotation = call.argument<Int>("rotationDegrees") ?: 0
                 if (bytes == null || width == null || height == null) {
                     result.error("bad_arguments", "Missing frame data", null)
                     return
                 }
-                // The camera plugin hands over a single tightly packed NV21 plane on Android.
+                // The camera plugin hands over a single tightly packed NV21 plane on
+                // Android, still in the sensor's orientation, so the frame is turned
+                // upright by the rotation the Dart side worked out.
                 val image = InputImage.fromByteBuffer(
                     ByteBuffer.wrap(bytes),
                     width,
                     height,
-                    0,
+                    rotation,
                     InputImage.IMAGE_FORMAT_NV21
                 )
                 detect(image, result)

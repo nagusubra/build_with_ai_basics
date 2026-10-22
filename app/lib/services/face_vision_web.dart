@@ -38,7 +38,7 @@ Future<List<DetectedFace>> detectInBytes(Uint8List bytes) async {
 }
 
 /// The browser reads camera frames itself, so there is no Dart-side frame to pass.
-Future<List<DetectedFace>> detectInFrame(CameraImage frame) =>
+Future<List<DetectedFace>> detectInFrame(CameraImage frame, {int rotationDegrees = 0}) =>
     throw UnsupportedError('Live frames on the web come from the browser camera bridge.');
 
 /// MediaPipe measures the eye opening on its own scale, so it is mapped onto the

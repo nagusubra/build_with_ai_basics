@@ -23,10 +23,11 @@ Future<List<DetectedFace>> detectInBytes(Uint8List bytes) async {
   }
 }
 
-/// Expects a camera frame that is already upright.
+/// Expects a camera frame in the sensor's orientation.
 ///
-/// iOS hands over BGRA; Android hands over NV21, so the format travels with the bytes.
-Future<List<DetectedFace>> detectInFrame(CameraImage frame) {
+/// iOS hands over BGRA and its channel treats frames as upright; Android hands
+/// over NV21, rotated by [rotationDegrees] from upright, so both travel with the bytes.
+Future<List<DetectedFace>> detectInFrame(CameraImage frame, {int rotationDegrees = 0}) {
   final plane = frame.planes.first;
   return _detect('detectInFrame', {
     'bytes': plane.bytes,
@@ -34,6 +35,7 @@ Future<List<DetectedFace>> detectInFrame(CameraImage frame) {
     'height': frame.height,
     'bytesPerRow': plane.bytesPerRow,
     'format': Platform.isAndroid ? 'nv21' : 'bgra',
+    'rotationDegrees': rotationDegrees,
   });
 }
 

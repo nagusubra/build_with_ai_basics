@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../services/face_vision.dart';
+import '../../services/frame_rotation.dart';
 import '../../services/liveness_tracker.dart';
 import '../../theme/colors.dart';
 
@@ -68,11 +69,22 @@ class _LiveCheckViewState extends State<LiveCheckView> {
     }
   }
 
+  /// How far Android has to turn the raw frame to make it upright.
+  int _frameRotation(CameraController controller) => uprightRotation(
+        sensorOrientation: controller.description.sensorOrientation,
+        orientation: controller.value.deviceOrientation,
+        android: Platform.isAndroid,
+      );
+
   Future<void> _onFrame(CameraImage frame) async {
+    // Frames keep arriving while one is being read, so late ones are skipped.
     if (_busy || _capturing) return;
     _busy = true;
     try {
-      final faces = await FaceVision.detectInFrame(frame);
+      final camera = _camera;
+      if (camera == null) return;
+      final before = _visibleState;
+      final faces = await FaceVision.detectInFrame(frame, rotationDegrees: _frameRotation(camera));
       final face = faces.length == 1 ? faces.first : null;
       _tracker.update(FaceSnapshot(
         faceCount: faces.length,
@@ -81,24 +93,51 @@ class _LiveCheckViewState extends State<LiveCheckView> {
         headYaw: face?.yaw,
       ));
       if (!mounted) return;
-      setState(() {});
+      // Frames arrive many times a second, so only rebuild when the screen changes.
+      if (_visibleState != before) setState(() {});
       if (_tracker.passed) await _capture();
     } finally {
       _busy = false;
     }
   }
 
+  String get _visibleState => '${_tracker.prompt}|${_tracker.warning}|${_tracker.progress}|$_capturing';
+
   Future<void> _capture() async {
     final camera = _camera;
     if (camera == null || _capturing) return;
-    _capturing = true;
-    await camera.stopImageStream();
-    final still = await camera.takePicture();
-    if (!mounted) {
-      await File(still.path).delete().catchError((_) => File(still.path));
-      return;
+    setState(() => _capturing = true);
+    try {
+      await camera.stopImageStream();
+      final still = await camera.takePicture();
+      final bytes = await still.readAsBytes();
+      // The selfie is compared in memory, so the temp file goes right away.
+      try {
+        await File(still.path).delete();
+      } catch (_) {
+        // A leftover temp file is not worth failing the check over.
+      }
+      if (!mounted) return;
+      widget.onCaptured(bytes);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _capturing = false;
+        _error = 'That photo could not be taken. Please try again.';
+      });
     }
-    widget.onCaptured(await still.readAsBytes());
+  }
+
+  Future<void> _retry() async {
+    final old = _camera;
+    _camera = null;
+    _tracker.reset();
+    setState(() {
+      _error = null;
+      _capturing = false;
+    });
+    await old?.dispose();
+    await _start();
   }
 
   @override
@@ -113,7 +152,14 @@ class _LiveCheckViewState extends State<LiveCheckView> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text(_error!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_error!, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 16),
+              FilledButton(onPressed: _retry, child: const Text('Try again')),
+            ],
+          ),
         ),
       );
     }
