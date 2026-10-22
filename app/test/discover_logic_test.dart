@@ -5,7 +5,32 @@ import 'package:flutter_test/flutter_test.dart';
 UserProfile _p(String uid, {String gender = 'Woman', List<String> meet = const ['Men'], String lookingFor = 'partner', Map<String, dynamic> food = const {}}) =>
     UserProfile.fromMap(uid, {'gender': gender, 'interestedIn': meet, 'lookingFor': lookingFor, 'food': food});
 
+void _likeBackTests() {
+  group('like back', () {
+    UserProfile person(String uid, {bool verified = true, bool done = true, String goal = 'partner', String gender = 'Woman'}) =>
+        UserProfile.fromMap(uid, {
+          'gender': gender,
+          'interestedIn': ['Everyone'],
+          'lookingFor': goal,
+          'verified': verified,
+          'onboardingComplete': done,
+        });
+    final me = person('me', gender: 'Man');
+
+    test('a verified, onboarded liker with the same goal can be liked back', () {
+      expect(canLikeBack(me, person('a')), isTrue);
+    });
+
+    test('not if they switched goal, lost their verified badge, or never finished', () {
+      expect(canLikeBack(me, person('a', goal: 'friends')), isFalse);
+      expect(canLikeBack(me, person('a', verified: false)), isFalse);
+      expect(canLikeBack(me, person('a', done: false)), isFalse);
+    });
+  });
+}
+
 void main() {
+  _likeBackTests();
   group('who appears in Discover', () {
     final ana = _p('ana', gender: 'Woman', meet: ['Men']);
     final ben = _p('ben', gender: 'Man', meet: ['Women']);

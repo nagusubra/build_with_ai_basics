@@ -138,6 +138,12 @@ await db.recursiveDelete(db.doc(`matches/${matchId}`));
 for (const [a, b] of [[one, two], [two, one]]) {
   await db.doc(`likes/${a}_${b}`).delete();
   await db.doc(`users/${a}/passes/${b}`).delete();
+  await db.doc(`users/${a}/likedBy/${b}`).delete();
+}
+
+// --two-likes-one: only Tester Two likes Tester One, so Tester One gets "Tester Two liked you".
+if (process.argv.includes('--two-likes-one')) {
+  await db.doc(`likes/${two}_${one}`).set({ from: two, to: one, createdAt: FieldValue.serverTimestamp() });
 }
 
 // --match: the testers like each other, so the real matching function (onLikeCreated) creates

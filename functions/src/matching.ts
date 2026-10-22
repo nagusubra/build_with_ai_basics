@@ -54,8 +54,35 @@ export async function matchIfMutual(db: Firestore, from: string, to: string, coi
   return created ? id : null;
 }
 
+/**
+ * A like either completes a match, or — when it's one-sided — tells the other person who liked
+ * them (`prd.md > Added at Final Review`), at `users/{to}/likedBy/{from}`, readable only by them.
+ * Not sent if they already passed on the liker or are looking for something different.
+ */
+export async function handleLike(db: Firestore, from: string, to: string, coin = () => Math.random() < 0.5) {
+  if (!from || !to || from === to) return { matchId: null, told: false };
+  const matchId = await matchIfMutual(db, from, to, coin);
+  const [reverse, passed, fromDoc, toDoc] = await Promise.all([
+    db.doc(`likes/${to}_${from}`).get(),
+    db.doc(`users/${to}/passes/${from}`).get(),
+    db.doc(`users/${from}`).get(),
+    db.doc(`users/${to}`).get(),
+  ]);
+  if (reverse.exists) {
+    await Promise.all([
+      db.doc(`users/${to}/likedBy/${from}`).delete(),
+      db.doc(`users/${from}/likedBy/${to}`).delete(),
+    ]);
+    return { matchId, told: false };
+  }
+  const sameGoal = !!fromDoc.get('lookingFor') && fromDoc.get('lookingFor') === toDoc.get('lookingFor');
+  if (passed.exists || !sameGoal || !toDoc.exists) return { matchId: null, told: false };
+  await db.doc(`users/${to}/likedBy/${from}`).set({ from, createdAt: FieldValue.serverTimestamp() });
+  return { matchId: null, told: true };
+}
+
 export const onLikeCreated = onDocumentCreated('likes/{likeId}', async (event) => {
   const data = event.data?.data();
   if (!data) return;
-  await matchIfMutual(getFirestore(), data.from, data.to);
+  await handleLike(getFirestore(), data.from, data.to);
 });

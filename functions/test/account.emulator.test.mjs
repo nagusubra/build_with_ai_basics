@@ -28,16 +28,22 @@ test('deleting an account removes everything belonging to it, and nothing of any
   await db.doc(`likes/${leaving}_${staying}`).set({ from: leaving, to: staying });
   await db.doc(`likes/${staying}_${leaving}`).set({ from: staying, to: leaving });
   await db.doc(`likes/${staying}_${third}`).set({ from: staying, to: third });
+  await db.doc(`likes/${leaving}_${third}`).set({ from: leaving, to: third });
+  await db.doc(`users/${third}/likedBy/${leaving}`).set({ from: leaving });
+  await db.doc(`users/${third}/likedBy/${staying}`).set({ from: staying });
+  await db.doc(`users/${leaving}/likedBy/${third}`).set({ from: third });
   await db.doc(`matches/${matchId}`).set({ users: [leaving, staying].sort() });
   await db.doc(`matches/${matchId}/messages/m1`).set({ sender: leaving, text: 'hi' });
   await bucket.file(`users/${leaving}/photos/1.jpg`).save(Buffer.from([0xff, 0xd8]), { contentType: 'image/jpeg' });
   await bucket.file(`users/${staying}/photos/1.jpg`).save(Buffer.from([0xff, 0xd8]), { contentType: 'image/jpeg' });
 
   const removed = await deleteEverything(db, bucket, auth, leaving);
-  assert.deepEqual(removed, { matches: 1, likes: 2 });
+  assert.deepEqual(removed, { matches: 1, likes: 3 });
 
   assert.equal((await db.doc(`users/${leaving}`).get()).exists, false);
-  for (const sub of ['private', 'passes', 'recipes']) {
+  assert.equal((await db.doc(`users/${third}/likedBy/${leaving}`).get()).exists, false, 'their like notice to others is gone');
+  assert.equal((await db.doc(`users/${third}/likedBy/${staying}`).get()).exists, true, "other people's like notices stay");
+  for (const sub of ['private', 'passes', 'recipes', 'likedBy']) {
     assert.equal((await db.collection(`users/${leaving}/${sub}`).get()).size, 0, `${sub} left behind`);
   }
   assert.equal((await db.doc(`matches/${matchId}`).get()).exists, false);

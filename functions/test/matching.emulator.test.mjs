@@ -56,6 +56,36 @@ test('a same-gender match gets a cherry for each person', async () => {
   assert.ok(cherries.every((c) => c === 'boy' || c === 'girl'));
 });
 
+const likedBy = (to, from) => db.doc(`users/${to}/likedBy/${from}`).get();
+
+test('a one-sided like tells the other person who liked them; liking back matches and clears it', async () => {
+  const ivy = await person('ivy', { gender: 'Woman', cherryAvatar: 'girl', lookingFor: 'partner' });
+  const jon = await person('jon', { gender: 'Man', cherryAvatar: 'boy', lookingFor: 'partner' });
+  await like(ivy, jon);
+  await settle();
+  const told = await likedBy(jon, ivy);
+  assert.equal(told.exists, true);
+  assert.equal(told.get('from'), ivy);
+  assert.equal((await likedBy(ivy, jon)).exists, false, 'the liker gets nothing');
+
+  await like(jon, ivy);
+  await settle();
+  assert.equal((await matchOf(ivy, jon)).exists, true);
+  assert.equal((await likedBy(jon, ivy)).exists, false, 'cleared once they match');
+});
+
+test('nobody is told about a like from someone they passed on, or who wants something else', async () => {
+  const kay = await person('kay', { gender: 'Woman', cherryAvatar: 'girl', lookingFor: 'partner' });
+  const leo = await person('leo', { gender: 'Man', cherryAvatar: 'boy', lookingFor: 'partner' });
+  const max = await person('max', { gender: 'Man', cherryAvatar: 'boy', lookingFor: 'friends' });
+  await db.doc(`users/${kay}/passes/${leo}`).set({ createdAt: FieldValue.serverTimestamp() });
+  await like(leo, kay);
+  await like(max, kay);
+  await settle();
+  assert.equal((await likedBy(kay, leo)).exists, false);
+  assert.equal((await likedBy(kay, max)).exists, false);
+});
+
 test('friends and partner seekers never match each other', async () => {
   const gia = await person('gia', { gender: 'Woman', cherryAvatar: 'girl', lookingFor: 'friends' });
   const hal = await person('hal', { gender: 'Man', cherryAvatar: 'boy', lookingFor: 'partner' });

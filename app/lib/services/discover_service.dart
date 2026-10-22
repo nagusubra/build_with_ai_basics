@@ -41,6 +41,19 @@ String? somethingInCommon(UserProfile me, UserProfile them) {
   return null;
 }
 
+/// Someone liked me and is waiting for a like back (`users/{me}/likedBy/{from}`).
+class LikeNotice {
+  const LikeNotice({required this.from, required this.seen});
+
+  final String from;
+
+  /// The banner has already been shown for it.
+  final bool seen;
+}
+
+/// A like is still worth answering: they're still around, verified, and looking for the same thing.
+bool canLikeBack(UserProfile me, UserProfile them) => them.onboardingComplete && them.verified && compatible(me, them);
+
 /// Discover: the people to show, and likes and passes.
 class DiscoverService {
   DiscoverService({FirebaseFirestore? db}) : _db = db ?? FirebaseFirestore.instance;
@@ -81,4 +94,20 @@ class DiscoverService {
 
   Future<void> pass(String me, String them) =>
       _db.doc('users/$me/passes/$them').set({'createdAt': FieldValue.serverTimestamp()});
+
+  /// People who liked me and haven't been answered, newest first.
+  Stream<List<LikeNotice>> likedMe(String me) => _db
+      .collection('users/$me/likedBy')
+      .orderBy('createdAt', descending: true)
+      .snapshots()
+      .map((s) => [for (final d in s.docs) LikeNotice(from: d.id, seen: d.data()['seenAt'] != null)]);
+
+  Future<void> markLikeSeen(String me, String from) =>
+      _db.doc('users/$me/likedBy/$from').update({'seenAt': FieldValue.serverTimestamp()});
+
+  /// Passing on someone who liked me also clears their notice.
+  Future<void> passOnLiker(String me, String them) async {
+    await pass(me, them);
+    await _db.doc('users/$me/likedBy/$them').delete();
+  }
 }

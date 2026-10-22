@@ -21,6 +21,7 @@ export async function deleteEverything(db: Firestore, bucket: Bucket, auth: Auth
   ]);
   const batch = db.batch();
   [...likesFrom.docs, ...likesTo.docs].forEach((d) => batch.delete(d.ref));
+  likesFrom.docs.forEach((d) => batch.delete(db.doc(`users/${d.get('to')}/likedBy/${uid}`)));
   await batch.commit();
 
   await bucket.deleteFiles({ prefix: `users/${uid}/` });

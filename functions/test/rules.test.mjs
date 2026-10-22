@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { after, before, beforeEach, describe, test } from 'node:test';
 
 import { assertFails, assertSucceeds, initializeTestEnvironment } from '@firebase/rules-unit-testing';
-import { addDoc, collection, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { deleteObject, getBytes, ref, uploadBytes } from 'firebase/storage';
 
 const MATCH = 'alice_bob';
@@ -107,7 +107,21 @@ describe('likes and passes', () => {
     await assertFails(setDoc(doc(db, 'likes/alice_carol'), like('alice', 'bob')));
   });
 
-  test('nobody can see who liked them', async () => {
+  test('"who liked you" is written only by Cloud Functions and readable only by the person liked', async () => {
+    await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'users/bob/likedBy/alice'), { from: 'alice' }));
+    const bob = env.authenticatedContext('bob').firestore();
+    const carol = env.authenticatedContext('carol').firestore();
+    await assertSucceeds(getDocs(collection(bob, 'users/bob/likedBy')));
+    await assertFails(getDoc(doc(carol, 'users/bob/likedBy/alice')));
+    await assertFails(setDoc(doc(carol, 'users/bob/likedBy/carol'), { from: 'carol' }));
+    await assertFails(setDoc(doc(bob, 'users/bob/likedBy/dave'), { from: 'dave' }));
+    await assertSucceeds(updateDoc(doc(bob, 'users/bob/likedBy/alice'), { seenAt: serverTimestamp() }));
+    await assertFails(updateDoc(doc(bob, 'users/bob/likedBy/alice'), { from: 'mallory' }));
+    await assertFails(deleteDoc(doc(carol, 'users/bob/likedBy/alice')));
+    await assertSucceeds(deleteDoc(doc(bob, 'users/bob/likedBy/alice')));
+  });
+
+  test('the like itself stays private to the liker', async () => {
     await env.withSecurityRulesDisabled((ctx) => setDoc(doc(ctx.firestore(), 'likes/alice_bob'), { from: 'alice', to: 'bob' }));
     await assertSucceeds(getDoc(doc(env.authenticatedContext('alice').firestore(), 'likes/alice_bob')));
     await assertFails(getDoc(doc(env.authenticatedContext('bob').firestore(), 'likes/alice_bob')));

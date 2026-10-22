@@ -78,7 +78,7 @@ Why each learner choice:
 2. Turn on **Authentication → Email/Password**, **Firestore**, and **Storage**.
 3. Get a **paid-tier Gemini API key** from Google AI Studio. Store it as a secret, never in code: `firebase functions:secrets:set GEMINI_API_KEY`.
 4. Install the tools: `npm install -g firebase-tools`, `dart pub global activate flutterfire_cli`, then `firebase login`. The local emulators need **Java 21+** (`brew install openjdk@21`, then put `/opt/homebrew/opt/openjdk@21/bin` first on `PATH`), and `functions/` uses **Node 22** (`nvm use` reads `functions/.nvmrc`).
-5. In `app/`, run `flutterfire configure`. This writes `lib/firebase_options.dart`. It holds the app's public Firebase identifiers, not secrets.
+5. Each teammate runs `sh app/scripts/setup.sh` (it replaced `flutterfire configure`). It downloads `GoogleService-Info.plist`, generates `lib/firebase_options.dart`, and writes their own `ios/Flutter/Signing.xcconfig` (Apple team and bundle ID). All three are git-ignored.
 6. Deploy the server side from the repo root: `firebase deploy --only functions,firestore,storage`.
 
 **Each teammate, to run it:**
@@ -437,6 +437,7 @@ Implements `prd.md > Added at Final Review`.
 - **Filters:** `users/{uid}.filters = { foodTypes: [], minAge, maxAge, cities: [] }`, where empty means no limit. They're applied in `DiscoverService.candidates` by a pure `passesFilters`. The mode switch updates `users/{uid}.lookingFor`.
 - **Jack & Jill:** `Wingman` in `app/lib/widgets/mascot.dart` gives the name and poses for a person's cherry. Cherry's system prompt tells the wingman never to name itself, and `mentionsCherry` also matches "jack" and "jill", except a name that belongs to one of the two people in the chat (so "bye Jack" to a person called Jack doesn't dismiss the wingman).
 - **Daily touches:** `app/lib/data/daily.dart` gives a time-of-day greeting with one line per day; Discover shows it with the Dish of the Day, and the Recipes page features the Dish of the Day.
+- **"Liked you":** `onLikeCreated` (`handleLike` in `matching.ts`) writes `users/{to}/likedBy/{from}` for a one-sided like, unless the person already passed on the liker or wants something different, and deletes both entries when the like back makes a match. Only the person liked can read it, mark it seen (`seenAt`), or delete it (passing). The app listens in `HomeShell`: an overlay banner for new ones, a pill on Discover while any are waiting, and `LikedYouScreen` with Like back / Pass. `deleteAccount` also removes the leaving person's notices from others.
 - **Chats list:** each match stores `readAt.{uid}` (members may update only their own entry, and only to the server time). Each tile streams its own last message, so no server change is needed; tiles show the preview, wingman or date status, and an unread dot.
 
 ## Decisions and Open Issues

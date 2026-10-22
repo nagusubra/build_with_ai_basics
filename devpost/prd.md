@@ -238,6 +238,7 @@ Agreed with Vinamra after he tried the full app (see `checklist.md > Final Revie
 - **Recipe library:** Recipes draws from a bundled, tagged library of about 40 recipes, filtered to your diet and allergies, instead of asking the AI each time.
 - **Jack & Jill:** the cherries' names and personality across the app.
 - **Daily touches:** a Dish of the Day and a greeting from your Jack or Jill on Discover; a Chats list with last-message previews, status, and unread dots; warm empty states and gentle haptics.
+- **"Liked you":** when someone likes you, a banner says who ("Priya liked you 💗") wherever you are in the app, and a pill stays on Discover until you answer. Tapping shows their profile with Like back or Pass; liking back makes the match straight away. This replaces the earlier rule that likes stay secret until a match (Vinamra's choice). There are still no push notifications, so it's seen while the app is open.
 
 ## Deferred From the POC
 - **Food filters and normal dating filters** in Discover. `scope.md > Later`; may return once the core path works. *(Brought back at final review — see Added at Final Review.)*
