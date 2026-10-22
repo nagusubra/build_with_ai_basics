@@ -9,7 +9,7 @@ status: approved
 
 BakeOut has three parts.
 
-1. **The app on your iPhone (Flutter).** Every screen people see: welcome, sign-up, the food quiz, photos and the selfie check, Discover, the match moment, the chat, Recipes, and My profile. It also runs the selfie verification itself, entirely on the phone.
+1. **The app on your phone or in a browser (Flutter).** Every screen people see: welcome, sign-up, the food quiz, photos and the selfie check, Discover, the match moment, the chat, Recipes, and My profile. It also runs the selfie verification itself, entirely on the device.
 2. **Firebase, Google's ready-made backend.**
    - **Authentication** handles email sign-up and login.
    - **Firestore** is the database: a live, shared spreadsheet in the cloud. When one phone writes a chat message, the other phone sees it within a second. Profiles, likes, matches, chats, and date plans all live here.
@@ -27,7 +27,7 @@ PRD ref: `prd.md > The Core Journey`.
 2. **Sign up** → Firebase Authentication creates the account → the app writes the public profile to Firestore `users/{uid}` and the date of birth to `users/{uid}/private/account`. Under 18 is blocked in the app before the account is created.
 3. **Food quiz** → answers are saved to `users/{uid}.food` as each card is answered, so nothing is lost if the app closes.
 4. **Photos** → uploaded to Storage under `users/{uid}/photos/`; their paths are saved on the profile.
-5. **Verification** → on the phone only: Apple's Vision framework watches the camera for a blink and a head turn, then the face-recognition model compares the selfie with the main profile photo → on success the app sets `verified: true`. The selfie is never uploaded or saved.
+5. **Verification** → on the device only: a face detector watches the camera for a blink and a head turn (Apple's Vision framework on iOS, ML Kit on Android, MediaPipe in the browser), then the face-recognition model compares the selfie with the main profile photo → on success the app sets `verified: true`. The selfie is never uploaded or saved. The platform split is in `app/README.md`; why it exists is in `checklist.md > Revisions`.
 6. **Profile preview and Meet Cherry** → the profile is read from Firestore and shown; `onboardingComplete: true` is set.
 7. **Discover** → the app reads profiles with the same `lookingFor` value, verified and onboarded, and skips anyone already liked or passed. It works out "something in common" by comparing the two food profiles.
 8. **Like** → the app writes `likes/{me}_{them}` → a Cloud Function checks whether `likes/{them}_{me}` exists → if so, it creates `matches/{id}` and assigns each person's cherry → both phones see the new match and play the "It's a BakeOut!" moment.
@@ -61,7 +61,7 @@ Why each learner choice:
 - **Firebase Auth, Firestore, Storage:** the team's choice ("auth set-up is super easy"). Firestore's live updates are what make a two-person chat work.
 - **Cloud Functions for Cherry:** agreed so there's exactly one Cherry per chat and the AI key stays off the phones. Accepted tradeoff: the Blaze pay-as-you-go plan, which needs a card.
 - **Gemini, paid tier:** the team's choice ("for now let's use Gemini"). Paid so chats and profiles aren't used to improve Google's products, in line with "we respect data privacy for people." Accepted tradeoff: small usage cost, with a budget alert.
-- **On-device verification (Apple Vision + face model):** the team's choice. Selfies never leave the phone. Accepted tradeoff: more setup, less accuracy than a cloud service, and the phone reports its own result. Originally ML Kit; swapped to Vision during slice 1 (see `checklist.md > Revisions`).
+- **On-device verification (a face detector + the face model):** the team's choice. Selfies never leave the device. Accepted tradeoff: more setup, less accuracy than a cloud service, and the device reports its own result. The detector is Apple Vision on iOS, ML Kit on Android, and MediaPipe on the web, added after the iPhone slice (see `checklist.md > Revisions`). Originally ML Kit on iOS; swapped to Vision during slice 1.
 - **Gemini writes recipes:** the team's choice ("not the main thing for the app"). Accepted tradeoff: an AI-written recipe could get an allergy wrong.
 
 **Unverified, check early in the build:**
@@ -71,7 +71,7 @@ Why each learner choice:
 
 ## Where It Runs and How Someone Tries It
 
-**Runs on:** iPhones. Each teammate builds from their own Mac with Xcode over a cable, signed with a free Apple account. Free-account installs expire after 7 days: reinstall shortly before recording the demo. Cherry's functions run on Firebase's servers.
+**Runs on:** iPhones, Android phones, and browsers. iPhone is the demoed platform: each teammate builds from their own Mac with Xcode over a cable, signed with a free Apple account. Free-account installs expire after 7 days: reinstall shortly before recording the demo. Android needs only an APK; the web build is served from Firebase Hosting. Cherry's functions run on Firebase's servers.
 
 **One-time setup** (once per project, by one teammate unless noted):
 1. Create a Firebase project. Upgrade it to **Blaze** and set a budget alert.
@@ -154,9 +154,9 @@ PRD ref: `prd.md > Food Profile Quiz`.
 
 ### Photos and Verification
 - **Photos:** pick or take 1–4 photos with `image_picker`, upload to Storage, and save the paths.
-- **Live check:** the `camera` stream feeds Apple Vision face detection (`FaceVision` in `face_vision.dart`, backed by `AppDelegate.swift`). Eye openness comes from each eye's height-to-width ratio in Vision's landmarks. The person is asked to look at the camera, blink, turn their head (yaw passes about ±20°), and look back. Exactly one face must be visible throughout.
-- **Match:** take the final frame and the main profile photo, find the face in each with Vision, and align it by the eyes to the model's 112×112 training layout. Real landmark eyes are used when they look plausible; otherwise the eyes are estimated from the face box. Compute both embeddings with the TFLite model in one call, and compare them with cosine similarity against a threshold kept in one constant (`faceMatchThreshold`, 0.5). Pass → `verified: true` and `verifiedAt`. Fail → the try-again screen explains why ("we couldn't see one clear face" or "this didn't match your photo") and retries.
-- **Privacy:** the selfie frames live only in memory and are discarded after the check. Nothing is uploaded.
+- **Live check:** the `camera` stream feeds the platform's face detector (`FaceVision` in `face_vision.dart`, backed by `AppDelegate.swift` on iOS, `FaceVisionChannel.kt` on Android, and `bakeout_vision.js` on the web). Eye openness comes from each eye's height-to-width ratio in the detector's landmarks. The person is asked to look at the camera, blink, turn their head (yaw passes about ±20°), and look back. Exactly one face must be visible throughout. Android frames arrive in the sensor's orientation, so `frame_rotation.dart` turns them upright first.
+- **Match:** take the final frame and the main profile photo, find the face in each with the same detector, and align it by the eyes to the model's 112×112 training layout. Real landmark eyes are used when they look plausible; otherwise the eyes are estimated from the face box. Compute both embeddings with the TFLite model in one call, and compare them with cosine similarity against a threshold kept in one constant (`faceMatchThreshold`, 0.5). Pass → `verified: true` and `verifiedAt`. Fail → the try-again screen explains why ("we couldn't see one clear face" or "this didn't match your photo") and retries.
+- **Privacy:** the selfie frames live only in memory and are discarded after the check. Nothing is uploaded, and the temporary file the native camera writes for the still is deleted at once.
 
 PRD ref: `prd.md > Photos and Verification`.
 
@@ -317,10 +317,10 @@ Updated by the owner as they go through onboarding and edits. Kept until the acc
 
 ```
 build_with_ai_basics/
-├── app/                          # Flutter app (iOS)
+├── app/                          # Flutter app (iOS, Android, web)
 │   ├── lib/
 │   │   ├── main.dart             # Firebase init, app shell, routing by login/onboarding state
-│   │   ├── firebase_options.dart # generated by flutterfire configure
+│   │   ├── firebase_options.dart # generated by scripts/setup.sh (git-ignored)
 │   │   ├── theme/                # colours, Nunito text styles, shared shapes and shadows
 │   │   ├── models/               # UserProfile, FoodProfile, Match, Message, DatePlan, Recipe
 │   │   ├── services/
@@ -329,7 +329,10 @@ build_with_ai_basics/
 │   │   │   ├── discover_service.dart      # candidate query, filters, likes/passes, common ground
 │   │   │   ├── chat_service.dart          # match + message streams, send message
 │   │   │   ├── verification_service.dart  # eye-aligned face crops + MobileFaceNet compare
-│   │   │   ├── face_vision.dart           # Apple Vision channel: faces, yaw, eye openness, eye centres
+│   │   │   ├── face_vision.dart           # picks the platform detector: faces, yaw, eye openness, eye centres
+│   │   │   ├── face_vision_native.dart    # Apple Vision (iOS) and ML Kit (Android) channels
+│   │   │   ├── face_vision_web.dart       # MediaPipe bridge in the browser
+│   │   │   ├── frame_rotation.dart        # how far Android must turn a raw camera frame
 │   │   │   ├── face_math.dart             # similarity, threshold, eye alignment
 │   │   │   ├── liveness_tracker.dart      # face → blink → turn → look back
 │   │   │   └── functions_service.dart     # confirmDatePlan, dismissCherry, getMyRecipes, deleteAccount
@@ -349,7 +352,9 @@ build_with_ai_basics/
 │   │   ├── mascots/               # copied from design/mascots/*.png
 │   │   ├── fonts/                 # bundled Nunito
 │   │   └── models/                # face embedding .tflite
-│   ├── ios/                       # Xcode project, app icon, camera permission text
+│   ├── ios/                       # Xcode project, app icon, camera permission text, Apple Vision channel
+│   ├── android/                   # Gradle project, ML Kit channel in FaceVisionChannel.kt
+│   ├── web/                       # index.html, bakeout_vision.js (MediaPipe), self-hosted mediapipe/ and tflite/ runtimes
 │   └── pubspec.yaml
 ├── functions/                     # Cherry's brain + server logic (TypeScript)
 │   ├── src/
@@ -428,7 +433,7 @@ build_with_ai_basics/
 - **A one-minute timer for stalls and reminders** instead of per-chat scheduled tasks. It's simpler, and a minute of delay is fine. The fuller version would schedule a check per chat with Cloud Tasks.
 - **`age` is stored on the public profile** while the exact date of birth stays private, so other users never see the birthday. It's recomputed on edit, not on birthdays.
 - **No push notifications**, with Cherry's reminder sent in-chat (`prd.md > Product Decisions`).
-- **iPhone only**, since that's what the team has to build on and demo with.
+- **iPhone is the demo platform**, since that's what the team has to build on and demo with. Android and web run the same app and the same selfie check, after the iPhone slice.
 
 ## Final-Review Additions
 Implements `prd.md > Added at Final Review`.
