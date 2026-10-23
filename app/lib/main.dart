@@ -18,12 +18,14 @@ import 'services/profile_service.dart';
 import 'theme/colors.dart';
 import 'theme/theme.dart';
 import 'widgets/mascot.dart';
+import 'widgets/mascot_rive.dart';
 
 /// `flutter run --dart-define=USE_EMULATORS=true` talks to the local Firebase emulators.
 const useEmulators = bool.fromEnvironment('USE_EMULATORS');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await MascotMotion.init();
   await initFirebase();
   runApp(const BakeOutApp());
 }

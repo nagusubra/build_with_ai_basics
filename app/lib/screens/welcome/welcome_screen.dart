@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../services/auth_service.dart';
 import '../../theme/colors.dart';
 import '../../widgets/mascot.dart';
+import '../../widgets/mascot_rive.dart';
 import '../auth/auth_screen.dart';
 
 /// First screen: the cherries, one clear message, one button (`prd.md > Welcome Screen`).
@@ -26,7 +27,7 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              const Mascot(MascotPose.duoWelcome, size: 290)
+              const AnimatedMascot(MascotPose.duoWelcome, size: 290)
                   .animate()
                   .fadeIn(duration: 500.ms)
                   .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), curve: Curves.easeOutBack),

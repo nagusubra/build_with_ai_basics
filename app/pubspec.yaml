@@ -25,6 +25,7 @@ dependencies:
   cloud_functions: ^7.0.0
   firebase_storage: ^14.0.0
   flutter_card_swiper: ^7.2.0
+  rive: 0.14.11
 
 dev_dependencies:
   flutter_test:
@@ -38,6 +39,7 @@ flutter:
 
   assets:
     - assets/mascots/
+    - assets/mascots/rive/
     - assets/models/mobile_facenet.tflite
     - assets/recipes/library.json
 

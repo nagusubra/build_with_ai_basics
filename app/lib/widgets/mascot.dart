@@ -4,14 +4,14 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../theme/colors.dart';
 
 enum MascotPose {
-  duoWelcome('cherry_duo_welcome'),
-  duoMatch('cherry_duo_match'),
+  duoWelcome('cherry_duo_welcome', 'DuoWelcome'),
+  duoMatch('cherry_duo_match', 'DuoMatch'),
   duoVerify('cherry_duo_verify'),
-  duoCooking('cherry_duo_cooking'),
-  boyHello('cherry_boy_hello'),
-  girlHello('cherry_girl_hello'),
-  boyCheer('cherry_boy_cheer'),
-  girlCheer('cherry_girl_cheer'),
+  duoCooking('cherry_duo_cooking', 'DuoCooking'),
+  boyHello('cherry_boy_hello', 'BoyHello'),
+  girlHello('cherry_girl_hello', 'GirlHello'),
+  boyCheer('cherry_boy_cheer', 'BoyCheer'),
+  girlCheer('cherry_girl_cheer', 'GirlCheer'),
   boyPlanning('cherry_boy_planning'),
   girlPlanning('cherry_girl_planning'),
   boyGoodbye('cherry_boy_goodbye'),
@@ -19,8 +19,11 @@ enum MascotPose {
   boyTryAgain('cherry_boy_tryagain'),
   girlTryAgain('cherry_girl_tryagain');
 
-  const MascotPose(this.file);
+  const MascotPose(this.file, [this.riveArtboard]);
   final String file;
+
+  /// The matching artboard in `cherry_mascots.riv`, or null for small/static poses.
+  final String? riveArtboard;
 
   String get asset => 'assets/mascots/$file.png';
 }
