@@ -121,7 +121,7 @@ From `prd.md > Look and Feel`. Lives in `app/lib/theme/`.
 ### Mascot Assets
 Generated from the team's reference images. Transparent PNGs are in `design/mascots/`, originals with floating hearts and extras in `design/mascots/source/`, and `design/cutout.swift` is the tool that made the cutouts. They're copied into `app/assets/mascots/` during the build.
 
-The animated `.riv` is built from `app/tool/mascot_rive/scene.rml` by `app/tool/build_mascot_rive.dart`, which downscales the source PNGs and calls the Rive CLI. It holds one artboard per hero pose in a single `app/assets/mascots/rive/cherry_mascots.riv`; the PNGs remain the poster and fallback.
+The animated `.riv` is built from `app/tool/mascot_rive/scene.rml` by `app/tool/build_mascot_rive.dart`, which downscales the source PNGs and calls the Rive CLI. It holds one artboard per hero pose in a single `app/assets/mascots/rive/cherry_mascots.riv`; the PNGs remain the poster and fallback. `app/tool/preview_mascot.ps1` opens that scene in the Rive CLI preview and rebuilds live, so motion can be judged without Flutter or a device.
 
 | Asset | Where it's used |
 | --- | --- |

@@ -66,6 +66,22 @@ The seven large mascot poses share one code-authored Rive file,
 `assets/mascots/rive/cherry_mascots.riv`. The PNGs stay the poster and the fallback;
 small mascots and reduced-motion users never load Rive.
 
+### Preview without Flutter
+
+Open the Rive preview window instead of building and launching the app:
+
+```powershell
+cd app
+.\tool\preview_mascot.ps1
+.\tool\preview_mascot.ps1 -Artboard DuoMatch
+```
+
+It watches `tool/mascot_rive/scene.rml` and rebuilds live. In the window, `space` pauses,
+`a` switches artboard, and `s` writes a screenshot. The equivalent direct command is
+`rive tool/mascot_rive --artboard=DuoWelcome`.
+
+### Regenerate the asset
+
 Regenerate it from the repo's `design/mascots/*.png` sources after changing the
 motion or pose list. Install the Rive CLI once (`curl -fsSL https://rive.app/install.sh | sh`
 on macOS/Linux, or the installer from https://rive.app/docs/cli on Windows), then:
