@@ -1,0 +1,6 @@
+build/debug_*
+build/crop_*
+build/cmp_*
+build/probe*
+build/opacity_test*
+build/source_on_dark.png
