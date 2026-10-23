@@ -12,6 +12,7 @@ import '../../services/recipe_library.dart';
 import '../../theme/colors.dart';
 import '../../theme/theme.dart';
 import '../../widgets/mascot.dart';
+import '../../widgets/mascot_rive.dart';
 import '../../widgets/onboarding.dart';
 import '../profile/profile_view.dart';
 import '../quiz/questions.dart';
@@ -101,7 +102,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Mascot(Wingman(widget.me.cherryAvatar).hello, size: 120),
+            AnimatedMascot(Wingman(widget.me.cherryAvatar).hello, size: 120),
             const SizedBox(height: 8),
             Text('Finding food lovers for you…', style: Theme.of(context).textTheme.titleMedium?.copyWith(color: BakeColors.muted)),
           ],
@@ -311,7 +312,7 @@ class _PersonCard extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   p.photos.isEmpty
-                      ? const ColoredBox(color: BakeColors.softPink, child: Center(child: Mascot(MascotPose.duoWelcome, size: 160)))
+                      ? const ColoredBox(color: BakeColors.softPink, child: Center(child: AnimatedMascot(MascotPose.duoWelcome, size: 160)))
                       : StoragePhoto(path: p.photos.first, profiles: profiles),
                   if (p.city != null)
                     Positioned(

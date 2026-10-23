@@ -5,6 +5,7 @@ import '../../models/profile.dart';
 import '../../services/profile_service.dart';
 import '../../theme/colors.dart';
 import '../../widgets/mascot.dart';
+import '../../widgets/mascot_rive.dart';
 
 /// One short, animated introduction to the wingman (`prd.md > Meet Cherry`).
 class MeetCherryScreen extends StatelessWidget {
@@ -24,7 +25,7 @@ class MeetCherryScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              Mascot(wingman.hello, size: 240)
+              AnimatedMascot(wingman.hello, size: 240)
                   .animate()
                   .slideX(begin: -0.6, end: 0, duration: 600.ms, curve: Curves.easeOutBack)
                   .fadeIn(),

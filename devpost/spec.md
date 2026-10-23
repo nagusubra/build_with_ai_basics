@@ -50,7 +50,8 @@ PRD ref: `prd.md > The Core Journey`.
 | Live face check | Apple Vision (built into iOS), through a small Swift channel in `AppDelegate.swift` | iOS 15.5+ | https://developer.apple.com/documentation/vision |
 | Face comparison | `tflite_flutter` running Qualcomm AI Hub's MobileFaceNet (Apache-2.0) | 0.12.1 | https://pub.dev/packages/tflite_flutter, https://huggingface.co/qualcomm/MobileFaceNet |
 | Swipe cards | `flutter_card_swiper` | 7.2.0 | https://pub.dev/packages/flutter_card_swiper |
-| Animations | `flutter_animate` | 4.5.2 | https://pub.dev/packages/flutter_animate |
+| Animations | `flutter_animate` for entrances and slides | 4.5.2 | https://pub.dev/packages/flutter_animate |
+| Mascot motion | `rive` + code-authored RML, built with Rive CLI | 0.14.11, 1.7.0 | https://pub.dev/packages/rive, https://rive.app/docs/cli |
 | Fonts | Nunito static TTFs bundled as app fonts (SIL OFL) | — | https://fonts.google.com/specimen/Nunito |
 | Cherry's brain | Cloud Functions for Firebase (2nd gen), TypeScript on Node.js | `firebase-functions` 7.4.0 | https://firebase.google.com/docs/functions |
 | AI model | Gemini API via `@google/genai`, paid tier | 2.30.0 | https://ai.google.dev/gemini-api/docs |
@@ -68,6 +69,7 @@ Why each learner choice:
 - The exact current Gemini model name. Use the current fast "Flash" model; confirm the name on the Gemini models page.
 - Which Node.js versions Cloud Functions currently accept. Node 20.15 is installed here.
 - Whether `tflite_flutter` 0.12.1 builds cleanly for iOS with Xcode 26.4.
+- Whether a free, unsigned Rive CLI `--once` build plays the Rive splash at runtime. **Partly answered:** an Android build showed no Rive splash, only the Flutter launch screen. Confirm on iPhone when a Mac is available.
 
 ## Where It Runs and How Someone Tries It
 
@@ -111,17 +113,19 @@ From `prd.md > Look and Feel`. Lives in `app/lib/theme/`.
   - `leafGreen #73984A`: small accents, the verified badge, progress fill
 - **Typography:** Nunito, bundled as static TTFs in `app/assets/fonts/` so it doesn't depend on the network. Headings weight 800–900, slightly larger and playful. Body weight 400–600.
 - **Shapes and space:** corners 20–24 px on cards and 16 px on buttons, soft low-opacity shadows tinted toward deep cherry, generous padding. One idea per screen.
-- **Motion with `flutter_animate`:** mascots gently bob or sway when idle; pop in with scale and fade during the quiz; the two cherries slide together for the match moment, with a heart and confetti burst drawn as separate animated pieces. Cherry's goodbye slides and fades out. Keep every animation short and subtle; never block a tap.
+- **Motion:** hero mascots (110px and above) breathe, sway, and carry a few sparkle accents from a code-authored Rive `.riv`. Entrances, quiz pops, the match slide, and Cherry's goodbye stay in `flutter_animate` around the Rive widget. Small mascots stay still. Keep every animation short and subtle; never block a tap.
 - **Tone of copy:** warm, playful food language with the emojis written in the PRD. Never pushy.
 - **References:** Hinge's simplicity, Duolingo's personality, Airbnb's polish.
-- **Constraint:** Flutter can honour all of the above. Mascots are still images that move as a whole (bob, slide, scale, fade); arms and faces don't animate.
+- **Constraint:** the mascots are flattened 3D renders, not rigged characters. Rive applies whole-image idle motion plus decorative vector overlays; arms, eyes, and faces are not rigged or deformed. Every Rive widget has the matching PNG as a poster and fallback, and reduce-motion shows the still PNG.
 
 ### Mascot Assets
 Generated from the team's reference images. Transparent PNGs are in `design/mascots/`, originals with floating hearts and extras in `design/mascots/source/`, and `design/cutout.swift` is the tool that made the cutouts. They're copied into `app/assets/mascots/` during the build.
 
+The animated `.riv` is built from `app/tool/mascot_rive/scene.rml` by `app/tool/build_mascot_rive.dart`, which downscales the source PNGs and calls the Rive CLI. It holds one artboard per hero pose in a single `app/assets/mascots/rive/cherry_mascots.riv`; the PNGs remain the poster and fallback.
+
 | Asset | Where it's used |
 | --- | --- |
-| `cherry_duo_welcome` | Welcome screen |
+| `cherry_duo_welcome` | Welcome screen; auth; Discover empty state |
 | `cherry_boy_cheer` / `cherry_girl_cheer` | Quiz pop-ins, profile preview |
 | `cherry_duo_verify` | Verification intro |
 | `cherry_boy_tryagain` / `cherry_girl_tryagain` | Verification failed |
@@ -129,7 +133,8 @@ Generated from the team's reference images. Transparent PNGs are in `design/masc
 | `cherry_duo_match` | "It's a BakeOut!" |
 | `cherry_boy_planning` / `cherry_girl_planning` | The date card |
 | `cherry_boy_goodbye` / `cherry_girl_goodbye` | Cherry's exit |
-| `cherry_duo_cooking` | Recipes page |
+| `cherry_duo_cooking` | Recipes page; chat loading |
+| `cherry_mascots.riv` | Rive idle motion for the seven hero poses above |
 | `app_icon` | iOS app icon |
 
 **Which cherry a person sees:** stored as `cherryAvatar` on their profile and in the match. A man gets the boy cherry and a woman the girl cherry. Other genders get one at random at sign-up. In a same-gender match, each person's cherry is picked at random when the match is created (`prd.md > Look and Feel`).
@@ -141,7 +146,7 @@ Starts Firebase, listens for login state, and routes: logged out → Welcome; lo
 PRD ref: `prd.md > Screens and Layout`, `prd.md > States and Boundaries`.
 
 ### Welcome Screen
-Static screen with the duo mascot, headline, subline, "Let's BakeOut" and "Log in".
+The duo mascot has a subtle Rive idle loop (breathing, sway, sparkles) with the PNG as its poster and fallback, plus the headline, subline, "Let's BakeOut" and "Log in". Reduce-motion shows the still PNG.
 PRD ref: `prd.md > Welcome Screen`.
 
 ### Sign-Up and Login
@@ -347,11 +352,15 @@ build_with_ai_basics/
 │   │   │   ├── recipes/           # list + detail
 │   │   │   ├── match/             # "It's a BakeOut!" moment
 │   │   │   └── chat/              # chat list + chat screen
-│   │   └── widgets/               # Mascot (animated), QuizCard, SwipeCard, DateCard, ChatBubble, ProgressBar, HeartBurst
+│   │   └── widgets/               # Mascot (static PNG), AnimatedMascot (Rive), QuizCard, SwipeCard, DateCard, ChatBubble, ProgressBar, HeartBurst
 │   ├── assets/
 │   │   ├── mascots/               # copied from design/mascots/*.png
+│   │   │   └── rive/              # cherry_mascots.riv, the seven idle artboards
 │   │   ├── fonts/                 # bundled Nunito
 │   │   └── models/                # face embedding .tflite
+│   ├── tool/
+│   │   ├── build_mascot_rive.dart # resizes PNGs, writes RML, runs the Rive CLI
+│   │   └── mascot_rive/           # rive.yaml + generated scene.rml
 │   ├── ios/                       # Xcode project, app icon, camera permission text, Apple Vision channel
 │   ├── android/                   # Gradle project, ML Kit channel in FaceVisionChannel.kt
 │   ├── web/                       # index.html, bakeout_vision.js (MediaPipe), self-hosted mediapipe/ and tflite/ runtimes

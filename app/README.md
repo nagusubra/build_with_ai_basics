@@ -60,6 +60,27 @@ therefore belong in `web/tflite/`; putting them anywhere else fails at
 MediaPipe's bundle and wasm live in `web/mediapipe/`. Both sets are self-hosted, so the
 app needs no CDN.
 
+## Mascot motion
+
+The seven large mascot poses share one code-authored Rive file,
+`assets/mascots/rive/cherry_mascots.riv`. The PNGs stay the poster and the fallback;
+small mascots and reduced-motion users never load Rive.
+
+Regenerate it from the repo's `design/mascots/*.png` sources after changing the
+motion or pose list. Install the Rive CLI once (`curl -fsSL https://rive.app/install.sh | sh`
+on macOS/Linux, or the installer from https://rive.app/docs/cli on Windows), then:
+
+```sh
+cd app
+dart run tool/build_mascot_rive.dart             # all seven artboards
+dart run tool/build_mascot_rive.dart --only=DuoWelcome  # one probe build
+```
+
+The script resizes each PNG to 768px in `tool/mascot_rive/assets/`, writes
+`tool/mascot_rive/scene.rml`, runs `rive --verify` and `rive --once`, and copies the
+result over the committed `.riv`. Those intermediates are git-ignored. `MASCOT_RIVE=false`
+forces the PNG path; Reduce Motion does the same at runtime.
+
 ## Tests
 
 ```sh

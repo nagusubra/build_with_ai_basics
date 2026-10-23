@@ -9,6 +9,7 @@ import '../../theme/colors.dart';
 import '../../widgets/chat_bubble.dart';
 import '../../widgets/chat_cards.dart';
 import '../../widgets/mascot.dart';
+import '../../widgets/mascot_rive.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({
@@ -164,7 +165,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Mascot(_wingman(match).hello, size: 120),
+                              AnimatedMascot(_wingman(match).hello, size: 120),
                               Text(
                                 snap.hasData ? 'Say hello to ${widget.otherName} 👋' : '${_wingman(match).name} is on the way…',
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(color: BakeColors.muted),

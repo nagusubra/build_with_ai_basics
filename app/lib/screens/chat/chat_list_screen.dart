@@ -7,6 +7,7 @@ import '../../services/chat_service.dart';
 import '../../services/functions_service.dart';
 import '../../theme/colors.dart';
 import '../../widgets/mascot.dart';
+import '../../widgets/mascot_rive.dart';
 import 'chat_screen.dart';
 
 class ChatListScreen extends StatelessWidget {
@@ -95,7 +96,7 @@ class _Note extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Mascot(pose, size: 170),
+            AnimatedMascot(pose, size: 170),
             Text(title, style: text.titleLarge),
             const SizedBox(height: 6),
             Text(body, textAlign: TextAlign.center, style: text.bodyLarge?.copyWith(color: BakeColors.muted)),

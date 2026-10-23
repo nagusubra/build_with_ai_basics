@@ -7,6 +7,7 @@ import '../../models/profile.dart';
 import '../../services/profile_service.dart';
 import '../../theme/colors.dart';
 import '../../widgets/mascot.dart';
+import '../../widgets/mascot_rive.dart';
 import '../../widgets/onboarding.dart';
 
 /// "It's a BakeOut! 🍒❤️" (`prd.md > The Match Moment`).
@@ -59,7 +60,7 @@ class MatchMomentScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [_avatar(me, -0.05), const SizedBox(width: 12), _avatar(them, 0.05)],
                   ),
-                  const Mascot(MascotPose.duoMatch, size: 220)
+                  const AnimatedMascot(MascotPose.duoMatch, size: 220)
                       .animate()
                       .slideY(begin: 0.4, end: 0, duration: 600.ms, curve: Curves.easeOutBack)
                       .fadeIn(),

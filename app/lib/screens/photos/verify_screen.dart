@@ -9,6 +9,7 @@ import '../../services/profile_service.dart';
 import '../../services/verification_service.dart';
 import '../../theme/colors.dart';
 import '../../widgets/mascot.dart';
+import '../../widgets/mascot_rive.dart';
 import '../../widgets/onboarding.dart';
 import 'live_check_view.dart';
 import 'photos_screen.dart';
@@ -110,7 +111,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Mascot(_cheerPose, size: 200),
+                AnimatedMascot(_cheerPose, size: 200),
                 Text("You're verified ✓", style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: BakeColors.leafGreen)),
               ],
             ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1)),

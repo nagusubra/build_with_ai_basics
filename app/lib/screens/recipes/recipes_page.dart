@@ -7,6 +7,7 @@ import '../../services/recipe_library.dart';
 import '../../theme/colors.dart';
 import '../../theme/theme.dart';
 import '../../widgets/mascot.dart';
+import '../../widgets/mascot_rive.dart';
 
 /// Shown when Discover has nobody new: recipes from the bundled library, picked for this person
 /// (`prd.md > Recipes`, `prd.md > Added at Final Review`). No network, no AI.
@@ -50,7 +51,7 @@ class _RecipesPageState extends State<RecipesPage> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(18, 8, 18, 28),
         children: [
-          const Center(child: Mascot(MascotPose.duoCooking, size: 150)),
+          const Center(child: AnimatedMascot(MascotPose.duoCooking, size: 150)),
           Text('No one new right now', textAlign: TextAlign.center, style: text.headlineSmall),
           const SizedBox(height: 4),
           Text(
