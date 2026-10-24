@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jack wingman - live Rive preview</title>
+<style>
+  body { margin: 0; font: 14px system-ui, sans-serif; background: #FFF0F2; color: #29252A; display: flex; flex-direction: column; align-items: center; }
+  h1 { font-size: 18px; color: #A71938; margin: 16px 0 8px; }
+  .bar { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 10px; }
+  button { border: 0; border-radius: 999px; padding: 7px 14px; background: #fff; color: #A71938; cursor: pointer; font-weight: 600; }
+  button.on { background: #E83D55; color: #fff; }
+  .stage { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; justify-content: center; padding: 0 8px; }
+  canvas { background: #FFF9F3; border-radius: 20px; box-shadow: 0 4px 18px #a7193822; }
+  #big { width: min(432px, 70vw, 60vh * 648 / 712); height: auto; aspect-ratio: 648 / 712; }
+  #chat { border-radius: 12px; }
+  .cap { text-align: center; color: #6E5257; margin-top: 4px; }
+  #err { color: #A71938; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Jack wingman: live Rive preview</h1>
+<div class="bar" id="bar"></div>
+<div class="stage">
+  <div><canvas id="big" width="648" height="712"></canvas><div class="cap">full size</div></div>
+  <div><canvas id="chat" width="240" height="264" style="width:120px;height:132px"></canvas><div class="cap">chat header (120 px)</div></div>
+</div>
+<p id="err"></p>
+<script src="https://unpkg.com/@rive-app/canvas@2"></script>
+<script>
+  const SRC = 'build/jack_wingman.riv';
+  const BOARDS = ['JackWingman', 'JackThink', 'JackIdea', 'JackWrite', 'JackSmile'];
+  let players = [];
+  function play(artboard) {
+    players.forEach(p => p.cleanup());
+    document.querySelectorAll('#bar button').forEach(b => b.classList.toggle('on', b.textContent === artboard));
+    players = ['big', 'chat'].map(id => {
+      const r = new rive.Rive({
+        src: SRC, canvas: document.getElementById(id), artboard, autoplay: true, stateMachine: artboard,
+        layout: new rive.Layout({ fit: rive.Fit.Contain }),
+        onLoad() { r.resizeDrawingSurfaceToCanvas(); },
+        onLoadError(e) { document.getElementById('err').textContent = 'Rive load error: ' + (e?.data ?? e); },
+      });
+      return r;
+    });
+  }
+  BOARDS.forEach(a => { const b = document.createElement('button'); b.textContent = a; b.onclick = () => play(a); document.getElementById('bar').append(b); });
+  play(BOARDS[0]);
+</script>
+</body>
+</html>

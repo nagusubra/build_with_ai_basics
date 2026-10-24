@@ -199,6 +199,15 @@ misplaced ink lines were caught.
 PowerShell shows the CLI's stderr logging as a NativeCommandError; look for "0 errors" instead of the exit
 colour.
 
+**Live preview in any browser (including VS Code's):** serve the folder and open `preview.html`. It plays
+the real `.riv` with the Rive web runtime at full size and at the 120 px chat size, with a button per
+artboard:
+
+```powershell
+python -m http.server 8765 --bind 127.0.0.1 --directory app\tool\mascot_rive_jack
+# open http://127.0.0.1:8765/preview.html
+```
+
 ## 8. Flutter integration
 
 1. Copy the build into the app's Rive assets (the folder is already in `pubspec.yaml`):
