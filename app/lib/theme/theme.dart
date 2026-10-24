@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import 'colors.dart';
@@ -28,6 +29,10 @@ ThemeData buildBakeTheme() {
       onSurface: BakeColors.charcoal,
     ),
     scaffoldBackgroundColor: BakeColors.warmCream,
+    // A browser on a Mac or PC would otherwise get compact desktop controls, desktop page
+    // animations and back arrows; the web version should look and move like the iPhone app.
+    visualDensity: VisualDensity.standard,
+    platform: kIsWeb ? TargetPlatform.iOS : null,
   );
 
   final text = base.textTheme.apply(
@@ -46,6 +51,10 @@ ThemeData buildBakeTheme() {
       bodyLarge: text.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
       bodyMedium: text.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
     ),
+    // Flutter's web build always draws a Material back arrow; use the iPhone chevron there too.
+    actionIconTheme: kIsWeb
+        ? ActionIconThemeData(backButtonIconBuilder: (_) => const Icon(Icons.arrow_back_ios_new_rounded))
+        : null,
     appBarTheme: const AppBarTheme(
       backgroundColor: BakeColors.warmCream,
       foregroundColor: BakeColors.deepCherry,

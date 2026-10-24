@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -18,13 +18,15 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="BakeOut — bake together, meet new people.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="BakeOut — love might just be one recipe away. A food-first dating app with Jack & Jill, your cherry wingmen.">
+  <meta name="theme-color" content="#FFF9F3">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="BakeOut">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
@@ -32,10 +34,53 @@
   <title>BakeOut</title>
   <link rel="manifest" href="manifest.json">
 
+  <!-- The same splash the app shows, so there's no blank page while it downloads. -->
+  <link rel="preload" href="assets/assets/mascots/cherry_duo_welcome_rest.png" as="image">
+  <style>
+    @font-face {
+      font-family: 'Nunito';
+      src: url('assets/assets/fonts/Nunito-Black.ttf') format('truetype');
+      font-weight: 900;
+      font-display: swap;
+    }
+    html, body { margin: 0; height: 100%; background: #FFF9F3; }
+    #bakeout-splash {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: #FFF9F3;
+      transition: opacity 300ms ease;
+    }
+    #bakeout-splash.gone { opacity: 0; pointer-events: none; }
+    #bakeout-splash img { width: 280px; max-width: 70vw; height: auto; }
+    #bakeout-splash h1 {
+      margin: 8px 0 20px; color: #A71938;
+      font: 900 36px 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    #bakeout-splash .spinner {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2.5px solid #FFF0F2; border-top-color: #E83D55;
+      animation: bakeout-spin 0.9s linear infinite;
+    }
+    @keyframes bakeout-spin { to { transform: rotate(360deg); } }
+  </style>
+
   <!-- MediaPipe face detection and the camera bridge, loaded before the app starts. -->
   <script src="bakeout_vision.js"></script>
 </head>
 <body>
+  <div id="bakeout-splash" aria-label="BakeOut is loading">
+    <img src="assets/assets/mascots/cherry_duo_welcome_rest.png" alt="Jack and Jill, the BakeOut cherries">
+    <h1>BakeOut</h1>
+    <div class="spinner"></div>
+  </div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var splash = document.getElementById('bakeout-splash');
+      if (!splash) return;
+      splash.classList.add('gone');
+      setTimeout(function () { splash.remove(); }, 400);
+    });
+  </script>
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader

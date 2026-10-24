@@ -87,7 +87,11 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   void _saveFailed(Object _) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("That didn't save — check your connection and try again.")),
+      const SnackBar(
+        content: Text(
+          "That didn't save — check your connection and try again.",
+        ),
+      ),
     );
   }
 
@@ -134,12 +138,24 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Mascot(Wingman(widget.me.cherryAvatar).tryAgain, size: 140),
-              Text("Couldn't load people just now", style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
+              Text(
+                "Couldn't load people just now",
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 6),
-              Text('Check your connection, then try again.',
-                  textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: BakeColors.muted)),
+              Text(
+                'Check your connection, then try again.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge
+                    ?.copyWith(color: BakeColors.muted),
+              ),
               const SizedBox(height: 16),
-              FilledButton(key: const Key('discover-retry'), onPressed: _load, child: const Text('Try again')),
+              FilledButton(
+                key: const Key('discover-retry'),
+                onPressed: _load,
+                child: const Text('Try again'),
+              ),
             ],
           ),
         ),
@@ -163,6 +179,19 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     }
     if (_left <= 0) return widget.whenEmpty(_load);
 
+    // On a keyboard (the web on a laptop): ← passes, → likes.
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.arrowLeft): () =>
+            _swiper.swipe(CardSwiperDirection.left),
+        const SingleActivator(LogicalKeyboardKey.arrowRight): () =>
+            _swiper.swipe(CardSwiperDirection.right),
+      },
+      child: Focus(autofocus: true, child: _deck(people)),
+    );
+  }
+
+  Widget _deck(List<UserProfile> people) {
     return Column(
       children: [
         DailyHeader(me: widget.me),
@@ -253,9 +282,13 @@ class _DailyHeaderState extends State<DailyHeader> {
   void initState() {
     super.initState();
     if (widget.showDish) {
-      RecipeLibrary.load().then((lib) {
-        if (mounted) setState(() => _dish = lib.dishOfTheDay(widget.me));
-      }).catchError((Object e) => debugPrint('Dish of the day unavailable: $e'));
+      RecipeLibrary.load()
+          .then((lib) {
+            if (mounted) setState(() => _dish = lib.dishOfTheDay(widget.me));
+          })
+          .catchError(
+            (Object e) => debugPrint('Dish of the day unavailable: $e'),
+          );
     }
   }
 
@@ -404,113 +437,119 @@ class _PersonCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(28),
-          boxShadow: BakeShapes.softShadow,
-          border: Border.all(color: BakeColors.line),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  p.photos.isEmpty
-                      ? const ColoredBox(
-                          color: BakeColors.softPink,
-                          child: Center(
-                            child: AnimatedMascot(
-                              MascotPose.duoWelcome,
-                              size: 160,
-                              animationAsset: MascotMotion.welcomeAsset,
-                              posterAsset: MascotMotion.welcomePosterAsset,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(28),
+            boxShadow: BakeShapes.softShadow,
+            border: Border.all(color: BakeColors.line),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    p.photos.isEmpty
+                        ? const ColoredBox(
+                            color: BakeColors.softPink,
+                            child: Center(
+                              child: AnimatedMascot(
+                                MascotPose.duoWelcome,
+                                size: 160,
+                                animationAsset: MascotMotion.welcomeAsset,
+                                posterAsset: MascotMotion.welcomePosterAsset,
+                              ),
+                            ),
+                          )
+                        : StoragePhoto(
+                            path: p.photos.first,
+                            profiles: profiles,
+                          ),
+                    if (p.city != null)
+                      Positioned(
+                        left: 12,
+                        top: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.9),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text(
+                            '📍 ${p.city!.split(',').first}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
                             ),
                           ),
-                        )
-                      : StoragePhoto(path: p.photos.first, profiles: profiles),
-                  if (p.city != null)
-                    Positioned(
-                      left: 12,
-                      top: 12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
                         ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          '📍 ${p.city!.split(',').first}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
+                      ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 14, 18, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            '${p.name ?? ''}, ${p.age ?? ''}',
+                            style: text.headlineSmall,
                           ),
                         ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(18, 14, 18, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          '${p.name ?? ''}, ${p.age ?? ''}',
-                          style: text.headlineSmall,
-                        ),
-                      ),
-                      if (p.verified) ...[
-                        const SizedBox(width: 6),
-                        const Icon(
-                          Icons.verified_rounded,
-                          color: BakeColors.leafGreen,
-                          size: 22,
-                        ),
+                        if (p.verified) ...[
+                          const SizedBox(width: 6),
+                          const Icon(
+                            Icons.verified_rounded,
+                            color: BakeColors.leafGreen,
+                            size: 22,
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                  if (style.isNotEmpty)
-                    Text(
-                      style.first,
-                      style: text.titleMedium?.copyWith(
-                        color: BakeColors.deepCherry,
-                      ),
                     ),
-                  const SizedBox(height: 6),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [
-                      if (diet != null) _Tag(withEmoji(diet)),
-                      for (final c in cuisines) _Tag(withEmoji(c)),
-                      if (p.foodText('signatureDish') != null)
-                        _Tag('⭐ ${p.foodText('signatureDish')}'),
-                    ],
-                  ),
-                  if (common != null) ...[
-                    const SizedBox(height: 10),
-                    Text(
-                      '🍒 $common',
-                      style: text.titleMedium?.copyWith(
-                        color: BakeColors.cherryRed,
+                    if (style.isNotEmpty)
+                      Text(
+                        style.first,
+                        style: text.titleMedium?.copyWith(
+                          color: BakeColors.deepCherry,
+                        ),
                       ),
+                    const SizedBox(height: 6),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        if (diet != null) _Tag(withEmoji(diet)),
+                        for (final c in cuisines) _Tag(withEmoji(c)),
+                        if (p.foodText('signatureDish') != null)
+                          _Tag('⭐ ${p.foodText('signatureDish')}'),
+                      ],
                     ),
+                    if (common != null) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        '🍒 $common',
+                        style: text.titleMedium?.copyWith(
+                          color: BakeColors.cherryRed,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

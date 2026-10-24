@@ -20,6 +20,7 @@ import 'theme/theme.dart';
 import 'widgets/mascot.dart';
 import 'widgets/mascot_rive.dart';
 import 'widgets/startup_gate.dart';
+import 'widgets/web_frame.dart';
 
 /// `flutter run --dart-define=USE_EMULATORS=true` talks to the local Firebase emulators.
 const useEmulators = bool.fromEnvironment('USE_EMULATORS');
@@ -49,6 +50,8 @@ class BakeOutApp extends StatelessWidget {
       title: 'BakeOut',
       debugShowCheckedModeBanner: false,
       theme: buildBakeTheme(),
+      scrollBehavior: const BakeScrollBehavior(),
+      builder: (context, child) => WebFrame(child: child ?? const SizedBox.shrink()),
       home: StartupGate(
         initialize: () async {
           await Future.wait([initFirebase(), MascotMotion.init()]);

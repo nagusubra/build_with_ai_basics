@@ -221,7 +221,9 @@ class _ModeSwitch extends StatelessWidget {
           key: key,
           behavior: HitTestBehavior.opaque,
           onTap: enabled ? () => onChanged(isLogIn) : null,
-          child: AnimatedContainer(
+          child: MouseRegion(
+            cursor: enabled && !on ? SystemMouseCursors.click : MouseCursor.defer,
+            child: AnimatedContainer(
             duration: 200.ms,
             curve: Curves.easeOut,
             padding: const EdgeInsets.symmetric(vertical: 11),
@@ -235,6 +237,7 @@ class _ModeSwitch extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.w800, color: on ? BakeColors.deepCherry : BakeColors.muted),
             ),
+          ),
           ),
         ),
       );

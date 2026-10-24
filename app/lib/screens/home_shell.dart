@@ -185,10 +185,22 @@ class _HomeShellState extends State<HomeShell> {
         appBar: AppBar(
           title: const Text('Discover'),
           actions: [
-            ActionChip(
-              key: const Key('discover-mode'),
-              label: Text(me.lookingFor == 'friends' ? '🤝 Friends' : '💞 Partner'),
-              onPressed: editFilters,
+            Material(
+              color: BakeColors.softPink,
+              shape: const StadiumBorder(side: BorderSide(color: BakeColors.line)),
+              child: InkWell(
+                key: const Key('discover-mode'),
+                customBorder: const StadiumBorder(),
+                onTap: editFilters,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  child: Text(
+                    me.lookingFor == 'friends' ? '🤝 Friends' : '💞 Partner',
+                    softWrap: false,
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: BakeColors.deepCherry),
+                  ),
+                ),
+              ),
             ),
             IconButton(
               key: const Key('discover-filters'),
