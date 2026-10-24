@@ -44,7 +44,8 @@
     });
   }
   BOARDS.forEach(a => { const b = document.createElement('button'); b.textContent = a; b.onclick = () => play(a); document.getElementById('bar').append(b); });
-  play(BOARDS[0]);
+  const start = new URLSearchParams(location.search).get('artboard');
+  play(BOARDS.includes(start) ? start : BOARDS[0]);
 </script>
 </body>
 </html>

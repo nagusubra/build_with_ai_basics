@@ -27,7 +27,12 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              const AnimatedMascot(MascotPose.duoWelcome, size: 290)
+              const AnimatedMascot(
+                MascotPose.duoWelcome,
+                size: 290,
+                animationAsset: MascotMotion.welcomeAsset,
+                posterAsset: MascotMotion.welcomePosterAsset,
+              )
                   .animate()
                   .fadeIn(duration: 500.ms)
                   .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), curve: Curves.easeOutBack),

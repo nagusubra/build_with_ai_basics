@@ -1,6 +1,7 @@
 import 'package:bakeout/widgets/mascot.dart';
 import 'package:bakeout/widgets/mascot_rive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -20,17 +21,35 @@ void main() {
     }
   });
 
-  testWidgets('falls back to the PNG when Rive is not available', (tester) async {
+  testWidgets('falls back to the PNG when Rive is not available', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(
         home: Center(
-          child: AnimatedMascot(MascotPose.duoWelcome, size: 120, bob: false),
+          child: AnimatedMascot(
+            MascotPose.duoWelcome,
+            size: 120,
+            bob: false,
+            animationAsset: MascotMotion.welcomeAsset,
+            posterAsset: MascotMotion.welcomePosterAsset,
+          ),
         ),
       ),
     );
 
     expect(find.byType(Image), findsOneWidget);
     final image = tester.widget<Image>(find.byType(Image));
-    expect((image.image as AssetImage).assetName, MascotPose.duoWelcome.asset);
+    expect(
+      (image.image as AssetImage).assetName,
+      MascotMotion.welcomePosterAsset,
+    );
+  });
+
+  test('the new DuoWelcome animation is bundled', () async {
+    final animation = await rootBundle.load(MascotMotion.welcomeAsset);
+    expect(animation.lengthInBytes, greaterThan(0));
+    final poster = await rootBundle.load(MascotMotion.welcomePosterAsset);
+    expect(poster.lengthInBytes, greaterThan(0));
   });
 }

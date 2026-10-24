@@ -5,6 +5,8 @@ import '../../models/profile.dart';
 import '../../services/profile_service.dart';
 import '../../theme/colors.dart';
 import '../../widgets/city_picker.dart';
+import '../../widgets/mascot.dart';
+import '../../widgets/mascot_rive.dart';
 import '../../widgets/onboarding.dart';
 
 const genders = ['Man', 'Woman', 'Non-binary', 'Other'];
@@ -107,6 +109,19 @@ class _BasicsScreenState extends State<BasicsScreen> {
         subtitle: 'Just the essentials. Your birthday stays private — people only see your age.',
         progress: widget.existing == null ? 0.05 : null,
         onBack: widget.existing == null ? null : () => Navigator.pop(context),
+        top: widget.existing == null
+            ? const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: Center(
+                  child: AnimatedMascot(
+                    MascotPose.duoWelcome,
+                    size: 170,
+                    animationAsset: MascotMotion.welcomeAsset,
+                    posterAsset: MascotMotion.welcomePosterAsset,
+                  ),
+                ),
+              )
+            : null,
         action: FilledButton(
           key: const Key('basics-continue'),
           onPressed: _busy ? null : _save,

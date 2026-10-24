@@ -63,7 +63,14 @@ class _AuthScreenState extends State<AuthScreen> {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
             children: [
-              const Center(child: AnimatedMascot(MascotPose.duoWelcome, size: 170)),
+              const Center(
+                child: AnimatedMascot(
+                  MascotPose.duoWelcome,
+                  size: 170,
+                  animationAsset: MascotMotion.welcomeAsset,
+                  posterAsset: MascotMotion.welcomePosterAsset,
+                ),
+              ),
               Text(_logIn ? 'Welcome back' : 'Create your account', textAlign: TextAlign.center, style: text.headlineMedium),
               const SizedBox(height: 24),
               TextFormField(

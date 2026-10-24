@@ -97,10 +97,20 @@ The script resizes each PNG to 768px in `tool/mascot_rive/assets/`, writes
 result over the committed `.riv`. Those intermediates are git-ignored. `MASCOT_RIVE=false`
 forces the PNG path; Reduce Motion does the same at runtime.
 
-### Isolated layered DuoWelcome proof
+### Layered DuoWelcome animation
 
-`tool/mascot_rive_duo/` is a separate art experiment, **not wired into Flutter**.
-It leaves the shipped seven-pose asset and PNG/reduced-motion fallback untouched.
+The layered animation in `tool/mascot_rive_duo/` is used on the Flutter startup
+screen, Welcome, auth, and the first onboarding step. It has its own
+`assets/mascots/rive/cherry_duo_welcome.riv` asset so the existing seven-pose
+`cherry_mascots.riv` remains unchanged. Its matching transparent rest-pose
+poster, `assets/mascots/cherry_duo_welcome_rest.png`, covers web, reduced-motion
+settings, and Rive initialization or loading failures. The native OS launch
+screen remains static; this animation starts as soon as Flutter is running.
+One splash stays mounted through Firebase, authentication, and profile loading;
+there is no artificial startup delay or intermediate resized mascot screen.
+The layered duo uses Rive's Flutter canvas renderer to avoid Android texture
+replacement flashes. Other mascot assets keep their existing renderer.
+
 The latest direction is two open eyes for Jill looking left toward Jack, Jack's
 eyes glancing right back at her, a synchronized blink and a gentle shared nuzzle
 instead of a phone tap. Jack still gives the pan a small lift; his arm layer now
@@ -119,6 +129,8 @@ From `app/`, with Python, NumPy, Pillow and the Rive CLI available:
 python .\tool\mascot_rive_duo\build_proof.py
 python .\tool\mascot_rive_duo\verify_proof.py
 .\tool\preview_mascot_duo.ps1
+Copy-Item .\tool\mascot_rive_duo\build\duo_welcome_layered.riv .\assets\mascots\rive\cherry_duo_welcome.riv
+Copy-Item .\tool\mascot_rive_duo\build\debug_rest_rgba.png .\assets\mascots\cherry_duo_welcome_rest.png
 ```
 
 The thirteen transparent 768px layers are the body, two heads, Jack's pan arm,
@@ -175,6 +187,23 @@ working directory, not the Rive project):
 ```
 
 Approve the live proof before committing or integrating it into the app.
+
+### Jack wingman rig (built from scratch, piece by piece)
+
+`tool/mascot_rive_jack/` rebuilds Jack from Gemini-generated parts (one master pose, then pose,
+expression and prop edits registered onto it) instead of cutting up a finished picture. It produces
+`JackWingman`, an 8 s think → idea → write → smile loop for the top of a guy's chat, plus reusable
+`JackThink`, `JackIdea`, `JackWrite` and `JackSmile` artboards. It is not wired into Flutter yet.
+
+```powershell
+python .\tool\mascot_rive_jack\build_jack.py
+python .\tool\mascot_rive_jack\verify_jack.py
+.\tool\preview_mascot_jack.ps1     # live preview in the browser, including VS Code's
+```
+
+The details are in [tool/mascot_rive_jack/README.md](tool/mascot_rive_jack/README.md), the method in
+[docs/mascot-animation-pipeline.md](../docs/mascot-animation-pipeline.md), and the steps for a new
+animation in [docs/new-mascot-animation-playbook.md](../docs/new-mascot-animation-playbook.md).
 
 ## Tests
 

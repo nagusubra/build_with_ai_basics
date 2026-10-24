@@ -28,6 +28,15 @@ run 1-start
 
 Read [hackathon/00-start-here.md](hackathon/00-start-here.md) first if you want the map. That file links the rules, eligibility, project requirements, submission checklist, judging rubric, prizes, schedule, method, video notes, organizer updates, and this workspace's setup.
 
+## Mascot animations
+
+Jack and Jill animate with code-generated Rive files built from image-model parts:
+
+- [docs/mascot-animation-pipeline.md](docs/mascot-animation-pipeline.md): tech stack, tools, MCP setup and how it all works.
+- [docs/new-mascot-animation-playbook.md](docs/new-mascot-animation-playbook.md): step-by-step checklist to make a new animation.
+- [design/mascots/jack_rig/](design/mascots/jack_rig/README.md): Jack's character bible, prompts and parts.
+- [app/tool/mascot_rive_jack/](app/tool/mascot_rive_jack/README.md): the Jack wingman rig. Preview it with `.\app\tool\preview_mascot_jack.ps1`.
+
 ## Links
 
 - Hackathon: https://learn-ai-basics.devpost.com/

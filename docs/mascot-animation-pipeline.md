@@ -5,6 +5,10 @@ This is the full recipe used to build BakeOut's mascot animations: first the **D
 tech stack, tool setup, the image-model workflow, the rig and animation code, verification and Flutter
 integration, so you can make a new character or a new move on your own.
 
+> **Making a new animation?** Follow the checklist in
+> [new-mascot-animation-playbook.md](new-mascot-animation-playbook.md). AI agents can load the
+> `mascot-animation` skill (`.agents/skills/mascot-animation/SKILL.md`), which wraps the same steps.
+
 ## 1. Why piece by piece
 
 Animating one finished picture means cutting it up after the fact. Hidden areas (behind an arm, under a
@@ -199,9 +203,10 @@ misplaced ink lines were caught.
 PowerShell shows the CLI's stderr logging as a NativeCommandError; look for "0 errors" instead of the exit
 colour.
 
-**Live preview in any browser (including VS Code's):** serve the folder and open `preview.html`. It plays
-the real `.riv` with the Rive web runtime at full size and at the 120 px chat size, with a button per
-artboard:
+**Live preview in any browser (including VS Code's):** `.\app\tool\preview_mascot_jack.ps1` serves the
+folder and opens `preview.html` (`-Artboard JackWrite` starts on a segment; `-Native` opens the Rive CLI
+window instead). The page plays the real `.riv` with the Rive web runtime at full size and at the 120 px
+chat size, with a button per artboard. The manual equivalent is:
 
 ```powershell
 python -m http.server 8765 --bind 127.0.0.1 --directory app\tool\mascot_rive_jack
@@ -251,7 +256,10 @@ beat fits.
 
 | Path | Role |
 |---|---|
+| `docs/new-mascot-animation-playbook.md` | Step-by-step checklist for a new animation |
+| `.agents/skills/mascot-animation/` | Agent skill wrapping the playbook |
 | `app/tool/gemini_web/` | Gemini automation (`gen.py` → `send.js`/`fetch.js`, `grab.py`) |
+| `app/tool/preview_mascot_jack.ps1` | Live browser or native preview, verify, build |
 | `design/mascots/jack_rig/` | Character bible, master, raw renders, registered parts, `jack_rig.json` |
 | `app/tool/mascot_rive_jack/` | `parts.py`, `build_jack.py`, `verify_jack.py`, runtime `assets/`, `scene.rml`, `rive.yaml`, `build/` |
 | `app/tool/mascot_rive_duo/` | The earlier DuoWelcome proof (same ideas, edited from a finished picture) |

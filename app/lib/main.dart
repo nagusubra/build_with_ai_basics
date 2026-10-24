@@ -19,14 +19,13 @@ import 'theme/colors.dart';
 import 'theme/theme.dart';
 import 'widgets/mascot.dart';
 import 'widgets/mascot_rive.dart';
+import 'widgets/startup_gate.dart';
 
 /// `flutter run --dart-define=USE_EMULATORS=true` talks to the local Firebase emulators.
 const useEmulators = bool.fromEnvironment('USE_EMULATORS');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await MascotMotion.init();
-  await initFirebase();
   runApp(const BakeOutApp());
 }
 
@@ -50,12 +49,18 @@ class BakeOutApp extends StatelessWidget {
       title: 'BakeOut',
       debugShowCheckedModeBanner: false,
       theme: buildBakeTheme(),
-      home: AuthGate(
-        auth: AuthService(),
-        chat: ChatService(),
-        functions: FunctionsService(),
-        profiles: ProfileService(),
-        discover: DiscoverService(),
+      home: StartupGate(
+        initialize: () async {
+          await Future.wait([initFirebase(), MascotMotion.init()]);
+        },
+        buildDestination: (onReady) => AuthGate(
+          auth: AuthService(),
+          chat: ChatService(),
+          functions: FunctionsService(),
+          profiles: ProfileService(),
+          discover: DiscoverService(),
+          onReady: onReady,
+        ),
       ),
     );
   }
@@ -77,12 +82,24 @@ class _ProfileLoadError extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Mascot(MascotPose.boyTryAgain, size: 170),
-              Text("We couldn't load your profile", textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineSmall),
+              Text(
+                "We couldn't load your profile",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
               const SizedBox(height: 8),
-              const Text('Check your connection, then try again.', textAlign: TextAlign.center, style: TextStyle(color: BakeColors.muted)),
+              const Text(
+                'Check your connection, then try again.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: BakeColors.muted),
+              ),
               const SizedBox(height: 24),
               FilledButton(onPressed: onRetry, child: const Text('Try again')),
-              TextButton(key: const Key('profile-error-signout'), onPressed: auth.signOut, child: const Text('Sign out')),
+              TextButton(
+                key: const Key('profile-error-signout'),
+                onPressed: auth.signOut,
+                child: const Text('Sign out'),
+              ),
             ],
           ),
         ),
@@ -100,6 +117,7 @@ class AuthGate extends StatelessWidget {
     required this.functions,
     required this.profiles,
     required this.discover,
+    this.onReady,
   });
 
   final AuthService auth;
@@ -107,6 +125,7 @@ class AuthGate extends StatelessWidget {
   final FunctionsService functions;
   final ProfileService profiles;
   final DiscoverService discover;
+  final VoidCallback? onReady;
 
   static const _loading = Scaffold(body: CherryLoading());
 
@@ -117,11 +136,39 @@ class AuthGate extends StatelessWidget {
       builder: (context, snap) {
         if (snap.connectionState == ConnectionState.waiting) return _loading;
         final user = snap.data;
-        if (user == null) return WelcomeScreen(auth: auth);
+        if (user == null) {
+          return _DestinationReady(
+            onReady: onReady,
+            child: WelcomeScreen(auth: auth),
+          );
+        }
         return _SignedIn(key: ValueKey(user.uid), uid: user.uid, gate: this);
       },
     );
   }
+}
+
+class _DestinationReady extends StatefulWidget {
+  const _DestinationReady({required this.onReady, required this.child});
+
+  final VoidCallback? onReady;
+  final Widget child;
+
+  @override
+  State<_DestinationReady> createState() => _DestinationReadyState();
+}
+
+class _DestinationReadyState extends State<_DestinationReady> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) widget.onReady?.call();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 class _SignedIn extends StatefulWidget {
@@ -144,21 +191,33 @@ class _SignedInState extends State<_SignedIn> {
       stream: _profile,
       builder: (context, snap) {
         if (snap.hasError) {
-          return _ProfileLoadError(
-            auth: g.auth,
-            onRetry: () => setState(() => _profile = g.profiles.profile(widget.uid)),
+          return _DestinationReady(
+            onReady: g.onReady,
+            child: _ProfileLoadError(
+              auth: g.auth,
+              onRetry: () =>
+                  setState(() => _profile = g.profiles.profile(widget.uid)),
+            ),
           );
         }
         final profile = snap.data;
         if (profile == null) return AuthGate._loading;
-        if (nextStep(profile) != OnboardingStep.done) return OnboardingFlow(profile: profile, profiles: g.profiles);
-        return HomeShell(
-          me: profile,
-          auth: g.auth,
-          chat: g.chat,
-          functions: g.functions,
-          profiles: g.profiles,
-          discover: g.discover,
+        if (nextStep(profile) != OnboardingStep.done) {
+          return _DestinationReady(
+            onReady: g.onReady,
+            child: OnboardingFlow(profile: profile, profiles: g.profiles),
+          );
+        }
+        return _DestinationReady(
+          onReady: g.onReady,
+          child: HomeShell(
+            me: profile,
+            auth: g.auth,
+            chat: g.chat,
+            functions: g.functions,
+            profiles: g.profiles,
+            discover: g.discover,
+          ),
         );
       },
     );

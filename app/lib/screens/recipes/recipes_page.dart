@@ -51,7 +51,14 @@ class _RecipesPageState extends State<RecipesPage> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(18, 8, 18, 28),
         children: [
-          const Center(child: AnimatedMascot(MascotPose.duoCooking, size: 150)),
+          const Center(
+            child: AnimatedMascot(
+              MascotPose.duoWelcome,
+              size: 150,
+              animationAsset: MascotMotion.welcomeAsset,
+              posterAsset: MascotMotion.welcomePosterAsset,
+            ),
+          ),
           Text('No one new right now', textAlign: TextAlign.center, style: text.headlineSmall),
           const SizedBox(height: 4),
           Text(
