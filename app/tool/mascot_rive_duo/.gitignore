@@ -4,3 +4,6 @@ build/cmp_*
 build/probe*
 build/opacity_test*
 build/source_on_dark.png
+build/ai_*
+build/review_*.png
+build/preview.gif
