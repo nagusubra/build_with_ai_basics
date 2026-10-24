@@ -112,6 +112,10 @@ class AnimatedMascot extends StatelessWidget {
       child: RiveWidgetBuilder(
         fileLoader: MascotMotion.loaderFor(animationAsset),
         artboardSelector: ArtboardNamed(artboard),
+        onFailed: (error, stack) {
+          debugPrint('Could not load mascot animation $animationAsset: $error');
+          debugPrintStack(stackTrace: stack);
+        },
         builder: (context, state) => switch (state) {
           RiveLoaded(:final controller) => RepaintBoundary(
             child: RiveWidget(controller: controller, fit: Fit.contain),

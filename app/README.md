@@ -110,6 +110,17 @@ One splash stays mounted through Firebase, authentication, and profile loading;
 there is no artificial startup delay or intermediate resized mascot screen.
 The layered duo uses Rive's Flutter canvas renderer to avoid Android texture
 replacement flashes. Other mascot assets keep their existing renderer.
+The same layered duo is also used in Discover's greeting and recipe fallback.
+
+The splash regression test runs on an Android device without Firebase emulators:
+
+```powershell
+flutter test integration_test\startup_motion_test.dart -d emulator-5554
+```
+
+It checks actual rendered mascot pixels for motion, rejects native texture
+rendering for this asset, and verifies that initialization does not replace or
+resize the splash before the destination is ready.
 
 The latest direction is two open eyes for Jill looking left toward Jack, Jack's
 eyes glancing right back at her, a synchronized blink and a gentle shared nuzzle
