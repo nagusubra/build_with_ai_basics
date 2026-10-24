@@ -8,20 +8,29 @@ and tool setup are in [mascot-animation-pipeline.md](mascot-animation-pipeline.m
 Reference implementation: [`app/tool/mascot_rive_jack/`](../app/tool/mascot_rive_jack/README.md) +
 [`design/mascots/jack_rig/`](../design/mascots/jack_rig/README.md).
 
+**Start with the [workshop README](../app/tool/README.md)** for the isolation audit,
+tool capabilities and cross-editor setup. Use the
+[starter prompt](mascot-animation-starter-prompt.md) in a fresh agent session.
+Default to **animation-only**: no Flutter code, shipped assets, tests or pubspec
+changes. Integration is an optional, separately approved task.
+
 ---
 
 ## Step 0: Set up (once per machine)
 
-- [ ] Python 3.12 + `pip install numpy pillow`
-- [ ] Rive CLI at `%USERPROFILE%\.rive\bin\rive.exe`. Check it with `rive --help`.
-- [ ] Chrome with the **Playwright MCP Bridge** extension. Add the VS Code MCP server
+- [ ] Check Git status, permissions and tool versions. Prefer a separate worktree for concurrent app work.
+- [ ] Python 3.12 + NumPy/Pillow. Check imports first; install missing dependencies into your local environment.
+- [ ] Rive CLI at `%USERPROFILE%\.rive\bin\rive.exe` or on PATH. Check version/help.
+- [ ] Optional: Chrome with the **Playwright MCP Bridge** extension. Add the VS Code MCP server
       `npx @playwright/mcp@latest --extension` with `PLAYWRIGHT_MCP_EXTENSION_TOKEN` passed as an input
       (section 3 of the pipeline doc).
-- [ ] Signed in to Gemini (and a backup Google account and ChatGPT for when credits run out).
+- [ ] For new art only: signed in to an approved image provider. Respect quotas; pause or ask for an approved alternative when limited.
+- [ ] Confirm image viewing and actual build execution are available. Read-only agents can review, not finish the animation.
 
 ## Step 1: Storyboard before generating anything
 
-Write this down in the rig README first. It decides every asset you'll need.
+Write this down in the rig README first and obtain approval, including a generation
+budget. It decides every asset you'll need. Skip generation when existing art suffices.
 
 | Question | Jack wingman example |
 |---|---|
@@ -74,7 +83,9 @@ Per image:
 
 ## Step 4: Key, register and cut parts
 
-Start from a copy of `app/tool/mascot_rive_jack/` (`parts.py` is generic; `build_jack.py` is the template).
+Adapt `app/tool/mascot_rive_jack/` into a unique workshop (`parts.py` is reusable;
+the builder/verifier are character-specific). Do not blindly copy generated
+outputs. Update all paths/output names/preview settings to avoid writing into Jack.
 
 - [ ] Update constants: `RIG`, `CROP` (the master-space window to show), `S` (runtime scale), and pivots.
       Measure pivots on `master.png`: neck under the chin, shoulders, hat band, root between the feet.
@@ -133,27 +144,45 @@ Update `beats` in the verifier to your story frames. Then check:
 - [ ] Live preview: watch at least three full loops. Look for pops, hitches at the seam, arms that cut off
       at the shoulder, and bobbing that's too stiff or too floaty.
 - [ ] Frame-to-frame diff: big spikes should only be the intended pose swaps.
-- [ ] `.riv` under 4 MB.
+- [ ] Capture blink/pose transitions and check every changed reusable segment's seam as well as the main loop.
+- [ ] Nonempty `.riv` under 4,000,000 bytes; check the size explicitly.
+
+The commands for a new `<rig>` are naming conventions to implement, not existing
+generic scripts. Jack's verifier samples segments but does not test their seams
+or enforce the size budget; neither mode performs a full frame-diff analysis.
+Its `--quick` mode also skips the previews and small-size strip.
+Run one verifier per rig at a time because segment capture temporarily edits `rive.yaml`.
 
 Fix and repeat. Prefer timing fixes over new art; generate new art only when a pose truly can't be faked.
 
-## Step 8: Ship
+## Step 8: Deliver the standalone animation (default)
 
-- [ ] Copy the `.riv` to `app/assets/mascots/rive/` and keep a static poster PNG for fallback.
+- [ ] Keep the accepted `.riv` and review artifacts in this rig's workshop `build/`.
+- [ ] Write the rig README: approved story, look, palette, exact prompts, parts,
+      pivots, artboards/state machines, tool versions, validation results and handoff.
+- [ ] Document standalone preview commands and the static-poster plan.
+- [ ] Review status/diff against the session baseline. No new Flutter runtime code,
+      shipped assets, tests, platform config or pubspec changes.
+- [ ] Commit/push only if requested; stage this task's files explicitly. Never
+      commit tokens, login state, `send.js`/`fetch.js`, prompt dumps or scratch captures.
+- [ ] **Stop here** unless Flutter integration is explicitly approved.
+
+## Step 9: Integrate into Flutter (optional, separate approval)
+
+- [ ] Copy the approved `.riv` to `app/assets/mascots/rive/` and keep a matching
+      transparent PNG for web/reduced motion/failure. Preserve other assets.
 - [ ] Add `MascotPose` entries (`file`, `riveArtboard`) and render with
       `AnimatedMascot(pose, animationAsset: ...)` (section 8 of the pipeline doc). Run `flutter analyze`
-      and `flutter test`.
-- [ ] Write the rig README: look, palette, prompts, parts, pivots, artboards.
-- [ ] Commit `design/mascots/<rig>/` (raw, master, parts, README), the tool folder (scripts, `assets/`,
-      `scene.rml`, `rive.yaml`, `.riv`, review images) and the app changes. Scratch captures stay ignored.
-- [ ] Never commit tokens, `send.js`/`fetch.js`, or prompt dumps.
+      and focused Flutter tests.
+- [ ] Hot reload/restart a connected app; check native playback, web/reduced-motion
+      posters, load failures and affected startup behavior. Report unavailable device checks.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---|---|
-| Gemini didn't send, or nothing happens | The Chrome window is hidden or minimised; bring it on screen and rerun `fetch.js` |
-| "You've reached your limit" | Switch Google account in Gemini, or continue in ChatGPT |
+| Gemini didn't send, or nothing happens | Bring Chrome on screen; inspect page/response state before retrying to avoid duplicate sends |
+| "You've reached your limit" | Pause or ask for an approved alternative provider; respect account quotas |
 | Edit drifted (moved, resized or restyled) | Same chat: "That moved the X. Keep everything pixel-identical to the image I attached; only …" |
 | Green rim around parts | `key()` already strips a 4 px rim; widen `MinFilter(9)` or lower `GREEN_LO_RIM` |
 | Green details vanish (leaf, cherry stems) | Pass `keep_green` for that part, or cut it from its own render |

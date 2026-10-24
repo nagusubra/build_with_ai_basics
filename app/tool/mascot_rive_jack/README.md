@@ -5,6 +5,10 @@ Code-authored Rive animation of Jack (the boy chef cherry), built from image-mod
 [`docs/mascot-animation-pipeline.md`](../../../docs/mascot-animation-pipeline.md). To make a new animation,
 follow [`docs/new-mascot-animation-playbook.md`](../../../docs/new-mascot-animation-playbook.md).
 
+Start with the [workshop README](../README.md) for the isolation audit,
+cross-editor setup and [starter prompt](../../../docs/mascot-animation-starter-prompt.md).
+Build/verify/preview stay outside shipped Flutter assets; **do not integrate by default**.
+
 ## Artboards
 
 | Artboard | Frames @ 60 fps | Use |
@@ -28,7 +32,13 @@ python app\tool\mascot_rive_jack\verify_jack.py           # ...plus preview.webp
 ```
 
 Needs Python 3.12 with NumPy and Pillow, and the Rive CLI at `%USERPROFILE%\.rive\bin\rive.exe` (or on
-PATH). PowerShell prints the CLI's stderr log as a NativeCommandError, so check for "0 errors" instead.
+PATH). PowerShell can print normal stderr logs as a NativeCommandError: require
+the CLI's successful exit code and zero errors/warnings, not just output color.
+
+`--quick` samples beats/segments and tests the main loop seam, but skips previews
+and the size strip. Neither verifier mode checks every segment seam, enforces the
+size budget or performs a full frame-diff analysis. Check those separately when
+changing reusable loops. Do not run two verifiers on this rig concurrently.
 
 ## Files
 
@@ -42,7 +52,7 @@ PATH). PowerShell prints the CLI's stderr log as a NativeCommandError, so check 
 | `scene.rml`, `rive.yaml` | Generated Rive source; `rive.yaml` `main` must stay `JackWingman` |
 | `build/` | `jack_wingman.riv`, `review.png`, `chat_size.png`, `preview.webp` are committed; scratch captures are ignored |
 
-## Ship to the app
+## Ship to the app (only after explicit integration approval)
 
 ```powershell
 Copy-Item app\tool\mascot_rive_jack\build\jack_wingman.riv app\assets\mascots\rive\jack_wingman.riv

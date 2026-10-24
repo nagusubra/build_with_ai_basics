@@ -7,6 +7,11 @@ generations use your Gemini account's normal image credits.
 Setup and the full workflow are in
 [`docs/mascot-animation-pipeline.md`](../../../docs/mascot-animation-pipeline.md#4-generating-assets-with-gemini).
 
+For editor portability, secret handling and animation-only boundaries, start with
+the [workshop README](../README.md#6-editor-portability-and-mcp). These helpers are
+optional; manual authorized upload/download works too. Their scratch filenames are
+shared: do not run concurrent generations from this directory.
+
 ## One image, end to end
 
 ```powershell
@@ -17,9 +22,14 @@ python app\tool\gemini_web\gen.py app\tool\gemini_web\p.txt design\mascots\jack_
 
 Then, through the MCP tools:
 
+These are the original bridge's tool names and file-output arguments. Discover
+the actual tool schemas in your client; do not assume `filename` or
+`browser_run_code_unsafe` exists in another Playwright MCP implementation.
+
 1. `browser_run_code_unsafe` with `filename: app\tool\gemini_web\send.js`, which pastes the images, types the prompt and sends.
 2. `browser_run_code_unsafe` with `filename: app\tool\gemini_web\fetch.js`, which waits up to 45 s and stores the newest image in
-   `window.__out`. Repeat while it returns `{ok:false}`; it re-presses Send if the prompt never went out.
+   `window.__out`. If `{ok:false}`, inspect the page/response before retrying;
+   it may re-press Send, so avoid duplicate paid generations.
 3. `browser_evaluate` with `function: () => window.__out` and `filename: app\tool\gemini_web\dump.txt`.
 
 Finally:
@@ -37,6 +47,7 @@ python app\tool\gemini_web\grab.py app\tool\gemini_web\dump.txt design\mascots\<
 - `send.js`, `fetch.js`, prompt `.txt` files and dumps are generated and git-ignored.
 - These scripts target Gemini's DOM (`rich-textarea .ql-editor`, `model-response img`). If Google changes the
   UI, update the selectors in `gen.py`.
-- When credits run out, switch the Google account in Gemini, or use ChatGPT (manually or via plain MCP
-  clicks), switching its account too.
+- When credits run out, pause or ask for an approved alternative provider. Respect
+  quotas; do not cycle accounts to evade limits. ChatGPT requires its own UI flow;
+  the Gemini scripts do not target it.
 - Never commit the Playwright extension token.

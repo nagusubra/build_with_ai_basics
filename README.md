@@ -32,6 +32,8 @@ Read [hackathon/00-start-here.md](hackathon/00-start-here.md) first if you want 
 
 Jack and Jill animate with code-generated Rive files built from image-model parts:
 
+- [Animation workshop README](app/tool/README.md): isolation audit, safe authoring boundaries, tools and cross-editor setup. **New animations do not require Flutter changes; deployment is a separate task.**
+- [Reusable starter prompt](docs/mascot-animation-starter-prompt.md): paste into Cursor, OpenCode, Copilot or another write-capable agent.
 - [docs/mascot-animation-pipeline.md](docs/mascot-animation-pipeline.md): tech stack, tools, MCP setup and how it all works.
 - [docs/new-mascot-animation-playbook.md](docs/new-mascot-animation-playbook.md): step-by-step checklist to make a new animation.
 - [design/mascots/jack_rig/](design/mascots/jack_rig/README.md): Jack's character bible, prompts and parts.

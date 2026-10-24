@@ -62,6 +62,13 @@ app needs no CDN.
 
 ## Mascot motion
 
+For new animation work, start with the [workshop README](tool/README.md) and
+[portable starter prompt](../docs/mascot-animation-starter-prompt.md).
+**Authoring is isolated from Flutter; integrating an accepted animation is a
+separate, explicitly approved step.** The legacy Dart builder below is an
+exception: it automatically overwrites the shipped shared `.riv`, so do not run
+it for standalone animation work.
+
 The seven large mascot poses share one code-authored Rive file,
 `assets/mascots/rive/cherry_mascots.riv`. The PNGs stay the poster and the fallback;
 small mascots and reduced-motion users never load Rive.
@@ -143,6 +150,9 @@ python .\tool\mascot_rive_duo\verify_proof.py
 Copy-Item .\tool\mascot_rive_duo\build\duo_welcome_layered.riv .\assets\mascots\rive\cherry_duo_welcome.riv
 Copy-Item .\tool\mascot_rive_duo\build\debug_rest_rgba.png .\assets\mascots\cherry_duo_welcome_rest.png
 ```
+
+The two `Copy-Item` commands are **deployment**, not preview; run them only after
+explicit integration approval.
 
 The thirteen transparent 768px layers are the body, two heads, Jack's pan arm,
 Jill's phone hand, two closed-eye overlays, and three in-between blink poses per
