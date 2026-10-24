@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../models/chat_match.dart';
 import '../../models/message.dart';
-import '../../services/auth_service.dart';
 import '../../services/chat_service.dart';
 import '../../services/functions_service.dart';
 import '../../theme/colors.dart';
@@ -13,14 +12,12 @@ import 'chat_screen.dart';
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({
     super.key,
-    required this.auth,
     required this.chat,
     required this.functions,
     required this.myUid,
     this.myCherry,
   });
 
-  final AuthService auth;
   final ChatService chat;
   final FunctionsService functions;
   final String myUid;
@@ -32,19 +29,7 @@ class ChatListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chats'),
-        actions: [
-          // DEV ONLY: log out is deferred in the PRD; kept for switching test accounts.
-          PopupMenuButton<String>(
-            icon: const Icon(Icons.more_horiz),
-            onSelected: (choice) {
-              if (choice == 'signout') auth.signOut();
-            },
-            itemBuilder: (_) => const [PopupMenuItem(value: 'signout', child: Text('Sign out (dev)'))],
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Chats')),
       body: StreamBuilder<List<ChatMatch>>(
         stream: chat.matchesFor(myUid),
         builder: (context, snap) {

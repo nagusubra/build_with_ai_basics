@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../models/profile.dart';
+import '../services/auth_service.dart';
 import '../services/profile_service.dart';
+import '../widgets/log_out_sheet.dart';
+import '../widgets/onboarding.dart';
 import 'auth/basics_screen.dart';
 import 'meet_cherry/meet_cherry_screen.dart';
 import 'photos/photos_screen.dart';
@@ -26,10 +29,11 @@ OnboardingStep nextStep(UserProfile p) {
 
 /// Shows the step [nextStep] picks; each step's save moves the person on.
 class OnboardingFlow extends StatelessWidget {
-  const OnboardingFlow({super.key, required this.profile, required this.profiles});
+  const OnboardingFlow({super.key, required this.profile, required this.profiles, required this.auth});
 
   final UserProfile profile;
   final ProfileService profiles;
+  final AuthService auth;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +46,9 @@ class OnboardingFlow extends StatelessWidget {
       OnboardingStep.preview => PreviewScreen(profile: profile, profiles: profiles),
       OnboardingStep.meetCherry || OnboardingStep.done => MeetCherryScreen(profile: profile, profiles: profiles),
     };
-    return KeyedSubtree(key: ValueKey(step), child: screen);
+    return OnboardingExit(
+      onLogOut: () => confirmLogOut(context, auth: auth, cherry: profile.cherryAvatar, midOnboarding: true),
+      child: KeyedSubtree(key: ValueKey(step), child: screen),
+    );
   }
 }

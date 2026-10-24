@@ -11,6 +11,11 @@ class AuthService {
 
   Stream<User?> get changes => _auth.authStateChanges();
   User? get currentUser => _auth.currentUser;
+  String? get email => _auth.currentUser?.email;
+
+  /// Emails a link to set a new password. Firebase doesn't say whether the account exists,
+  /// so the app shouldn't either.
+  Future<void> sendPasswordReset(String email) => _auth.sendPasswordResetEmail(email: email.trim());
 
   /// Creates the account; the basics form fills in the profile next.
   Future<void> signUp({required String email, required String password}) async {
@@ -48,6 +53,8 @@ String friendlyAuthError(Object error) {
     'weak-password' => 'Pick a password with at least 6 characters.',
     'invalid-credential' || 'wrong-password' || 'user-not-found' => "That email and password don't match.",
     'network-request-failed' => "You're offline. Check your connection and try again.",
+    'too-many-requests' => 'Too many tries for now. Wait a minute, then try again.',
+    'user-disabled' => 'This account has been switched off. Contact the BakeOut team if that seems wrong.',
     _ => 'Something went wrong (${error.code}). Please try again.',
   };
 }

@@ -6,6 +6,7 @@ import '../../services/functions_service.dart';
 import '../../services/profile_service.dart';
 import '../../theme/colors.dart';
 import '../../theme/theme.dart';
+import '../../widgets/log_out_sheet.dart';
 import '../../widgets/mascot.dart';
 import '../auth/basics_screen.dart';
 import '../photos/photos_screen.dart';
@@ -33,6 +34,18 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   Future<void> _open(Widget Function(VoidCallback done) screen) {
     final nav = Navigator.of(context);
     return nav.push(MaterialPageRoute(builder: (_) => screen(nav.pop)));
+  }
+
+  Future<void> _changePassword() async {
+    final email = widget.auth.email;
+    if (email == null) return;
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await widget.auth.sendPasswordReset(email);
+      messenger.showSnackBar(SnackBar(content: Text('Check $email for a link to set a new password.')));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(friendlyAuthError(e))));
+    }
   }
 
   Future<void> _delete() async {
@@ -74,7 +87,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     final me = widget.me;
     final text = Theme.of(context).textTheme;
     if (_deleting) {
-      return const Scaffold(body: CherryLoading(caption: 'Getting your profile…'));
+      return const Scaffold(body: CherryLoading(caption: 'Deleting everything…'));
     }
     return Scaffold(
       appBar: AppBar(title: const Text('My profile')),
@@ -128,6 +141,35 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               onTap: () => _open((done) => QuizScreen(profile: me, profiles: widget.profiles, startAt: i, onDone: done)),
             ),
           const SizedBox(height: 28),
+          Text('Account', style: text.titleLarge),
+          const SizedBox(height: 8),
+          Card(
+            margin: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.mail_outline_rounded, color: BakeColors.muted),
+                  title: const Text('Signed in as'),
+                  subtitle: Text(widget.auth.email ?? '—', key: const Key('account-email')),
+                ),
+                const Divider(height: 1, indent: 16, endIndent: 16),
+                ListTile(
+                  key: const Key('change-password'),
+                  leading: const Icon(Icons.lock_reset_rounded, color: BakeColors.muted),
+                  title: const Text('Change password'),
+                  subtitle: const Text('We’ll email you a link to set a new one'),
+                  onTap: _changePassword,
+                ),
+                const Divider(height: 1, indent: 16, endIndent: 16),
+                ListTile(
+                  key: const Key('logout'),
+                  leading: const Icon(Icons.logout_rounded, color: BakeColors.cherryRed),
+                  title: const Text('Log out', style: TextStyle(color: BakeColors.cherryRed, fontWeight: FontWeight.w800)),
+                  onTap: () => confirmLogOut(context, auth: widget.auth, cherry: me.cherryAvatar),
+                ),
+              ],
+            ),
+          ),
           OutlinedButton.icon(
             key: const Key('delete-account'),
             onPressed: _delete,

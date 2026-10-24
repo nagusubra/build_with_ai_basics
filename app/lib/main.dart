@@ -205,7 +205,7 @@ class _SignedInState extends State<_SignedIn> {
         if (nextStep(profile) != OnboardingStep.done) {
           return _DestinationReady(
             onReady: g.onReady,
-            child: OnboardingFlow(profile: profile, profiles: g.profiles),
+            child: OnboardingFlow(profile: profile, profiles: g.profiles, auth: g.auth),
           );
         }
         return _DestinationReady(

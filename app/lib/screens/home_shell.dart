@@ -207,7 +207,7 @@ class _HomeShellState extends State<HomeShell> {
           ],
         ),
       ),
-      ChatListScreen(auth: widget.auth, chat: widget.chat, functions: widget.functions, myUid: me.uid, myCherry: me.cherryAvatar),
+      ChatListScreen(chat: widget.chat, functions: widget.functions, myUid: me.uid, myCherry: me.cherryAvatar),
       MyProfileScreen(me: widget.me, profiles: widget.profiles, functions: widget.functions, auth: widget.auth),
     ];
     return Scaffold(

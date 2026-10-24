@@ -239,12 +239,13 @@ Agreed with Vinamra after he tried the full app (see `checklist.md > Final Revie
 - **Jack & Jill:** the cherries' names and personality across the app.
 - **Daily touches:** a Dish of the Day and a greeting from your Jack or Jill on Discover; a Chats list with last-message previews, status, and unread dots; warm empty states and gentle haptics.
 - **"Liked you":** when someone likes you, a banner says who ("Priya liked you 💗") wherever you are in the app, and a pill stays on Discover until you answer. Tapping shows their profile with Like back or Pass; liking back makes the match straight away. This replaces the earlier rule that likes stay secret until a match (Vinamra's choice). There are still no push notifications, so it's seen while the app is open.
+- **Polished log in and log out:** a Log in / Sign up switch, show/hide password, iPhone password autofill, "Forgot password?" by email, and friendlier errors. Log out sits in an Account section on Me (with the signed-in email and "Change password"), behind a goodbye from your Jack or Jill, and is also offered during onboarding so nobody gets stuck halfway.
 
 ## Deferred From the POC
 - **Food filters and normal dating filters** in Discover. `scope.md > Later`; may return once the core path works. *(Brought back at final review — see Added at Final Review.)*
 - **Recommendation or matching algorithm.** Real profiles appearing is enough for now.
 - **Push notifications.** Cherry's reminder is an in-chat message instead.
-- **Other account basics:** log out, unmatch, block or report, and settings. Only preview, edit, and delete were chosen for this version. Block/report matters for a real launch's safety.
+- **Other account basics:** unmatch, block or report, and settings. Only preview, edit, and delete were chosen for this version. Block/report matters for a real launch's safety. *(Log out was brought back at final review — see Added at Final Review.)*
 - **The virtual cooking date itself**, such as an in-app video call. `scope.md > Later`.
 - **Playing music in the app or Spotify integration.** `scope.md > Later`.
 

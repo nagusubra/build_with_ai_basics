@@ -134,6 +134,9 @@ Agreed in the follow-up interview:
 
   Built and checked: the server tells only the person liked (not if they passed on the liker or want something different) and clears it on a match; rules let only them read, mark seen, or clear it; account deletion removes the notices. Checks passed: 75 app unit; 27 function unit; 23 rules; matching 6; account deletion; the new end-to-end check (banner → profile → Like back → match moment → pill gone); and the filters, Recipes, chat, and My profile UI checks.
 - [ ] **Rive mascot motion**: the seven hero poses use one code-authored `.riv` with subtle whole-image breathing, sway, and sparkle accents; PNGs remain the fallback and reduced motion keeps them still. Verified on iPhone with no splash and no face deformation.
+- [ ] **Polished log in and log out** (asked for after pulling the mascot and Android/web work): a Log in / Sign up switch, show/hide password, iPhone password autofill, "Forgot password?" by email, and friendlier errors. Me gets an Account section (signed-in email, Change password, Log out) with a goodbye sheet from your Jack or Jill; onboarding pages offer Log out from a small menu; the "Sign out (dev)" menu in Chats is gone.
+
+  Built and checked so far: analyzer; 85 app unit tests; release build on Vinamra's iPhone. Written but not yet run (Vinamra asked for phone-only builds for now): `npm run check:auth-ui`, which covers a wrong password, show/hide, the reset link, logging in, logging out from Me, and logging out mid-onboarding. Tick once he's tried it on the phone.
 - [ ] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map

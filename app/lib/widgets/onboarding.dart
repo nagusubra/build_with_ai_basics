@@ -5,6 +5,18 @@ import '../services/profile_service.dart';
 import '../theme/colors.dart';
 import '../theme/theme.dart';
 
+/// Lets onboarding pages offer "Log out" while someone is still setting up their profile.
+class OnboardingExit extends InheritedWidget {
+  const OnboardingExit({super.key, required this.onLogOut, required super.child});
+
+  final VoidCallback onLogOut;
+
+  static OnboardingExit? maybeOf(BuildContext context) => context.dependOnInheritedWidgetOfExactType<OnboardingExit>();
+
+  @override
+  bool updateShouldNotify(OnboardingExit oldWidget) => false;
+}
+
 /// Shared frame for onboarding steps: optional progress bar, title, body, and a bottom action.
 class OnboardingPage extends StatelessWidget {
   const OnboardingPage({
@@ -31,13 +43,14 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final exit = OnboardingExit.maybeOf(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 20, 0),
+              padding: EdgeInsets.fromLTRB(8, 4, exit == null ? 20 : 4, 0),
               child: Row(
                 children: [
                   if (onBack != null)
@@ -55,6 +68,21 @@ class OnboardingPage extends StatelessWidget {
                           backgroundColor: BakeColors.softPink,
                         ),
                       ),
+                    )
+                  else
+                    const Spacer(),
+                  if (exit != null)
+                    PopupMenuButton<String>(
+                      key: const Key('onboarding-menu'),
+                      icon: const Icon(Icons.more_horiz_rounded, color: BakeColors.muted),
+                      onSelected: (_) => exit.onLogOut(),
+                      itemBuilder: (_) => const [
+                        PopupMenuItem<String>(
+                          key: Key('onboarding-logout'),
+                          value: 'logout',
+                          child: Row(children: [Icon(Icons.logout_rounded, size: 20), SizedBox(width: 10), Text('Log out')]),
+                        ),
+                      ],
                     ),
                 ],
               ),

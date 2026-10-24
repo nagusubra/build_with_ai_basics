@@ -21,7 +21,8 @@
     "check:account": "npm run build && firebase emulators:exec --only auth,firestore,storage \"node --test test/account.emulator.test.mjs\"",
     "check:profile-ui": "npm run build && firebase emulators:exec --only auth,firestore,functions,storage \"node scripts/seed-testers.mjs && cd ../app && flutter test integration_test/my_profile_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\"",
     "check:filters-ui": "firebase emulators:exec --only auth,firestore,functions,storage \"node scripts/seed-testers.mjs && cd ../app && flutter test integration_test/discover_filters_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\"",
-    "check:liked-ui": "npm run build && firebase emulators:exec --only auth,firestore,functions,storage \"node scripts/seed-testers.mjs --two-likes-one && cd ../app && flutter test integration_test/liked_you_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\""
+    "check:liked-ui": "npm run build && firebase emulators:exec --only auth,firestore,functions,storage \"node scripts/seed-testers.mjs --two-likes-one && cd ../app && flutter test integration_test/liked_you_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\"",
+    "check:auth-ui": "firebase emulators:exec --only auth,firestore,functions,storage \"node scripts/seed-testers.mjs && cd ../app && flutter test integration_test/auth_flow_test.dart --dart-define=USE_EMULATORS=true -d ${SIM:-iPhone}\""
   },
   "dependencies": {
     "@google-cloud/firestore": "^9.3.1",
