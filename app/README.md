@@ -101,13 +101,16 @@ forces the PNG path; Reduce Motion does the same at runtime.
 
 `tool/mascot_rive_duo/` is a separate art experiment, **not wired into Flutter**.
 It leaves the shipped seven-pose asset and PNG/reduced-motion fallback untouched.
-The latest direction is two open eyes for Jill looking left toward Jack, a
-synchronized blink and a gentle shared nuzzle instead of a phone tap. Jack still
-gives the pan a small lift. Jill's eyes, lids, lashes and brows are repainted
-from image-model (Gemini) edits of a 2x face crop, stored in
-`design/mascots/jill_eyes_gemini/` (`open`, `half`, `nearly`, `closed`). The
-builder maps that crop back to source box `(545, 300, 929, 684)`, composites only
-feathered eye/brow ellipses, and subtracts the surrounding color drift so the
+The latest direction is two open eyes for Jill looking left toward Jack, Jack's
+eyes glancing right back at her, a synchronized blink and a gentle shared nuzzle
+instead of a phone tap. Jack still gives the pan a small lift; his arm layer now
+holds only the pan, glove and forearm, so the torso, strap and apron stay put.
+Both characters' eyes, lids, lashes and brows are repainted from image-model
+(Gemini) edits of a 2x face crop, stored in `design/mascots/jill_eyes_gemini/`
+and `design/mascots/jack_eyes_gemini/` (`open`, `half`, `nearly`, `closed`). The
+builder maps each crop back to its source box (Jill `(545, 300, 929, 684)`, Jack
+`(218, 278, 602, 662)`), composites only feathered eye/brow ellipses clipped to
+the opaque head interior, and subtracts the surrounding color drift so the
 cheeks keep the original shading.
 
 From `app/`, with Python, NumPy, Pillow and the Rive CLI available:
@@ -128,9 +131,13 @@ only interior neck/shoulder overlap stays underneath.
 
 The 192-frame/3.2-second loop uses a restrained breath and sway, a pan lift peaking
 at frame 62, anticipation at 72-84, and a nuzzle peaking at 101/103 (about 1.38 degrees
-per head). Sway, pan and head curves have matching velocities at their joins,
+per head). Each head also has its own idle tilt and a soft vertical bob (two small
+hops, a squash into the nuzzle and a rebound) that trails the body's breath, with
+Jill a few frames behind Jack. The body keeps opaque source pixels under each
+head's inner edge so the bob never opens a seam.
+Sway, pan and head curves have matching velocities at their joins,
 including the loop: the sway passes through center instead of stopping there.
-The blink closes through three poses at 94-96 (Jill: half, nearly, nearly), holds at 97-102,
+The blink closes through three poses at 94-96 (half, nearly, nearly), holds at 97-102,
 then reopens more slowly through 103-108. Each pose is opaque, never a dissolve:
 pupils retain their shape and never ghost through the eyelids. Heads settle
 independently through 160/164. A small native vector heart blooms at the nuzzle and floats away; the

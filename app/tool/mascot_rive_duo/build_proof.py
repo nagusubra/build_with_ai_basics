@@ -8,7 +8,9 @@ scene.rml, and leaves the shipped seven-pose asset alone.
 Jill's source art is a permanent wink. This pipeline removes the wink, then
 composites Gemini-painted eyes and brows (design/mascots/jill_eyes_gemini) so
 both eyes look left at Jack, and uses Gemini's matching half, nearly-closed
-and closed eyelids for her blink. Both characters blink together.
+and closed eyelids for her blink. Jack gets the same treatment from
+design/mascots/jack_eyes_gemini: glossy eyes glancing right at Jill and a
+matching three-stage blink. Both characters blink together.
 The phone tap
 is replaced by a gentle head bump: each head pivots at its stem attachment, so
 the heart stems stay connected while the cheeks lean together.
@@ -68,11 +70,21 @@ JILL_BROW_BOX = (605, 425, 716, 482)
 
 # Gemini edited a 768px render of this source crop; its 1024px outputs map
 # back onto the same box. Feature ellipses are in that 1024px space.
-JILL_AI_DIR = REPO / "design" / "mascots" / "jill_eyes_gemini"
-JILL_AI_BOX = (545, 300, 929, 684)
-JILL_AI_EYES = (((340, 515), 160, 140), ((742, 520), 135, 138))
-JILL_AI_BROWS = (((340, 345), 140, 60), ((725, 340), 125, 60))
+JILL_AI = {
+    "dir": REPO / "design" / "mascots" / "jill_eyes_gemini",
+    "box": (545, 300, 929, 684),
+    "eyes": (((340, 515), 160, 140), ((742, 520), 135, 138)),
+    "brows": (((340, 345), 140, 60), ((725, 340), 125, 60)),
+}
 JILL_AI_BLINK = ("half", "nearly", "nearly")
+# Jack's Gemini frames: a 2x crop of his face; pupils glance right at Jill.
+JACK_AI = {
+    "dir": REPO / "design" / "mascots" / "jack_eyes_gemini",
+    "box": (218, 278, 602, 662),
+    "eyes": (((328, 518), 128, 122), ((700, 592), 112, 115)),
+    "brows": (((355, 335), 110, 46), ((748, 425), 88, 66)),
+}
+JACK_AI_BLINK = ("half", "nearly", "nearly")
 JILL_MOUTH_BOX = (715, 552, 778, 590)
 
 
@@ -81,9 +93,9 @@ def arc_points(cx, cy, radius, start_deg, end_deg, steps=20):
     return [(cx + radius * math.cos(a), cy + radius * math.sin(a)) for a in angles]
 
 
-# Jack's pan arm: pan, vegetables, handle, glove and forearm. The right edge
-# follows the apron edge down to the forearm, so no apron strip travels with
-# the arm. The shoulder disk is fully inside the torso red.
+# Jack's pan arm: pan, vegetables, handle, glove and forearm only. The lower
+# edge follows the underside of the forearm into the shoulder, so Jack's torso
+# side, strap and apron stay in the body instead of swinging with the pan.
 JACK_ARM_POLY = (
     [(305, 556), (300, 560), (285, 572), (272, 585), (258, 592), (243, 592),
      (228, 585), (215, 575), (207, 558), (198, 545), (185, 535), (172, 522),
@@ -92,23 +104,20 @@ JACK_ARM_POLY = (
      (88, 353), (70, 362), (55, 377), (43, 395), (38, 415), (36, 435),
      (30, 455), (20, 472), (13, 492), (13, 515), (20, 535), (34, 552),
      (52, 565), (75, 574), (100, 578), (125, 584), (145, 594), (160, 608),
-     (175, 628), (195, 645), (215, 657), (240, 665), (262, 666),
-     (270, 654), (278, 642), (286, 630), (294, 618), (300, 608)]
+     (172, 624), (186, 634), (202, 636), (218, 630), (234, 620), (248, 609),
+     (260, 601), (276, 603), (290, 605)]
     + arc_points(305, 580, JACK_DISK_R, 100, -90, 16)
 )
 JACK_PROP_POLY = [
     (0, 335), (145, 335), (184, 390), (184, 480), (176, 520),
-    (188, 548), (211, 560), (220, 590), (240, 630), (220, 660),
-    (170, 650), (130, 620), (0, 595),
+    (188, 548), (211, 560), (222, 590), (226, 612), (212, 632),
+    (180, 640), (130, 620), (0, 595),
 ]
 
-# Body patch: the part of Jack's arm that sits in front of the torso, above
-# the apron edge. Filled with torso red / apron beige; the arm covers it at
-# rest. Stops short of the apron button at (325-365, 600-645).
-JACK_PATCH_POLY = [
-    (255, 548), (330, 548), (330, 583), (322, 593), (315, 599), (300, 601),
-    (285, 597), (270, 591), (255, 584),
-]
+# Body patch: the torso, strap and apron under Jack's shoulder disk and the
+# forearm root. The body keeps the original pixels here (the arm covers them at
+# rest), so a lifted arm reveals real torso detail instead of a hole.
+JACK_PATCH_POLY = [(252, 540), (345, 540), (345, 640), (252, 640)]
 
 # Jill's hand + phone. The wrist edge is a disk around the wrist pivot, so the
 # red forearm stump underneath is always covered as the wrist bobs.
@@ -129,16 +138,6 @@ SPARKLES = [
     (700, 104, 0.33, "FFFF8FA3"),
     (420, 44, 0.66, "FFFFD166"),
 ]
-
-# Closed eyelids for Jack. Points are cubic Bezier handles in source pixels.
-LEFT_LID = ((305, 490), (327, 471), (361, 467), (383, 485))
-RIGHT_LID = ((445, 509), (464, 491), (494, 486), (513, 503))
-JACK_LIDS = (
-    (LEFT_LID, ((301, 499), (297, 407), (367, 406), (383, 505)),
-     ((301, 499), (320, 531), (369, 542), (383, 505))),
-    (RIGHT_LID, ((444, 521), (438, 442), (508, 432), (514, 526)),
-     ((444, 521), (460, 546), (500, 548), (514, 526))),
-)
 
 
 def polygon_mask(size: tuple[int, int], points: list[tuple[float, float]], ss: int = 4) -> np.ndarray:
@@ -207,31 +206,6 @@ def inpaint(rgb: np.ndarray, mask: np.ndarray, iters: int = 1500, pad: int = 30)
     return result
 
 
-def bezier(p0, p1, p2, p3, n: int = 160):
-    pts = []
-    for i in range(n + 1):
-        t = i / n
-        u = 1 - t
-        pts.append(
-            (
-                u ** 3 * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t ** 3 * p3[0],
-                u ** 3 * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t ** 3 * p3[1],
-            )
-        )
-    return pts
-
-
-def tapered_curve(draw, pts, r0, rmid, r1, color):
-    n = len(pts)
-    for i, (x, y) in enumerate(pts):
-        t = i / (n - 1)
-        if t < 0.5:
-            r = r0 + (rmid - r0) * (t / 0.5)
-        else:
-            r = rmid + (r1 - rmid) * ((t - 0.5) / 0.5)
-        draw.ellipse([x - r, y - r, x + r, y + r], fill=color)
-
-
 def connected_mask(allowed: np.ndarray, seed: tuple[int, int]) -> np.ndarray:
     if not allowed[seed[1], seed[0]]:
         raise ValueError(f"Flood seed {seed} is outside the allowed region")
@@ -253,76 +227,6 @@ def eye_flood_mask(source: np.ndarray, seed: tuple[int, int]) -> np.ndarray:
     r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
     skin_red = (r > 110) & ((r - g) > 75) & ((r - b) > 60)
     return connected_mask((~skin_red) & (source[:, :, 3] > 40), seed)
-
-
-def build_jack_blink(source_rgba: Image.Image) -> tuple[Image.Image, Image.Image]:
-    src = np.asarray(source_rgba)
-    base = morph(eye_flood_mask(src, (342, 480)), close=3) | morph(
-        eye_flood_mask(src, (478, 500)), close=3
-    )
-    expanded = morph(base, close=0, dilate=10)
-    feather = np.asarray(
-        Image.fromarray((expanded * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(4))
-    ).astype(np.float32) / 255.0
-
-    filled = inpaint(src[:, :, :3], expanded, iters=2400)
-
-    overlay = Image.new("RGBA", source_rgba.size, (0, 0, 0, 0))
-    skin = Image.fromarray(filled).convert("RGBA")
-    skin.putalpha(Image.fromarray((feather * 255).astype(np.uint8)))
-    overlay = Image.alpha_composite(overlay, skin)
-    skin_plate = overlay.copy()
-
-    left = bezier(*LEFT_LID)
-    right = bezier(*RIGHT_LID)
-
-    lid_shadow = Image.new("RGBA", source_rgba.size, (0, 0, 0, 0))
-    sd = ImageDraw.Draw(lid_shadow)
-    for pts in (left, right):
-        tapered_curve(sd, [(x, y + 2) for x, y in pts], 10, 13, 9, (100, 0, 0, 70))
-    lid_shadow = lid_shadow.filter(ImageFilter.GaussianBlur(6))
-    overlay = Image.alpha_composite(overlay, lid_shadow)
-
-    crease = Image.new("RGBA", source_rgba.size, (0, 0, 0, 0))
-    cd = ImageDraw.Draw(crease)
-    for pts in (left, right):
-        tapered_curve(cd, [(x, y - 8) for x, y in pts], 1.5, 2.6, 1.5, (110, 0, 0, 45))
-    crease = crease.filter(ImageFilter.GaussianBlur(3))
-    overlay = Image.alpha_composite(overlay, crease)
-
-    highlight = Image.new("RGBA", source_rgba.size, (0, 0, 0, 0))
-    hd = ImageDraw.Draw(highlight)
-    for pts in (left, right):
-        tapered_curve(hd, [(x, y + 5) for x, y in pts], 1.2, 2.2, 1.2, (255, 120, 110, 55))
-    highlight = highlight.filter(ImageFilter.GaussianBlur(2))
-    overlay = Image.alpha_composite(overlay, highlight)
-
-    d = ImageDraw.Draw(overlay)
-    for pts in (left, right):
-        tapered_curve(d, pts, 2.0, 3.8, 2.0, (56, 24, 18, 255))
-    tapered_curve(
-        d,
-        bezier(
-            (LEFT_LID[0][0], LEFT_LID[0][1]),
-            (LEFT_LID[0][0] - 7, LEFT_LID[0][1] - 3),
-            (LEFT_LID[0][0] - 11, LEFT_LID[0][1] - 6),
-            (LEFT_LID[0][0] - 14, LEFT_LID[0][1] - 8),
-            24,
-        ),
-        3.0, 1.6, 0.4, (56, 24, 18, 255),
-    )
-    tapered_curve(
-        d,
-        bezier(
-            (RIGHT_LID[3][0], RIGHT_LID[3][1]),
-            (RIGHT_LID[3][0] + 7, RIGHT_LID[3][1] - 3),
-            (RIGHT_LID[3][0] + 11, RIGHT_LID[3][1] - 6),
-            (RIGHT_LID[3][0] + 14, RIGHT_LID[3][1] - 8),
-            24,
-        ),
-        3.0, 1.6, 0.4, (56, 24, 18, 255),
-    )
-    return overlay, skin_plate
 
 
 def open_jill_eye(source_rgba: Image.Image) -> Image.Image:
@@ -461,19 +365,19 @@ def blur_float(values: np.ndarray, sigma: float) -> np.ndarray:
     return out
 
 
-def gemini_jill_layer(
-    base_rgba: Image.Image, name: str, include_brows: bool,
+def gemini_layer(
+    base_rgba: Image.Image, spec: dict, name: str, include_brows: bool,
 ) -> Image.Image:
-    """Map one Gemini eye frame back onto Jill as a feathered RGBA overlay.
+    """Map one Gemini eye frame back onto a character as a feathered overlay.
 
     Gemini repaints the whole crop, so only the eye (and optionally brow)
     ellipses are kept. Its slight lighting drift is measured in a ring just
     outside those features and removed, so the overlay has no visible seam.
     """
-    x0, y0, x1, y1 = JILL_AI_BOX
+    x0, y0, x1, y1 = spec["box"]
     size = x1 - x0
     scale = size / 1024
-    art = Image.open(JILL_AI_DIR / f"{name}.jpg").convert("RGB")
+    art = Image.open(spec["dir"] / f"{name}.jpg").convert("RGB")
     if art.size != (1024, 1024):
         raise RuntimeError(f"Unexpected Gemini frame size for {name}: {art.size}")
     art = np.asarray(
@@ -482,7 +386,7 @@ def gemini_jill_layer(
     base = np.asarray(base_rgba)[y0:y1, x0:x1].astype(np.float32)
 
     mask = np.zeros((size, size), dtype=bool)
-    for (cx, cy), rx, ry in JILL_AI_EYES + (JILL_AI_BROWS if include_brows else ()):
+    for (cx, cy), rx, ry in spec["eyes"] + (spec["brows"] if include_brows else ()):
         mask |= ellipse_mask((size, size), (cx * scale, cy * scale), rx * scale, ry * scale)
     ring = (morph(mask, close=0, dilate=12) & ~mask & (base[:, :, 3] > 250)).astype(np.float32)
     delta = (art - base[:, :, :3]) * ring[:, :, None]
@@ -497,45 +401,6 @@ def gemini_jill_layer(
     out[y0:y1, x0:x1, :3] = corrected.astype(np.uint8)
     out[y0:y1, x0:x1, 3] = np.clip(feather * base[:, :, 3], 0, 255).astype(np.uint8)
     return Image.fromarray(out)
-
-
-def blink_inbetweens(skin: Image.Image, lids: tuple) -> list[Image.Image]:
-    """Reveal Jack's unchanged eyes through narrowing curved apertures."""
-    frames = []
-    for amount in (0.25, 0.55, 0.82):
-        overlay = skin.copy()
-        aperture = Image.new("L", skin.size, 0)
-        aperture_draw = ImageDraw.Draw(aperture)
-        curves = []
-        for closed, top, bottom in lids:
-            top_curve = tuple(
-                (x * (1 - amount) + cx * amount, y * (1 - amount) + cy * amount)
-                for (x, y), (cx, cy) in zip(top, closed)
-            )
-            bottom_curve = tuple(
-                (x * (1 - amount) + cx * amount, y * (1 - amount) + cy * amount)
-                for (x, y), (cx, cy) in zip(bottom, closed)
-            )
-            pts = bezier(*top_curve)
-            aperture_draw.polygon(pts + bezier(*bottom_curve)[::-1], fill=255)
-            curves.append(pts)
-        aperture = aperture.filter(ImageFilter.GaussianBlur(0.65))
-        alpha = np.asarray(overlay.getchannel("A")).astype(np.float32)
-        alpha *= 1 - np.asarray(aperture).astype(np.float32) / 255
-        overlay.putalpha(Image.fromarray(alpha.astype(np.uint8)))
-        draw = ImageDraw.Draw(overlay)
-        for side, pts in enumerate(curves):
-            tapered_curve(draw, pts, 1.5, 2.8, 1.5, (56, 24, 18, 255))
-            end = pts[0] if side == 0 else pts[-1]
-            direction = -1 if side == 0 else 1
-            start = end
-            tapered_curve(draw, bezier(
-                start, (start[0] + direction * 5, start[1] - 1),
-                (start[0] + direction * 9, start[1] - 4),
-                (start[0] + direction * 9, start[1] - 8),
-            ), 2.0, 1.4, 0.3, (56, 24, 18, 255))
-        frames.append(overlay)
-    return frames
 
 
 def rotate_premultiplied(image: Image.Image, degrees: float, center: tuple[int, int]) -> Image.Image:
@@ -641,19 +506,55 @@ def build_layers():
         disk_mask(source.size, JACK_PIVOT, JACK_DISK_R + 12)
         & jack_head_region & (alpha >= 254) & (yy < 606)
     )
+    # Semi-transparent fringe where a head mask cuts into other material stays
+    # on the body: it cannot be duplicated under the head without changing the
+    # rest composite, and leaving a hole there shows a dark seam when heads bob.
+    jack_cut = (alpha > 0) & ~jack_head_mask
+    jill_cut = (alpha > 0) & ~jill_head_mask
+    jack_head_mask &= ~((alpha < 254) & morph(jack_cut, close=0, dilate=3))
+    jill_head_mask &= ~((alpha < 254) & morph(jill_cut, close=0, dilate=3))
     jack_neck = ellipse_mask(source.size, *JACK_NECK_ELLIPSE) & jack_head_mask
     jill_neck = ellipse_mask(source.size, *JILL_NECK_ELLIPSE) & jill_head_mask
     # Only retain interior neck overlap, never the exterior head silhouette.
     # A stationary silhouette rim becomes a second outline as soon as it moves.
     neck_patch = (jack_neck | jill_neck) & (yy >= 594) & erode_mask(alpha >= 254, 14)
+    # The head bob lifts each head a few pixels (slightly out of phase), so keep
+    # the source pixels under any opaque head pixel that borders other opaque
+    # material: torso, shoulders or the other head. Covered at rest.
+    for head in (jack_head_mask, jill_head_mask):
+        neck_patch |= head & (alpha >= 254) & morph((alpha >= 200) & ~head, close=0, dilate=8)
+    # Partial-alpha head pixels beside that band would leave a hole when the
+    # head lifts, so they stay on the body too.
+    static_rim = (alpha < 254) & morph(neck_patch, close=0, dilate=7)
+    jack_head_mask &= ~static_rim
+    jill_head_mask &= ~static_rim
 
     wink_removed = open_jill_eye(source)
     # Clip the repaint to the opaque head interior so every repainted pixel
     # moves with the head and the antialiased silhouette stays untouched.
-    open_overlay = np.asarray(gemini_jill_layer(wink_removed, "open", True)).copy()
-    open_overlay[~(jill_head_mask & erode_mask(alpha >= 254, 2)), 3] = 0
-    open_source = Image.alpha_composite(wink_removed, Image.fromarray(open_overlay))
+    interior = erode_mask(alpha >= 254, 2)
+
+    def head_overlay(base: Image.Image, spec: dict, name: str, brows: bool, head: np.ndarray) -> Image.Image:
+        arr = np.asarray(gemini_layer(base, spec, name, brows)).copy()
+        arr[~(head & interior), 3] = 0
+        return Image.fromarray(arr)
+
+    open_source = Image.alpha_composite(
+        wink_removed, head_overlay(wink_removed, JILL_AI, "open", True, jill_head_mask)
+    )
+    open_source = Image.alpha_composite(
+        open_source, head_overlay(open_source, JACK_AI, "open", True, jack_head_mask)
+    )
     open_arr = np.asarray(open_source)
+    # Jack's pupils (darkest pixels in each eye) sit right of the eye centre, toward Jill.
+    x0, y0, x1, _ = JACK_AI["box"]
+    ai_scale = (x1 - x0) / 1024
+    for (cx, cy), rx, ry in JACK_AI["eyes"]:
+        sx, sy = x0 + cx * ai_scale, y0 + cy * ai_scale
+        eye = ellipse_mask((SOURCE_SIZE, SOURCE_SIZE), (sx, sy), rx * ai_scale * 0.8, ry * ai_scale * 0.8)
+        dark = eye & (open_arr[:, :, :3].mean(axis=2) < 70)
+        if dark.sum() < 40 or np.where(dark)[1].mean() < sx + 4:
+            raise RuntimeError("Jack's pupils must sit right of the eye centre, toward Jill")
     # Both pupils sit left of their bright sclera, toward Jack.
     for pupil, sclera in (((665, 500), (697, 497)), ((795, 500), (838, 492))):
         if not (
@@ -662,7 +563,7 @@ def build_layers():
         ):
             raise RuntimeError("Jill's pupils must sit left of the white sclera, toward Jack")
 
-    jack_head = source.copy()
+    jack_head = open_source.copy()
     jack_head.putalpha(Image.fromarray(np.where(jack_head_mask, alpha, 0)))
     jill_head = open_source.copy()
     jill_head.putalpha(Image.fromarray(np.where(jill_head_mask, alpha, 0)))
@@ -671,7 +572,6 @@ def build_layers():
     # material, so a moving edge reveals red arm/torso instead of a transparent
     # seam. The fills are covered at rest.
     body_rgb = src[:, :, :3].copy()
-    body_rgb[jack_patch] = surrounding_color(src[:, :, :3], alpha, jack_mask, red_only=True)
     body_rgb[jill_patch] = surrounding_color(src[:, :, :3], alpha, jill_mask, red_only=True)
 
     body_alpha = alpha.copy()
@@ -683,12 +583,12 @@ def build_layers():
     body_alpha[neck_patch] = 255
     body = Image.fromarray(np.dstack([body_rgb, body_alpha]))
 
-    jack_blink, jack_skin = build_jack_blink(source)
-    jill_blink = gemini_jill_layer(open_source, "closed", False)
+    jack_blink = head_overlay(open_source, JACK_AI, "closed", False, jack_head_mask)
+    jill_blink = head_overlay(open_source, JILL_AI, "closed", False, jill_head_mask)
     blink_stages = [
-        *[(f"duo_welcome_jack_blink_{i}.png", image)
-          for i, image in enumerate(blink_inbetweens(jack_skin, JACK_LIDS), 1)],
-        *[(f"duo_welcome_jill_blink_{i}.png", gemini_jill_layer(open_source, name, False))
+        *[(f"duo_welcome_jack_blink_{i}.png", head_overlay(open_source, JACK_AI, name, False, jack_head_mask))
+          for i, name in enumerate(JACK_AI_BLINK, 1)],
+        *[(f"duo_welcome_jill_blink_{i}.png", head_overlay(open_source, JILL_AI, name, False, jill_head_mask))
           for i, name in enumerate(JILL_AI_BLINK, 1)],
     ]
 
@@ -918,6 +818,7 @@ def build_scene() -> str:
     lines.append("      </Node>")
 
     hx, hy = jack_head_pivot[0] - MOTION_PIVOT[0], jack_head_pivot[1] - MOTION_PIVOT[1]
+    jack_head_y = hy
     lines.append(f'      <Node x="{hx}" y="{hy}" name="JackHeadPivot" id="0:3016">')
     for stage in range(1, 4):
         lines.append(
@@ -936,6 +837,7 @@ def build_scene() -> str:
     lines.append("      </Node>")
 
     hx, hy = jill_head_pivot[0] - MOTION_PIVOT[0], jill_head_pivot[1] - MOTION_PIVOT[1]
+    jill_head_y = hy
     lines.append(f'      <Node x="{hx}" y="{hy}" name="JillHeadPivot" id="0:3018">')
     for stage in range(1, 4):
         lines.append(
@@ -986,17 +888,31 @@ def build_scene() -> str:
         (92, 0.0, "flow"), (192, 0.0, "flow"),
     ])
 
-    # A small anticipation, shared nuzzle, then a slower overlapping settle.
+    # Idle sway that hands off into a small anticipation, the shared nuzzle,
+    # then a slower overlapping settle. Jill mirrors Jack a few frames later.
     keyed(lines, 3016, 15, [
-        (0, 0.0, "flow"), (72, 0.0, "flow"), (82, 0.003, "flow"),
+        (0, 0.0, "flow"), (24, 0.011, "flow"), (50, -0.008, "flow"),
+        (72, 0.0, "flow"), (82, 0.004, "flow"),
         (101, -0.024, "flow"), (111, -0.021, "flow"),
         (140, 0.0015, "flow"), (160, 0.0, "flow"), (192, 0.0, "flow"),
     ])
     keyed(lines, 3018, 15, [
-        (0, 0.0, "flow"), (74, 0.0, "flow"), (84, -0.0025, "flow"),
+        (0, 0.0, "flow"), (30, -0.011, "flow"), (56, 0.008, "flow"),
+        (74, 0.0, "flow"), (84, -0.0035, "flow"),
         (103, 0.024, "flow"), (113, 0.021, "flow"),
         (144, -0.0015, "flow"), (164, 0.0, "flow"), (192, 0.0, "flow"),
     ])
+    # Bubbly vertical head bob that trails the body's breath: two soft hops,
+    # a squash into the nuzzle, then a rebound that settles home.
+    for object_id, base_y, lag, amp in (
+        (3016, jack_head_y, 0, 1.0), (3018, jill_head_y, 6, 0.85),
+    ):
+        keyed(lines, object_id, 14, [
+            (0, base_y, "flow"), (28 + lag, base_y - 2.6 * amp, "flow"),
+            (56 + lag, base_y + 0.9 * amp, "flow"), (80 + lag, base_y - 1.6 * amp, "flow"),
+            (102 + lag, base_y + 1.4 * amp, "flow"), (128 + lag, base_y - 1.5 * amp, "flow"),
+            (158 + lag, base_y + 0.4 * amp, "flow"), (192, base_y, "flow"),
+        ])
 
     # Opaque aperture poses close quickly and reopen more slowly. Never
     # dissolve the eyes: that makes pupils ghost through the painted skin.
