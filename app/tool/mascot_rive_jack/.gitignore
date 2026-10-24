@@ -1,0 +1,6 @@
+__pycache__/
+build/*
+!build/jack_wingman.riv
+!build/review.png
+!build/chat_size.png
+!build/preview.webp
