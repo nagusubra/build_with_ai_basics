@@ -18,6 +18,8 @@ The setup script downloads the app's Firebase config and finds your Apple team, 
 
 The same script writes the Android and web Firebase settings, so `flutter run -d <android device>` and `flutter run -d chrome` work with no extra setup and no signing. See [app/README.md](app/README.md) for what each platform uses for the selfie check.
 
+To try the web version in any browser: `cd app && flutter run -d web-server --release --web-port 5050`, then open http://localhost:5050. (Port 8080 is taken by the Firestore emulator during tests.) Profile photos load on the web because the Storage bucket allows browser reads; that setting lives in `storage.cors.json` and is applied once per project with `gcloud storage buckets update gs://studio-1391080484-497cf.firebasestorage.app --cors-file=storage.cors.json`.
+
 ## Next session
 
 Open this folder in Cursor or OpenCode and say:

@@ -45,7 +45,7 @@ class _BasicsScreenState extends State<BasicsScreen> {
     if (widget.existing != null) {
       widget.profiles.dateOfBirth(widget.uid).then((d) {
         if (mounted && d != null) setState(() => _dob = d);
-      });
+      }).catchError((Object e) => debugPrint('Could not load your birthday: $e'));
     }
   }
 

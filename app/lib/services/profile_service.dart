@@ -96,7 +96,11 @@ class ProfileService {
     return 'image/jpeg';
   }
 
-  Future<String> photoUrl(String path) => _urls[path] ??= _storage.ref(path).getDownloadURL();
+  /// Download URLs are cached; a failed lookup is forgotten so the next attempt tries again.
+  Future<String> photoUrl(String path) => _urls[path] ??= _storage.ref(path).getDownloadURL().catchError((Object e) {
+        _urls.remove(path);
+        throw e;
+      });
 
   /// The main photo as bytes, for comparing with the selfie on the device.
   Future<Uint8List> downloadPhoto(String path) async {
@@ -106,6 +110,9 @@ class ProfileService {
 
   Future<void> markVerified(String uid) =>
       _user(uid).update({'verified': true, 'verifiedAt': FieldValue.serverTimestamp()});
+
+  /// "Skip for now": onboarding moves on without the verified badge; they can verify later from Me.
+  Future<void> skipVerification(String uid) => _user(uid).update({'verificationSkipped': true});
 
   /// Discover settings: the filters, and the person's own mode (which also changes who sees them).
   Future<void> saveDiscoverSettings(String uid, {required String lookingFor, required DiscoverFilters filters}) =>

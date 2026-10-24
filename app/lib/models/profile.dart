@@ -10,6 +10,7 @@ class UserProfile {
     this.lookingFor,
     this.photos = const [],
     this.verified = false,
+    this.verificationSkipped = false,
     this.cherryAvatar,
     this.food = const {},
     this.prompts = const {},
@@ -29,6 +30,7 @@ class UserProfile {
         lookingFor: d?['lookingFor'] as String?,
         photos: List<String>.from(d?['photos'] as List? ?? const []),
         verified: d?['verified'] as bool? ?? false,
+        verificationSkipped: d?['verificationSkipped'] as bool? ?? false,
         cherryAvatar: d?['cherryAvatar'] as String?,
         food: (d?['food'] as Map?)?.cast<String, dynamic>() ?? const {},
         prompts: (d?['prompts'] as Map?)?.cast<String, String>() ?? const {},
@@ -51,6 +53,9 @@ class UserProfile {
   /// Storage paths; the first is the main photo.
   final List<String> photos;
   final bool verified;
+
+  /// They chose "Skip for now" on the selfie check: onboarding moves on, without the badge.
+  final bool verificationSkipped;
 
   /// "boy" or "girl" — which cherry this person sees as their wingman.
   final String? cherryAvatar;
@@ -76,13 +81,20 @@ class UserProfile {
 
 /// Discover filters (`spec.md > Final-Review Additions`). Empty lists mean "any".
 class DiscoverFilters {
-  const DiscoverFilters({this.foodTypes = const [], this.minAge = ageFloor, this.maxAge = ageCeiling, this.cities = const []});
+  const DiscoverFilters({
+    this.foodTypes = const [],
+    this.minAge = ageFloor,
+    this.maxAge = ageCeiling,
+    this.cities = const [],
+    this.verifiedOnly = false,
+  });
 
   factory DiscoverFilters.fromMap(Map<String, dynamic>? m) => DiscoverFilters(
         foodTypes: List<String>.from(m?['foodTypes'] as List? ?? const []),
         minAge: ((m?['minAge'] as num?)?.toInt() ?? ageFloor).clamp(ageFloor, ageCeiling),
         maxAge: ((m?['maxAge'] as num?)?.toInt() ?? ageCeiling).clamp(ageFloor, ageCeiling),
         cities: List<String>.from(m?['cities'] as List? ?? const []),
+        verifiedOnly: m?['verifiedOnly'] as bool? ?? false,
       );
 
   static const ageFloor = 18;
@@ -95,17 +107,25 @@ class DiscoverFilters {
   final int maxAge;
   final List<String> cities;
 
-  int get activeCount =>
-      (foodTypes.isNotEmpty ? 1 : 0) + (minAge > ageFloor || maxAge < ageCeiling ? 1 : 0) + (cities.isNotEmpty ? 1 : 0);
+  /// Only people who passed the selfie check.
+  final bool verifiedOnly;
 
-  Map<String, dynamic> toMap() => {'foodTypes': foodTypes, 'minAge': minAge, 'maxAge': maxAge, 'cities': cities};
+  int get activeCount =>
+      (foodTypes.isNotEmpty ? 1 : 0) +
+      (minAge > ageFloor || maxAge < ageCeiling ? 1 : 0) +
+      (cities.isNotEmpty ? 1 : 0) +
+      (verifiedOnly ? 1 : 0);
+
+  Map<String, dynamic> toMap() =>
+      {'foodTypes': foodTypes, 'minAge': minAge, 'maxAge': maxAge, 'cities': cities, 'verifiedOnly': verifiedOnly};
 
   /// Changes whenever the filters do; used to reload Discover.
-  String get signature => '${foodTypes.join(',')}|$minAge-$maxAge|${cities.join(',')}';
+  String get signature => '${foodTypes.join(',')}|$minAge-$maxAge|${cities.join(',')}|$verifiedOnly';
 }
 
 /// Whether [person] gets through [f].
 bool passesFilters(DiscoverFilters f, UserProfile person) {
+  if (f.verifiedOnly && !person.verified) return false;
   if (f.foodTypes.isNotEmpty && !f.foodTypes.contains(person.foodText('foodType'))) return false;
   final age = person.age;
   if (age != null && (age < f.minAge || (f.maxAge < DiscoverFilters.ageCeiling && age > f.maxAge))) return false;

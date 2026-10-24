@@ -66,7 +66,11 @@ class RecipeLibrary {
       .then((raw) => RecipeLibrary([
             for (final r in (jsonDecode(raw) as Map<String, dynamic>)['recipes'] as List)
               Recipe.fromMap((r as Map).cast<String, dynamic>()),
-          ]));
+          ]))
+      .catchError((Object e) {
+        _loading = null;
+        throw e;
+      });
 
   final List<Recipe> recipes;
 

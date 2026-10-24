@@ -51,8 +51,9 @@ class LikeNotice {
   final bool seen;
 }
 
-/// A like is still worth answering: they're still around, verified, and looking for the same thing.
-bool canLikeBack(UserProfile me, UserProfile them) => them.onboardingComplete && them.verified && compatible(me, them);
+/// A like is still worth answering: they're still around and looking for the same thing.
+/// Unverified people can be liked back too; the verified badge is shown where it applies.
+bool canLikeBack(UserProfile me, UserProfile them) => them.onboardingComplete && compatible(me, them);
 
 /// Discover: the people to show, and likes and passes.
 class DiscoverService {
@@ -60,15 +61,14 @@ class DiscoverService {
 
   final FirebaseFirestore _db;
 
-  /// Verified, onboarded people with the same goal whom I haven't liked, passed, or matched,
-  /// and who get through my filters.
+  /// Onboarded people with the same goal whom I haven't liked, passed, or matched, and who get
+  /// through my filters. Verified people come first; "verified only" is a filter.
   Future<List<UserProfile>> candidates(UserProfile me) async {
     final results = await Future.wait([
       _db
           .collection('users')
           .where('lookingFor', isEqualTo: me.lookingFor)
           .where('onboardingComplete', isEqualTo: true)
-          .where('verified', isEqualTo: true)
           .get(),
       _db.collection('likes').where('from', isEqualTo: me.uid).get(),
       _db.collection('users/${me.uid}/passes').get(),
@@ -83,7 +83,8 @@ class DiscoverService {
         .docs
         .map((d) => UserProfile.fromMap(d.id, d.data()))
         .where((p) => !seen.contains(p.uid) && compatible(me, p) && passesFilters(me.filters, p))
-        .toList();
+        .toList()
+      ..sort((a, b) => (b.verified ? 1 : 0) - (a.verified ? 1 : 0));
   }
 
   Future<void> like(String me, String them) => _db.doc('likes/${me}_$them').set({

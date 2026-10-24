@@ -103,7 +103,7 @@ Why it matters: "can't cook but would love to learn" keeps BakeOut open to non-c
 Implements `scope.md > The POC Boundary` (picture verification). One mandatory profile photo, plus the option to add two or three more. Then a live selfie: the system checks there's a real face and compares it with the profile photo using an appropriate verification service. The screen explains why: so people feel comfortable knowing they're talking to a genuine person.
 - [ ] A user can't continue without at least one profile photo.
 - [ ] A live selfie that matches the profile photo results in a verified badge on the profile.
-- [ ] If the selfie doesn't match or no face is found, the user sees why and can retry. They can't continue unverified, following `scope.md > The POC Boundary` ("no fake people or profiles").
+- [ ] If the selfie doesn't match or no face is found, the user sees why and can retry. ~~They can't continue unverified.~~ *Changed at final review (Vinamra's call): they can "Skip for now" on iPhone and web. They still appear in Discover, without the verified badge; anyone can switch on "Verified profiles only" in the filters; and Me invites them to verify later.*
 - [ ] The verification selfie never appears on any profile or to any other user.
 - [ ] Sensitive verification data is kept only as long as needed.
 
@@ -208,7 +208,7 @@ The two users keep chatting in the same chat on their own.
 - **Date confirmed:** Cherry leaves permanently; the chat continues between the two people.
 - **Account deleted:** back to Welcome; everything belonging to the account is deleted, including profile, photos, verification data, matches, and chats.
 - **Who sees what:** profiles are visible in Discover only to people looking for the same thing (friends or a partner); a chat is visible only to its two people (and Cherry while present); the verification selfie is never visible to anyone.
-- **Verification fails:** the user sees why and retries; they can't continue unverified.
+- **Verification fails:** the user sees why and retries, or skips for now and continues without the verified badge (changed at final review).
 - **Discover runs out of profiles:** the Recipes page appears until someone new is available.
 
 ## Product Decisions
@@ -239,6 +239,7 @@ Agreed with Vinamra after he tried the full app (see `checklist.md > Final Revie
 - **Jack & Jill:** the cherries' names and personality across the app.
 - **Daily touches:** a Dish of the Day and a greeting from your Jack or Jill on Discover; a Chats list with last-message previews, status, and unread dots; warm empty states and gentle haptics.
 - **"Liked you":** when someone likes you, a banner says who ("Priya liked you 💗") wherever you are in the app, and a pill stays on Discover until you answer. Tapping shows their profile with Like back or Pass; liking back makes the match straight away. This replaces the earlier rule that likes stay secret until a match (Vinamra's choice). There are still no push notifications, so it's seen while the app is open.
+- **Skippable selfie check:** "Skip for now" on the selfie screen (and after a failed try) on iPhone and web. Skipped profiles still appear in Discover, after verified ones and without the badge; a "Verified profiles only" filter is there for anyone who wants it.
 - **Polished log in and log out:** a Log in / Sign up switch, show/hide password, iPhone password autofill, "Forgot password?" by email, and friendlier errors. Log out sits in an Account section on Me (with the signed-in email and "Change password"), behind a goodbye from your Jack or Jill, and is also offered during onboarding so nobody gets stuck halfway.
 
 ## Deferred From the POC

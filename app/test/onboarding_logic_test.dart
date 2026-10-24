@@ -84,9 +84,10 @@ void main() {
       expect(nextStep(p({...photos, 'verified': true, 'previewSeen': true, 'onboardingComplete': true})), OnboardingStep.done);
     });
 
-    test('nobody skips verification', () {
-      final p = UserProfile.fromMap('u', {...basics, 'food': _complete, 'quizDone': true, 'photos': ['x'], 'previewSeen': true});
-      expect(nextStep(p), OnboardingStep.verify);
+    test('verification is asked for, and moves on only when passed or skipped on purpose', () {
+      final base = {...basics, 'food': _complete, 'quizDone': true, 'photos': ['x']};
+      expect(nextStep(UserProfile.fromMap('u', {...base, 'previewSeen': true})), OnboardingStep.verify);
+      expect(nextStep(UserProfile.fromMap('u', {...base, 'verificationSkipped': true})), OnboardingStep.preview);
     });
   });
 

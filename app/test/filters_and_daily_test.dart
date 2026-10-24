@@ -39,11 +39,18 @@ void main() {
       expect(passesFilters(f, _person(city: null)), isFalse);
     });
 
+    test('"verified only" hides people who skipped the selfie check', () {
+      const f = DiscoverFilters(verifiedOnly: true);
+      expect(passesFilters(f, UserProfile.fromMap('x', {'verified': true})), isTrue);
+      expect(passesFilters(f, UserProfile.fromMap('x', {'verificationSkipped': true})), isFalse);
+      expect(passesFilters(const DiscoverFilters(), UserProfile.fromMap('x', {'verificationSkipped': true})), isTrue);
+    });
+
     test('saved filters round-trip and count what is on', () {
-      const f = DiscoverFilters(foodTypes: ['Vegan'], minAge: 21, maxAge: 35, cities: ['Glasgow, UK']);
+      const f = DiscoverFilters(foodTypes: ['Vegan'], minAge: 21, maxAge: 35, cities: ['Glasgow, UK'], verifiedOnly: true);
       final back = DiscoverFilters.fromMap(f.toMap());
       expect(back.signature, f.signature);
-      expect(back.activeCount, 3);
+      expect(back.activeCount, 4);
       expect(UserProfile.fromMap('u', {'filters': f.toMap()}).filters.cities, ['Glasgow, UK']);
     });
   });

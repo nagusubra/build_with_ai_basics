@@ -42,6 +42,7 @@ class DiscoverScreen extends StatefulWidget {
 class _DiscoverScreenState extends State<DiscoverScreen> {
   final _swiper = CardSwiperController();
   List<UserProfile>? _people;
+  bool _failed = false;
   int _left = 0;
   int _hearts = 0;
 
@@ -68,13 +69,26 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   }
 
   Future<void> _load() async {
-    final people = await widget.discover.candidates(widget.me);
-    if (mounted) {
-      setState(() {
-        _people = people;
-        _left = people.length;
-      });
+    if (_failed) setState(() => _failed = false);
+    try {
+      final people = await widget.discover.candidates(widget.me);
+      if (mounted) {
+        setState(() {
+          _people = people;
+          _left = people.length;
+        });
+      }
+    } catch (e) {
+      debugPrint('Discover failed to load: $e');
+      if (mounted) setState(() => _failed = true);
     }
+  }
+
+  void _saveFailed(Object _) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("That didn't save — check your connection and try again.")),
+    );
   }
 
   bool _onSwipe(int index, int? _, CardSwiperDirection direction) {
@@ -82,10 +96,10 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     if (direction == CardSwiperDirection.right) {
       HapticFeedback.mediumImpact();
       setState(() => _hearts++);
-      widget.discover.like(widget.me.uid, them);
+      widget.discover.like(widget.me.uid, them).catchError(_saveFailed);
     } else if (direction == CardSwiperDirection.left) {
       HapticFeedback.selectionClick();
-      widget.discover.pass(widget.me.uid, them);
+      widget.discover.pass(widget.me.uid, them).catchError(_saveFailed);
     }
     setState(() => _left--);
     return true;
@@ -112,6 +126,25 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   @override
   Widget build(BuildContext context) {
     final people = _people;
+    if (_failed) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Mascot(Wingman(widget.me.cherryAvatar).tryAgain, size: 140),
+              Text("Couldn't load people just now", style: Theme.of(context).textTheme.titleLarge, textAlign: TextAlign.center),
+              const SizedBox(height: 6),
+              Text('Check your connection, then try again.',
+                  textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: BakeColors.muted)),
+              const SizedBox(height: 16),
+              FilledButton(key: const Key('discover-retry'), onPressed: _load, child: const Text('Try again')),
+            ],
+          ),
+        ),
+      );
+    }
     if (people == null) {
       return Center(
         child: Column(
@@ -222,7 +255,7 @@ class _DailyHeaderState extends State<DailyHeader> {
     if (widget.showDish) {
       RecipeLibrary.load().then((lib) {
         if (mounted) setState(() => _dish = lib.dishOfTheDay(widget.me));
-      });
+      }).catchError((Object e) => debugPrint('Dish of the day unavailable: $e'));
     }
   }
 

@@ -26,13 +26,22 @@ class _RecipesPageState extends State<RecipesPage> {
   static const _pageSize = 6;
 
   RecipeLibrary? _library;
+  bool _libraryFailed = false;
   int _page = 0;
 
   @override
   void initState() {
     super.initState();
+    _loadLibrary();
+  }
+
+  void _loadLibrary() {
+    setState(() => _libraryFailed = false);
     RecipeLibrary.load().then((lib) {
       if (mounted) setState(() => _library = lib);
+    }).catchError((Object e) {
+      debugPrint('Recipe library failed to load: $e');
+      if (mounted) setState(() => _libraryFailed = true);
     });
   }
 
@@ -78,7 +87,9 @@ class _RecipesPageState extends State<RecipesPage> {
               ),
             ),
           const SizedBox(height: 16),
-          if (lib == null)
+          if (lib == null && _libraryFailed)
+            Center(child: TextButton.icon(onPressed: _loadLibrary, icon: const Icon(Icons.refresh), label: const Text('Couldn’t load recipes — try again')))
+          else if (lib == null)
             const Padding(padding: EdgeInsets.all(30), child: Center(child: CircularProgressIndicator(color: BakeColors.cherryRed))),
           if (dish != null) _DishOfTheDay(recipe: dish).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.97, 0.97)),
           if (recipes.isNotEmpty) Padding(

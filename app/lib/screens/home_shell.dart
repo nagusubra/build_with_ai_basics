@@ -78,8 +78,13 @@ class _HomeShellState extends State<HomeShell> {
   Future<void> _onLikes(List<LikeNotice> notices) async {
     final likers = <UserProfile>[];
     for (final n in notices) {
-      final p = _likerCache[n.from] ??= await widget.profiles.load(n.from);
-      if (canLikeBack(widget.me, p)) likers.add(p);
+      try {
+        final p = _likerCache[n.from] ??= await widget.profiles.load(n.from);
+        if (canLikeBack(widget.me, p)) likers.add(p);
+      } catch (e) {
+        // Picked up again with the next update of the list.
+        debugPrint('Could not load who liked you: $e');
+      }
     }
     if (!mounted) return;
     setState(() => _likers = likers);
@@ -135,7 +140,14 @@ class _HomeShellState extends State<HomeShell> {
   Future<void> _celebrate(List<ChatMatch> unseen) async {
     for (final match in unseen) {
       if (!_celebrating.add(match.id)) continue;
-      final them = await widget.profiles.load(match.otherUser(widget.me.uid));
+      final UserProfile them;
+      try {
+        them = await widget.profiles.load(match.otherUser(widget.me.uid));
+      } catch (e) {
+        debugPrint('Could not load the new match: $e');
+        _celebrating.remove(match.id);
+        continue;
+      }
       if (!mounted) return;
       HapticFeedback.heavyImpact();
       await Navigator.of(context).push(MaterialPageRoute(
@@ -146,7 +158,7 @@ class _HomeShellState extends State<HomeShell> {
           wingman: Wingman(match.cherryFor[widget.me.uid] ?? widget.me.cherryAvatar),
           profiles: widget.profiles,
           onBreakTheIce: () {
-            widget.chat.markSeen(match.id, widget.me.uid);
+            widget.chat.markSeen(match.id, widget.me.uid).catchError((_) {});
             Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (_) => ChatScreen(
                 chat: widget.chat,
@@ -159,7 +171,7 @@ class _HomeShellState extends State<HomeShell> {
           },
         ),
       ));
-      await widget.chat.markSeen(match.id, widget.me.uid);
+      await widget.chat.markSeen(match.id, widget.me.uid).catchError((_) {});
     }
   }
 

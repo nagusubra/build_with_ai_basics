@@ -21,7 +21,7 @@ OnboardingStep nextStep(UserProfile p) {
   if (!p.hasBasics) return OnboardingStep.basics;
   if (!p.quizDone || !quizComplete(p.food)) return OnboardingStep.quiz;
   if (p.photos.isEmpty) return OnboardingStep.photos;
-  if (!p.verified) return OnboardingStep.verify;
+  if (!p.verified && !p.verificationSkipped) return OnboardingStep.verify;
   if (!p.previewSeen) return OnboardingStep.preview;
   if (!p.onboardingComplete) return OnboardingStep.meetCherry;
   return OnboardingStep.done;

@@ -21,10 +21,10 @@ void _likeBackTests() {
       expect(canLikeBack(me, person('a')), isTrue);
     });
 
-    test('not if they switched goal, lost their verified badge, or never finished', () {
+    test('not if they switched goal or never finished; unverified people can still be liked back', () {
       expect(canLikeBack(me, person('a', goal: 'friends')), isFalse);
-      expect(canLikeBack(me, person('a', verified: false)), isFalse);
       expect(canLikeBack(me, person('a', done: false)), isFalse);
+      expect(canLikeBack(me, person('a', verified: false)), isTrue);
     });
   });
 }

@@ -42,10 +42,16 @@ class ChatService {
   Future<void> markSeen(String matchId, String uid) =>
       _db.doc('matches/$matchId').update({'seenBy': FieldValue.arrayUnion([uid])});
 
-  Future<String> displayName(String uid) async {
-    final doc = await _db.doc('users/$uid').get();
-    return doc.data()?['name'] as String? ?? 'Someone';
-  }
+  final _names = <String, Future<String>>{};
+
+  /// A person's first name, fetched once; a failed fetch is forgotten so it's tried again.
+  Future<String> displayName(String uid) => _names[uid] ??= _db.doc('users/$uid').get().then(
+        (doc) => doc.data()?['name'] as String? ?? 'Someone',
+        onError: (Object e) {
+          _names.remove(uid);
+          throw e;
+        },
+      );
 
   Future<void> send(String matchId, String senderUid, String text) {
     final body = text.trim();

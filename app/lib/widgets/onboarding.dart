@@ -203,8 +203,9 @@ InputDecoration bakeField(String label, {String? hint}) => InputDecoration(
       enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: BakeColors.line)),
     );
 
-/// A profile photo stored in Firebase Storage.
-class StoragePhoto extends StatelessWidget {
+/// A profile photo stored in Firebase Storage: fades in when loaded, and offers a retry
+/// if the network let it down.
+class StoragePhoto extends StatefulWidget {
   const StoragePhoto({super.key, required this.path, required this.profiles, this.fit = BoxFit.cover});
 
   final String path;
@@ -212,20 +213,65 @@ class StoragePhoto extends StatelessWidget {
   final BoxFit fit;
 
   @override
+  State<StoragePhoto> createState() => _StoragePhotoState();
+}
+
+class _StoragePhotoState extends State<StoragePhoto> {
+  late Future<String> _url = widget.profiles.photoUrl(widget.path);
+  int _attempt = 0;
+
+  @override
+  void didUpdateWidget(StoragePhoto old) {
+    super.didUpdateWidget(old);
+    if (old.path != widget.path) _url = widget.profiles.photoUrl(widget.path);
+  }
+
+  void _retry() => setState(() {
+        _attempt++;
+        _url = widget.profiles.photoUrl(widget.path);
+      });
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: profiles.photoUrl(path),
-      builder: (context, snap) => snap.hasData
-          ? Image.network(snap.data!, fit: fit, errorBuilder: (_, _, _) => const _PhotoPlaceholder())
-          : const _PhotoPlaceholder(),
+      future: _url,
+      builder: (context, snap) {
+        if (snap.hasError) return _PhotoPlaceholder(onRetry: _retry);
+        if (!snap.hasData) return const _PhotoPlaceholder();
+        return Image.network(
+          snap.data!,
+          key: ValueKey('${snap.data}#$_attempt'),
+          fit: widget.fit,
+          frameBuilder: (context, child, frame, wasSync) => wasSync
+              ? child
+              : AnimatedOpacity(opacity: frame == null ? 0 : 1, duration: const Duration(milliseconds: 250), child: child),
+          errorBuilder: (_, _, _) => _PhotoPlaceholder(onRetry: _retry),
+        );
+      },
     );
   }
 }
 
 class _PhotoPlaceholder extends StatelessWidget {
-  const _PhotoPlaceholder();
+  const _PhotoPlaceholder({this.onRetry});
+
+  final VoidCallback? onRetry;
 
   @override
-  Widget build(BuildContext context) =>
-      const ColoredBox(color: BakeColors.softPink, child: Center(child: Text('🍒', style: TextStyle(fontSize: 40))));
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: onRetry,
+        child: ColoredBox(
+          color: BakeColors.softPink,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('🍒', style: TextStyle(fontSize: 40)),
+                if (onRetry != null)
+                  const Text('Tap to reload', style: TextStyle(color: BakeColors.muted, fontWeight: FontWeight.w700, fontSize: 12)),
+              ],
+            ),
+          ),
+        ),
+      );
 }

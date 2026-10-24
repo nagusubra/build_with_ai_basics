@@ -87,6 +87,39 @@ class _VerifyScreenState extends State<VerifyScreen> {
     }
   }
 
+  /// Onboarding moves on without the badge; from My profile it just closes.
+  Future<void> _skip() async {
+    final reverifying = widget.onVerified != null;
+    final sure = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Skip the selfie check?'),
+        content: Text(
+          reverifying
+              ? 'You can verify any time from My profile.'
+              : "You'll still appear in Discover, just without the verified badge — and some people only look at verified profiles. "
+                  'You can verify any time from My profile.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Verify now')),
+          TextButton(key: const Key('verify-skip-confirm'), onPressed: () => Navigator.pop(context, true), child: const Text('Skip for now')),
+        ],
+      ),
+    );
+    if (sure != true || !mounted) return;
+    if (reverifying) {
+      Navigator.of(context).pop();
+      return;
+    }
+    try {
+      await widget.profiles.skipVerification(widget.profile.uid);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Couldn't save that just now — please try again.")));
+      }
+    }
+  }
+
   Future<void> _changePhotos() => Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => PhotosScreen(
           profile: widget.profile,
@@ -123,7 +156,13 @@ class _VerifyScreenState extends State<VerifyScreen> {
           subtitle: '$_reason\n\nTips: face the light, take off sunglasses or a hat, and use a main photo where your face is clear.',
           top: Center(child: Mascot(_tryAgainPose, size: 170)),
           action: FilledButton(onPressed: () => setState(() => _stage = _Stage.camera), child: const Text('Try again')),
-          secondaryAction: TextButton(onPressed: _changePhotos, child: const Text('Change my photos')),
+          secondaryAction: Wrap(
+            alignment: WrapAlignment.center,
+            children: [
+              TextButton(onPressed: _changePhotos, child: const Text('Change my photos')),
+              TextButton(key: const Key('verify-skip-after-fail'), onPressed: _skip, child: const Text('Skip for now')),
+            ],
+          ),
           child: const SizedBox.shrink(),
         );
       case _Stage.intro:
@@ -138,18 +177,22 @@ class _VerifyScreenState extends State<VerifyScreen> {
           action: FilledButton(
             key: const Key('verify-start'),
             onPressed: _hasCamera ? () => setState(() => _stage = _Stage.camera) : null,
-            child: const Text("I'm ready"),
+            child: Text(_hasCamera ? "I'm ready" : 'No camera found'),
           ),
-          secondaryAction: kDebugMode
-              ? TextButton(
+          secondaryAction: Column(
+            children: [
+              TextButton(key: const Key('verify-skip'), onPressed: _skip, child: const Text('Skip for now')),
+              if (kDebugMode)
+                TextButton(
                   key: const Key('verify-dev-skip'),
                   onPressed: () async {
                     await widget.profiles.markVerified(widget.profile.uid);
                     widget.onVerified?.call();
                   },
-                  child: const Text('DEV ONLY: skip selfie check'),
-                )
-              : null,
+                  child: const Text('DEV ONLY: mark verified'),
+                ),
+            ],
+          ),
           child: const SizedBox.shrink(),
         );
     }

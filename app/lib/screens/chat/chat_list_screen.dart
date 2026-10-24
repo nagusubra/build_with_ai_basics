@@ -9,7 +9,7 @@ import '../../widgets/mascot.dart';
 import '../../widgets/mascot_rive.dart';
 import 'chat_screen.dart';
 
-class ChatListScreen extends StatelessWidget {
+class ChatListScreen extends StatefulWidget {
   const ChatListScreen({
     super.key,
     required this.chat,
@@ -26,14 +26,27 @@ class ChatListScreen extends StatelessWidget {
   final String? myCherry;
 
   @override
+  State<ChatListScreen> createState() => _ChatListScreenState();
+}
+
+class _ChatListScreenState extends State<ChatListScreen> {
+  // Subscribed once, so the list doesn't re-read or flicker whenever the screen rebuilds.
+  late final Stream<List<ChatMatch>> _matches = widget.chat.matchesFor(widget.myUid);
+
+  ChatService get chat => widget.chat;
+  FunctionsService get functions => widget.functions;
+  String get myUid => widget.myUid;
+  String? get myCherry => widget.myCherry;
+
+  @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Chats')),
       body: StreamBuilder<List<ChatMatch>>(
-        stream: chat.matchesFor(myUid),
+        stream: _matches,
         builder: (context, snap) {
-          if (snap.hasError) {
+          if (snap.hasError && !snap.hasData) {
             return _Note(pose: Wingman(myCherry).tryAgain, title: 'Couldn’t load your chats', body: 'Check your connection and come back in a moment.');
           }
           if (!snap.hasData) {
@@ -57,7 +70,7 @@ class ChatListScreen extends StatelessWidget {
                     child: Text('Every chat starts with a cherry and ends with a cooking date 🍳',
                         textAlign: TextAlign.center, style: text.bodyMedium?.copyWith(color: BakeColors.muted)),
                   )
-                : _MatchTile(chat: chat, functions: functions, match: matches[i], myUid: myUid),
+                : _MatchTile(key: ValueKey(matches[i].id), chat: chat, functions: functions, match: matches[i], myUid: myUid),
           );
         },
       ),
@@ -92,13 +105,25 @@ class _Note extends StatelessWidget {
   }
 }
 
-class _MatchTile extends StatelessWidget {
-  const _MatchTile({required this.chat, required this.functions, required this.match, required this.myUid});
+class _MatchTile extends StatefulWidget {
+  const _MatchTile({super.key, required this.chat, required this.functions, required this.match, required this.myUid});
 
   final ChatService chat;
   final FunctionsService functions;
   final ChatMatch match;
   final String myUid;
+
+  @override
+  State<_MatchTile> createState() => _MatchTileState();
+}
+
+class _MatchTileState extends State<_MatchTile> {
+  late final Stream<ChatMessage?> _last = widget.chat.lastMessage(widget.match.id);
+
+  ChatService get chat => widget.chat;
+  FunctionsService get functions => widget.functions;
+  ChatMatch get match => widget.match;
+  String get myUid => widget.myUid;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +134,7 @@ class _MatchTile extends StatelessWidget {
       builder: (context, nameSnap) {
         final name = nameSnap.data ?? '…';
         return StreamBuilder<ChatMessage?>(
-          stream: chat.lastMessage(match.id),
+          stream: _last,
           builder: (context, lastSnap) {
             final last = lastSnap.data;
             final unread = isUnread(match, last, myUid);

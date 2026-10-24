@@ -33,6 +33,7 @@ class _FiltersSheetState extends State<_FiltersSheet> {
   late final Set<String> _food = {...widget.me.filters.foodTypes};
   late RangeValues _ages = RangeValues(widget.me.filters.minAge.toDouble(), widget.me.filters.maxAge.toDouble());
   late final List<String> _cities = [...widget.me.filters.cities];
+  late bool _verifiedOnly = widget.me.filters.verifiedOnly;
   bool _saving = false;
 
   static const _floor = DiscoverFilters.ageFloor;
@@ -42,6 +43,7 @@ class _FiltersSheetState extends State<_FiltersSheet> {
         _food.clear();
         _ages = const RangeValues(_floor * 1.0, _ceiling * 1.0);
         _cities.clear();
+        _verifiedOnly = false;
       });
 
   Future<void> _addCity() async {
@@ -60,6 +62,7 @@ class _FiltersSheetState extends State<_FiltersSheet> {
           minAge: _ages.start.round(),
           maxAge: _ages.end.round(),
           cities: _cities,
+          verifiedOnly: _verifiedOnly,
         ),
       );
       if (mounted) Navigator.pop(context);
@@ -145,6 +148,17 @@ class _FiltersSheetState extends State<_FiltersSheet> {
                   activeColor: BakeColors.cherryRed,
                   labels: RangeLabels('${_ages.start.round()}', maxLabel),
                   onChanged: (v) => setState(() => _ages = v),
+                ),
+                const SizedBox(height: 12),
+                SwitchListTile.adaptive(
+                  key: const Key('filter-verified-only'),
+                  contentPadding: EdgeInsets.zero,
+                  activeTrackColor: BakeColors.leafGreen,
+                  secondary: const Icon(Icons.verified_rounded, color: BakeColors.leafGreen),
+                  title: Text('Verified profiles only', style: text.titleMedium),
+                  subtitle: const Text('People who passed the selfie check'),
+                  value: _verifiedOnly,
+                  onChanged: (v) => setState(() => _verifiedOnly = v),
                 ),
                 section('Location'),
                 Wrap(

@@ -53,6 +53,8 @@ else
 
   IOS_ID=$(app_id IOS)
   [ -n "$IOS_ID" ] || fail "No iOS app found in $PROJECT."
+  # The CLI won't overwrite an existing file without asking, and there's nobody to answer.
+  rm -f "$PLIST"
   firebase apps:sdkconfig IOS "$IOS_ID" --project "$PROJECT" -o "$PLIST" >/dev/null
   cp "$PLIST" "$WORK/GoogleService-Info.plist"
 

@@ -103,9 +103,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text('Verify your new photos', style: text.titleMedium),
+                  Text('Get your verified badge ✓', style: text.titleMedium),
                   const SizedBox(height: 4),
-                  const Text("You won't appear in Discover until you've done a quick selfie check with your new main photo."),
+                  Text(
+                    me.verificationSkipped
+                        ? 'A quick selfie check shows people you’re genuine. Some people only look at verified profiles.'
+                        : 'You changed your photos, so the badge needs a new quick selfie check with your main photo.',
+                  ),
                   const SizedBox(height: 10),
                   FilledButton(
                     key: const Key('reverify'),

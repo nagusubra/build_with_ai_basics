@@ -34,6 +34,8 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _input = TextEditingController();
   final _scroll = ScrollController();
+  late final Stream<ChatMatch?> _match = widget.chat.match(widget.matchId);
+  late final Stream<List<ChatMessage>> _messages = widget.chat.messages(widget.matchId);
   String? _readUpTo;
 
   @override
@@ -62,7 +64,15 @@ class _ChatScreenState extends State<ChatScreen> {
     final text = _input.text;
     if (text.trim().isEmpty) return;
     _input.clear();
-    await widget.chat.send(widget.matchId, widget.myUid, text);
+    try {
+      await widget.chat.send(widget.matchId, widget.myUid, text);
+    } catch (_) {
+      if (!mounted) return;
+      if (_input.text.isEmpty) _input.text = text;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Your message didn't send — check your connection and tap send again.")),
+      );
+    }
   }
 
   void _scrollToEnd() {
@@ -130,13 +140,22 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
-    if (ok == true) await widget.functions.dismissCherry(widget.matchId);
+    if (ok != true) return;
+    try {
+      await widget.functions.dismissCherry(widget.matchId);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("${wingman.name} couldn't leave just now — please try again.")),
+        );
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<ChatMatch?>(
-      stream: widget.chat.match(widget.matchId),
+      stream: _match,
       builder: (context, matchSnap) {
         final match = matchSnap.data;
         return Scaffold(
@@ -157,8 +176,14 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Expanded(
                   child: StreamBuilder<List<ChatMessage>>(
-                    stream: widget.chat.messages(widget.matchId),
+                    stream: _messages,
                     builder: (context, snap) {
+                      if (snap.hasError && !snap.hasData) {
+                        return Center(
+                          child: Text("Couldn't load this chat. Check your connection.",
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(color: BakeColors.muted)),
+                        );
+                      }
                       final messages = snap.data ?? const <ChatMessage>[];
                       if (messages.isEmpty) {
                         return Center(
