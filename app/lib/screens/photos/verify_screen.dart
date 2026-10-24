@@ -140,14 +140,14 @@ class _VerifyScreenState extends State<VerifyScreen> {
             onPressed: _hasCamera ? () => setState(() => _stage = _Stage.camera) : null,
             child: const Text("I'm ready"),
           ),
-          secondaryAction: kDebugMode && !_hasCamera
+          secondaryAction: kDebugMode
               ? TextButton(
                   key: const Key('verify-dev-skip'),
                   onPressed: () async {
                     await widget.profiles.markVerified(widget.profile.uid);
                     widget.onVerified?.call();
                   },
-                  child: const Text('DEV ONLY: no camera here — mark verified'),
+                  child: const Text('DEV ONLY: skip selfie check'),
                 )
               : null,
           child: const SizedBox.shrink(),
