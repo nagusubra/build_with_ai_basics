@@ -86,6 +86,15 @@ test('nobody is told about a like from someone they passed on, or who wants some
   assert.equal((await likedBy(kay, max)).exists, false);
 });
 
+test('a demo profile likes back, so the like becomes a match with no "liked you" notice', async () => {
+  const nia = await person('nia', { gender: 'Woman', cherryAvatar: 'girl', lookingFor: 'partner' });
+  const sol = await person('sol', { gender: 'Man', cherryAvatar: 'boy', lookingFor: 'partner', demoLikesBack: true });
+  await like(nia, sol);
+  await settle();
+  assert.equal((await matchOf(nia, sol)).exists, true);
+  assert.equal((await likedBy(sol, nia)).exists, false);
+});
+
 test('friends and partner seekers never match each other', async () => {
   const gia = await person('gia', { gender: 'Woman', cherryAvatar: 'girl', lookingFor: 'friends' });
   const hal = await person('hal', { gender: 'Man', cherryAvatar: 'boy', lookingFor: 'partner' });

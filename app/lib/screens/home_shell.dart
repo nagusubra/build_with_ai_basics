@@ -12,6 +12,7 @@ import '../services/discover_service.dart';
 import '../services/functions_service.dart';
 import '../services/profile_service.dart';
 import '../theme/colors.dart';
+import '../services/judge_access.dart';
 import '../widgets/guided_tour.dart';
 import '../widgets/mascot.dart';
 import '../widgets/onboarding.dart';
@@ -59,6 +60,9 @@ class _HomeShellState extends State<HomeShell> {
   OverlayEntry? _banner;
   Timer? _bannerTimer;
   OverlayEntry? _tour;
+
+  /// Celebrations and "liked you" banners wait until the first-time tour is over.
+  Completer<void>? _touring;
   final _tourDiscover = GlobalKey();
   final _tourFilters = GlobalKey();
   final _tourNav = GlobalKey();
@@ -74,7 +78,8 @@ class _HomeShellState extends State<HomeShell> {
     _likes = widget.discover
         .likedMe(widget.me.uid)
         .listen(_onLikes, onError: (_) {});
-    if (!widget.me.tourSeen) {
+    if (JudgeAccess.takeTourRequest() || !widget.me.tourSeen) {
+      _touring = Completer<void>();
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future<void>.delayed(const Duration(milliseconds: 900), _startTour);
       });
@@ -146,6 +151,8 @@ class _HomeShellState extends State<HomeShell> {
         onDone: (_) {
           _tour?.remove();
           _tour = null;
+          _touring?.complete();
+          _touring = null;
           widget.profiles
               .markTourSeen(widget.me.uid)
               .catchError(
@@ -177,6 +184,8 @@ class _HomeShellState extends State<HomeShell> {
           ...likers.where((p) => p.uid == n.from),
     ];
     if (fresh.isEmpty) return;
+    await _touring?.future;
+    if (!mounted) return;
     for (final p in fresh) {
       widget.discover.markLikeSeen(widget.me.uid, p.uid).catchError((_) {});
     }
@@ -224,6 +233,7 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   Future<void> _celebrate(List<ChatMatch> unseen) async {
+    await _touring?.future;
     for (final match in unseen) {
       if (!_celebrating.add(match.id)) continue;
       final UserProfile them;

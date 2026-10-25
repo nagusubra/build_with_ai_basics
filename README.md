@@ -20,6 +20,15 @@ The same script writes the Android and web Firebase settings, so `flutter run -d
 
 To try the web version in any browser: `cd app && flutter run -d web-server --release --web-port 5050`, then open http://localhost:5050. (Port 8080 is taken by the Firestore emulator during tests.) Profile photos load on the web because the Storage bucket allows browser reads; that setting lives in `storage.cors.json` and is applied once per project with `gcloud storage buckets update gs://studio-1391080484-497cf.firebasestorage.app --cors-file=storage.cors.json`.
 
+## Judge access (web)
+
+On the web, a "Judging BakeOut?" card beside the phone (or a "Judging? Quick access" button on narrow screens) lets judges skip sign-up:
+
+- **Log in as Maya** (Jill is her wingwoman) or **Arjun** (Jack is his wingman): ready-made profiles, matched with each other with Cherry's opening message waiting, and each with a "liked you" from the sample crowd. Open one in a private window and the other in a normal window to chat as both.
+- **Start fresh**: a throwaway account that goes through sign-up from the first question, with a placeholder-photo option and the skippable selfie check.
+
+Discover has six sample profiles (`functions/scripts/judge-demo.mjs`) that like a judge back, so any like becomes a match. `cd functions && npm run seed:judges` creates everything on the real project and resets Maya and Arjun to a clean slate; run it again after judges have been through. Build with `--dart-define=JUDGE_ACCESS=false` to hide the shortcuts.
+
 ## Next session
 
 Open this folder in Cursor or OpenCode and say:

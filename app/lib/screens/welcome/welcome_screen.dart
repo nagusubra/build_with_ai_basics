@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../services/auth_service.dart';
+import '../../services/judge_access.dart';
 import '../../theme/colors.dart';
+import '../../widgets/judge_panel.dart';
 import '../../widgets/mascot.dart';
 import '../../widgets/mascot_rive.dart';
+import '../../widgets/web_frame.dart';
 import '../auth/auth_screen.dart';
 
 /// First screen: the cherries, one clear message, one button (`prd.md > Welcome Screen`).
@@ -26,6 +29,16 @@ class WelcomeScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(28, 12, 28, 20),
           child: Column(
             children: [
+              if (JudgeAccess.enabled && !WebFrame.showsSidePanel(context))
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    key: const Key('welcome-judges'),
+                    onPressed: () => showJudgeSheet(context),
+                    style: TextButton.styleFrom(backgroundColor: BakeColors.softPink, shape: const StadiumBorder()),
+                    child: const Text('🏆 Judging? Quick access'),
+                  ),
+                ),
               const Spacer(),
               const AnimatedMascot(
                 MascotPose.duoWelcome,

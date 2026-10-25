@@ -14,6 +14,7 @@ import 'services/auth_service.dart';
 import 'services/chat_service.dart';
 import 'services/discover_service.dart';
 import 'services/functions_service.dart';
+import 'services/judge_access.dart';
 import 'services/profile_service.dart';
 import 'theme/colors.dart';
 import 'theme/theme.dart';
@@ -39,6 +40,7 @@ Future<void> initFirebase() async {
     await FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
   }
   await AuthService().dropStaleSession();
+  JudgeAccess.ready.value = true;
 }
 
 class BakeOutApp extends StatelessWidget {
@@ -48,6 +50,7 @@ class BakeOutApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'BakeOut',
+      navigatorKey: JudgeAccess.navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: buildBakeTheme(),
       scrollBehavior: const BakeScrollBehavior(),

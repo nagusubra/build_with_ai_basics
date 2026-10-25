@@ -77,6 +77,11 @@ export async function handleLike(db: Firestore, from: string, to: string, coin =
   }
   const sameGoal = !!fromDoc.get('lookingFor') && fromDoc.get('lookingFor') === toDoc.get('lookingFor');
   if (passed.exists || !sameGoal || !toDoc.exists) return { matchId: null, told: false };
+  // Hackathon demo profiles (functions/scripts/seed-judges.mjs) like back, so a judge gets a real match.
+  if (toDoc.get('demoLikesBack') === true) {
+    await db.doc(`likes/${to}_${from}`).set({ from: to, to: from, createdAt: FieldValue.serverTimestamp() });
+    return { matchId: null, told: false };
+  }
   await db.doc(`users/${to}/likedBy/${from}`).set({ from, createdAt: FieldValue.serverTimestamp() });
   return { matchId: null, told: true };
 }

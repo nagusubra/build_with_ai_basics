@@ -4,7 +4,11 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 
+import '../services/judge_access.dart';
 import '../theme/colors.dart';
+import 'judge_panel.dart';
+import 'mascot.dart';
+import 'mascot_rive.dart';
 
 /// On a wide browser window, BakeOut runs inside an iPhone (body, Dynamic Island, status bar,
 /// home indicator) on a soft cherry backdrop, with a short introduction beside it when there's
@@ -23,14 +27,21 @@ class WebFrame extends StatelessWidget {
   static const _minWideWidth = 600.0;
   static const _brandPanelWidth = 1020.0;
 
+  /// The introduction (with the judge panel) is showing beside the phone.
+  static bool showsSidePanel(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_SidePanelShown>()?.shown ?? false;
+
   @override
   Widget build(BuildContext context) {
     if (!kIsWeb) return child;
     return LayoutBuilder(
       builder: (context, box) {
         if (box.maxWidth < _minWideWidth) return child;
+        final sidePanel = box.maxWidth >= _brandPanelWidth;
         final media = MediaQuery.of(context);
-        final phone = MediaQuery(
+        final phone = _SidePanelShown(
+          shown: sidePanel,
+          child: MediaQuery(
           data: media.copyWith(
             size: screen,
             padding: const EdgeInsets.only(
@@ -42,7 +53,8 @@ class WebFrame extends StatelessWidget {
               bottom: _bottomInset,
             ),
           ),
-          child: SizedBox.fromSize(size: screen, child: child),
+            child: SizedBox.fromSize(size: screen, child: child),
+          ),
         );
         // Shrink the whole phone, never crop it, when the window is short.
         final height = math.min(box.maxHeight - 40, _device.height);
@@ -64,8 +76,14 @@ class WebFrame extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (box.maxWidth >= _brandPanelWidth) ...[
-                  const Material(type: MaterialType.transparency, child: _BrandPanel()),
+                if (sidePanel) ...[
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: box.maxHeight - 40),
+                    child: const FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Material(type: MaterialType.transparency, child: _BrandPanel()),
+                    ),
+                  ),
                   const SizedBox(width: 72),
                 ],
                 SizedBox(
@@ -90,6 +108,15 @@ class WebFrame extends StatelessWidget {
       },
     );
   }
+}
+
+class _SidePanelShown extends InheritedWidget {
+  const _SidePanelShown({required this.shown, required super.child});
+
+  final bool shown;
+
+  @override
+  bool updateShouldNotify(_SidePanelShown old) => old.shown != shown;
 }
 
 /// An iPhone 15 Pro-style body around [child]: titanium edge, side buttons, Dynamic Island,
@@ -287,35 +314,20 @@ class _BrandPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
     Widget point(String emoji, String title, String line) => Padding(
-      padding: const EdgeInsets.only(top: 14),
+      padding: const EdgeInsets.only(top: 10),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 40,
-            height: 40,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: BakeColors.line),
-            ),
-            child: Text(emoji, style: const TextStyle(fontSize: 20)),
-          ),
-          const SizedBox(width: 14),
+          SizedBox(width: 28, child: Text(emoji, style: const TextStyle(fontSize: 18))),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: text.titleMedium?.copyWith(color: BakeColors.charcoal),
-                ),
-                Text(
-                  line,
-                  style: text.bodyMedium?.copyWith(color: BakeColors.muted),
-                ),
-              ],
+            child: Text.rich(
+              TextSpan(
+                children: [
+                  TextSpan(text: title, style: const TextStyle(color: BakeColors.charcoal, fontWeight: FontWeight.w800)),
+                  TextSpan(text: ' · $line'),
+                ],
+              ),
+              style: text.bodyMedium?.copyWith(color: BakeColors.muted),
             ),
           ),
         ],
@@ -345,44 +357,44 @@ class _BrandPanel extends StatelessWidget {
       ),
     );
     return SizedBox(
-      width: 400,
+      width: 420,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(
-            'assets/mascots/cherry_duo_welcome_rest.png',
-            height: 170,
+          Row(
+            children: [
+              const AnimatedMascot(
+                MascotPose.duoWelcome,
+                size: 132,
+                animationAsset: MascotMotion.welcomeAsset,
+                posterAsset: MascotMotion.welcomePosterAsset,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('BakeOut', style: text.displaySmall?.copyWith(fontSize: 44)),
+                    Text(
+                      'Love might just be one recipe away.',
+                      style: text.titleLarge?.copyWith(color: BakeColors.charcoal),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          Text('BakeOut', style: text.displaySmall?.copyWith(fontSize: 44)),
-          const SizedBox(height: 6),
-          Text(
-            'Love might just be one recipe away.',
-            style: text.headlineSmall?.copyWith(color: BakeColors.charcoal),
-          ),
+          if (JudgeAccess.enabled) ...[
+            const SizedBox(height: 18),
+            const JudgePanel(),
+          ],
           const SizedBox(height: 10),
-          point(
-            '🍳',
-            'Food-first profiles',
-            'Your cooking style, favourite cuisines, and signature dish.',
-          ),
-          point(
-            '🍒',
-            'Jack & Jill, your wingmen',
-            'They break the ice and keep the conversation going.',
-          ),
-          point(
-            '📅',
-            'A real cooking date',
-            'Dish, day, time, a recipe and a song — then they leave you to it.',
-          ),
-          point(
-            '✅',
-            'Genuine people',
-            'A quick selfie check, done right on your device.',
-          ),
-          const SizedBox(height: 24),
+          point('🍳', 'Food-first profiles', 'cooking style, cuisines, signature dish'),
+          point('🍒', 'Jack & Jill, your wingmen', 'they break the ice for you'),
+          point('📅', 'A real cooking date', 'dish, day, time, recipe and a song'),
+          point('✅', 'Genuine people', 'a quick selfie check on your device'),
+          const SizedBox(height: 18),
           Text(
             'Available on',
             style: text.labelLarge?.copyWith(

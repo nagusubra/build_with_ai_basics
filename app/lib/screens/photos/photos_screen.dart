@@ -1,11 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:image_picker/image_picker.dart';
 
 import '../../models/profile.dart';
+import '../../services/judge_access.dart';
 import '../../services/profile_service.dart';
 import '../../theme/colors.dart';
+import '../../widgets/mascot.dart';
 import '../../widgets/onboarding.dart';
 
 /// One required photo, up to three more (`prd.md > Photos and Verification`).
@@ -45,6 +48,14 @@ class _PhotosScreenState extends State<PhotosScreen> {
     }
     if (!mounted) return;
     setState(() => _picked.addAll(added));
+  }
+
+  /// For judges without a photo to hand: their own Jack or Jill stands in.
+  Future<void> _addPlaceholder() async {
+    final asset = Wingman(widget.profile.cherryAvatar).hello.asset;
+    final bytes = (await rootBundle.load(asset)).buffer.asUint8List();
+    if (!mounted) return;
+    setState(() => _picked.add(_Picked(XFile.fromData(bytes, mimeType: 'image/png', name: 'placeholder.png'), bytes)));
   }
 
   void _remove(int i) => setState(() => _picked.removeAt(i));
@@ -134,6 +145,16 @@ class _PhotosScreenState extends State<PhotosScreen> {
                 ),
             ],
           ),
+          if (_picked.isEmpty && JudgeAccess.inFreshJudgeAccount)
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: TextButton.icon(
+                key: const Key('photos-placeholder'),
+                onPressed: _addPlaceholder,
+                icon: const Text('🍒'),
+                label: Text('Judging? Use ${Wingman(widget.profile.cherryAvatar).name} as a placeholder photo'),
+              ),
+            ),
           if (_error != null) ...[
             const SizedBox(height: 12),
             Text(_error!, style: const TextStyle(color: BakeColors.deepCherry)),

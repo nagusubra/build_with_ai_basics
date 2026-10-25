@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/profile.dart';
 import '../../services/auth_service.dart';
 import '../../services/functions_service.dart';
+import '../../services/judge_access.dart';
 import '../../services/profile_service.dart';
 import '../../theme/colors.dart';
 import '../../theme/theme.dart';
@@ -174,7 +175,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               ],
             ),
           ),
-          OutlinedButton.icon(
+          if (JudgeAccess.readyMadeFor(widget.auth.email) == null) OutlinedButton.icon(
             key: const Key('delete-account'),
             onPressed: _delete,
             style: OutlinedButton.styleFrom(
