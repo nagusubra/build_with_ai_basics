@@ -155,15 +155,15 @@ Agreed in the follow-up interview:
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
 - [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence:
+Activity and evidence: guided route offered (like → match → wingman opener), connected to the slice 6 acceptance sentences and `functions/test/matching.emulator.test.mjs`, which Vinamra opened in his editor.
 Route and stops: (guided route offered) a like becomes a match: `_onSwipe` / `DiscoverService.like` → `onLikeCreated` / `handleLike` / `matchIfMutual` → `openChat` and `_celebrate`. App map rendered in a browser and checked: every path and anchor exists at commit 23a6b8a.
-Edit outcome:
-Reflection:
-Activity mode:
+Edit outcome: offered (judge panel wording); not taken.
+Reflection: answered (recorded in the learner profile).
+Activity mode: guided route, fast mode.
 
 ## Revisions
 
