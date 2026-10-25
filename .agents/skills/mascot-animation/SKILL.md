@@ -55,14 +55,19 @@ rig README. For a timing-only change, reuse existing approved art.
 ### Optional web generation
 
 Use the [Gemini helper instructions](../../../app/tool/gemini_web/README.md) only
-when the connected tools support them. Discover actual MCP schemas; tool names,
+when the connected tools support them, and the
+[provider-agnostic helpers](../../../app/tool/llm_web/README.md) when Gemini is out
+of credits or is the wrong model (order: Gemini, ChatGPT, Grok, Copilot, then
+Claude/DeepSeek once signed in). Discover actual MCP schemas; tool names,
 file-output parameters and secret configuration vary by client. Manual
 authorized image upload/download is equally valid.
 
 Keep Chrome visible. On a stalled send/fetch, inspect page state and generation
-status before retrying; avoid duplicate credit spend. Respect provider quotas;
-pause or ask for an approved alternative, not account cycling to bypass limits.
-Never upload source code, secrets or personal app data; only authorized art/prompts.
+status before retrying; avoid duplicate credit spend. Before sending on ChatGPT,
+clear any restored draft and confirm the prompt appears exactly once. Respect
+provider quotas; pause or ask for an approved alternative, not account cycling to
+bypass limits. Never upload source code, secrets or personal app data; only
+authorized art/prompts.
 
 ## 4. Rig and animate
 

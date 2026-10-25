@@ -7,6 +7,10 @@ generations use your Gemini account's normal image credits.
 Setup and the full workflow are in
 [`docs/mascot-animation-pipeline.md`](../../../docs/mascot-animation-pipeline.md#4-generating-assets-with-gemini).
 
+For another provider (ChatGPT, Grok, Copilot, Claude, DeepSeek) use
+[`../llm_web/`](../llm_web/README.md) instead: same send/fetch/grab loop, provider chosen with
+`--provider` or `--url` + `--selector`. This directory stays Gemini-only.
+
 For editor portability, secret handling and animation-only boundaries, start with
 the [workshop README](../README.md#6-editor-portability-and-mcp). These helpers are
 optional; manual authorized upload/download works too. Their scratch filenames are
@@ -48,6 +52,6 @@ python app\tool\gemini_web\grab.py app\tool\gemini_web\dump.txt design\mascots\<
 - These scripts target Gemini's DOM (`rich-textarea .ql-editor`, `model-response img`). If Google changes the
   UI, update the selectors in `gen.py`.
 - When credits run out, pause or ask for an approved alternative provider. Respect
-  quotas; do not cycle accounts to evade limits. ChatGPT requires its own UI flow;
-  the Gemini scripts do not target it.
+  quotas; do not cycle accounts to evade limits. For ChatGPT or another model, use
+  [`../llm_web/`](../llm_web/README.md); these scripts only target Gemini.
 - Never commit the Playwright extension token.

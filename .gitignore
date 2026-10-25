@@ -19,5 +19,10 @@ node_modules/
 *-debug.log
 functions/lib/
 
+<<<<<<< Updated upstream
 .playwright-mcp/
 
+=======
+# Playwright MCP browser artifacts (screenshots, snapshots, console logs).
+.playwright-mcp/
+>>>>>>> Stashed changes

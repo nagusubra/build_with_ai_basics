@@ -70,8 +70,29 @@ than leaving `@latest` for a reproducible setup.
    }
    ```
 
+   On **Windows + OpenCode** the equivalent lives in `~/.config/opencode/opencode.jsonc` (global, so the
+   token is never in the repo). Keep `cmd /c` unless `npx` alone is known to resolve:
+
+   ```jsonc
+   {
+     "permission": "allow",
+     "mcp": {
+       "playwright": {
+         "type": "local",
+         "command": ["cmd", "/c", "npx", "-y", "@playwright/mcp@latest", "--extension", "--port", "8931"],
+         "environment": { "PLAYWRIGHT_MCP_EXTENSION_TOKEN": "<from the extension options page>" },
+         "timeout": 120000
+       }
+     }
+   }
+   ```
+
+   The extension dials **`localhost`**; with this version the server listens on the IPv6 loopback only,
+   so `127.0.0.1:8931` is refused and `[::1]` returns 403. Use `http://localhost:8931/mcp`. The config is
+   read at startup, so **restart the editor/agent** after changing it.
+
 3. Start the server, sign in to Gemini (and ChatGPT) in that Chrome profile, and leave a Gemini tab open.
-   Rotate the token if it was ever pasted anywhere shared.
+   Rotate the token if it was ever pasted anywhere shared (including a chat transcript or a committed file).
 
 ### 3.2 Local tools
 
@@ -85,9 +106,12 @@ python -m pip show numpy pillow
 
 ## 4. Generating assets with Gemini
 
-### 4.1 The automation loop (`app/tool/gemini_web/`)
+### 4.1 The automation loop (`app/tool/gemini_web/`, `app/tool/llm_web/`)
 
-Typing in the Gemini UI by hand works too. The scripts just make it repeatable and cheap:
+Typing in the Gemini UI by hand works too. The scripts just make it repeatable and cheap.
+[`app/tool/llm_web/`](../app/tool/llm_web/README.md) is the same loop parameterised by provider
+(Gemini → ChatGPT → Grok → Copilot → Claude/DeepSeek), so use it whenever Gemini is out of credits or
+is the wrong model; `gemini_web/` remains the Gemini-only original.
 
 The tool names and `filename` output parameters below describe the bridge used
 originally. Discover the actual connected tool schemas; use manual upload/download
@@ -96,7 +120,7 @@ if the destination client cannot execute/save the helper results.
 | Step | What runs |
 |---|---|
 | 1. Write the prompt | `Set-Content -Encoding utf8 prompt.txt "..."` |
-| 2. Build the send script | `python app\tool\gemini_web\gen.py prompt.txt [image.png ...]` writes `send.js` and `fetch.js` next to itself. With images it opens a **new chat** and pastes them; without images it posts a **follow-up** in the current chat |
+| 2. Build the send script | `python app\tool\gemini_web\gen.py prompt.txt [image.png ...]` writes `send.js` and `fetch.js` next to itself. With images it opens a **new chat** and pastes them; without images it posts a **follow-up** in the current chat. Add `--provider chatgpt` and run `app\tool\llm_web\gen.py` for another provider; `--no-send` is a dry run |
 | 3. Send | MCP `browser_run_code_unsafe` with `filename = app\tool\gemini_web\send.js` |
 | 4. Wait and fetch | MCP `browser_run_code_unsafe` with `filename = app\tool\gemini_web\fetch.js`. It polls up to 45 s for a new `model-response img` and stores it as a PNG data URL in `window.__out`. If `{ok:false}`, inspect page state before retrying; it may re-press Send |
 | 5. Dump | MCP `browser_evaluate` with `function = () => window.__out` and `filename = dump.txt` |
@@ -109,14 +133,20 @@ Gotchas we hit:
 - **The tab must be visible.** Gemini won't send from a hidden or minimised window. Both scripts call
   `page.bringToFront()` first; keep the Chrome window on screen.
 - Images are attached by dispatching a synthetic `paste` with a `DataTransfer`. Text goes in with
-  `execCommand('insertText')`, and the send uses a real Enter on the editor.
+  `keyboard.insertText`, falling back to `execCommand('insertText')`; the send uses a real Enter on the
+  editor. Wait for the editor DOM to settle before falling back, or a slow ProseMirror (ChatGPT, Grok)
+  inserts the prompt twice — `llm_web` polls for ~5 s first.
 - Prompt files written by PowerShell have a BOM, so `gen.py` reads them as `utf-8-sig`.
 - To start a **new chat without editing** an image (e.g. a prop), attach the master anyway as a *style
   reference*.
 - **Credits:** each image costs a generation. Batch thinking, not generations: view every result and fix
   the prompt rather than rerolling blindly. Respect provider quotas; pause or ask for an approved
-  alternative provider when limited. Do not cycle accounts to evade limits. The scripts target
-  Gemini's DOM; on ChatGPT, drive it with plain MCP clicks and typing, or upload and download by hand.
+  alternative provider when limited. Do not cycle accounts to evade limits. The scripts target one
+  provider's composer DOM; add a row to `PROVIDERS` in `llm_web/gen.py` for a new site, or upload and
+  download by hand if its markup resists automation.
+- **ChatGPT restores unsent drafts**, and "New chat" does not clear them. Clear the composer first
+  (click the editor, `Control+A`, `Backspace`) and verify the text has exactly one copy before sending.
+  Its composer is `div.ProseMirror[contenteditable="true"]`; there is no `#prompt-textarea`.
 
 ### 4.2 Prompt rules that make parts line up
 
