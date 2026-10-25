@@ -60,7 +60,24 @@ class MatchMomentScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [_avatar(me, -0.05), const SizedBox(width: 12), _avatar(them, 0.05)],
                   ),
-                  const AnimatedMascot(MascotPose.duoMatch, size: 220)
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      const AnimatedMascot(MascotPose.duoMatch, size: 220),
+                      Positioned(
+                        right: -30,
+                        bottom: -6,
+                        child: AnimatedWingman(
+                          wingman.rig(WingmanRig.smile),
+                          size: 92,
+                          bob: false,
+                        )
+                            .animate(delay: 700.ms)
+                            .fadeIn()
+                            .scale(begin: const Offset(0.5, 0.5), curve: Curves.easeOutBack),
+                      ),
+                    ],
+                  )
                       .animate()
                       .slideY(begin: 0.4, end: 0, duration: 600.ms, curve: Curves.easeOutBack)
                       .fadeIn(),

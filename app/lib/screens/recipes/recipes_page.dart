@@ -91,7 +91,7 @@ class _RecipesPageState extends State<RecipesPage> {
             Center(child: TextButton.icon(onPressed: _loadLibrary, icon: const Icon(Icons.refresh), label: const Text('Couldn’t load recipes — try again')))
           else if (lib == null)
             const Padding(padding: EdgeInsets.all(30), child: Center(child: CircularProgressIndicator(color: BakeColors.cherryRed))),
-          if (dish != null) _DishOfTheDay(recipe: dish).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.97, 0.97)),
+          if (dish != null) _DishOfTheDay(recipe: dish, wingman: wingman).animate().fadeIn(duration: 300.ms).scale(begin: const Offset(0.97, 0.97)),
           if (recipes.isNotEmpty) Padding(
             padding: const EdgeInsets.only(top: 6, bottom: 10),
             child: Text('More for you', style: text.titleLarge),
@@ -112,9 +112,10 @@ class _RecipesPageState extends State<RecipesPage> {
 }
 
 class _DishOfTheDay extends StatelessWidget {
-  const _DishOfTheDay({required this.recipe});
+  const _DishOfTheDay({required this.recipe, required this.wingman});
 
   final Recipe recipe;
+  final Wingman wingman;
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +138,8 @@ class _DishOfTheDay extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
+                    AnimatedWingman(wingman.rig(WingmanRig.idea), size: 64, bob: false),
+                    const SizedBox(width: 10),
                     Text(recipe.emoji, style: const TextStyle(fontSize: 44)),
                     const SizedBox(width: 12),
                     Expanded(

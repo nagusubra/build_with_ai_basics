@@ -166,8 +166,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AnimatedMascot(Wingman(widget.me.cherryAvatar).hello, size: 120),
-            const SizedBox(height: 8),
+            AnimatedWingman(Wingman(widget.me.cherryAvatar).rig(WingmanRig.think), size: 120),            const SizedBox(height: 8),
             Text(
               'Finding food lovers for you…',
               style: Theme.of(context).textTheme.titleMedium
@@ -306,12 +305,7 @@ class _DailyHeaderState extends State<DailyHeader> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const AnimatedMascot(
-                MascotPose.duoWelcome,
-                size: 84,
-                animationAsset: MascotMotion.welcomeAsset,
-                posterAsset: MascotMotion.welcomePosterAsset,
-              ),
+              AnimatedWingman(wingman.rig(WingmanRig.hero), size: 72),
               const SizedBox(width: 8),
               Expanded(
                 child: Container(

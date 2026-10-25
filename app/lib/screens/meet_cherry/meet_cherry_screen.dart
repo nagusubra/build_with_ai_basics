@@ -25,7 +25,7 @@ class MeetCherryScreen extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(),
-              AnimatedMascot(wingman.hello, size: 240)
+              AnimatedWingman(wingman.rig(WingmanRig.hero), size: 240)
                   .animate()
                   .slideX(begin: -0.6, end: 0, duration: 600.ms, curve: Curves.easeOutBack)
                   .fadeIn(),

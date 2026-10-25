@@ -28,6 +28,20 @@ enum MascotPose {
   String get asset => 'assets/mascots/$file.png';
 }
 
+/// One clip from the personal wingman rigs: the Rive file, the artboard inside
+/// it, and the static rest pose that shows on web / reduced motion / failure.
+class WingmanPose {
+  const WingmanPose(this.animationAsset, this.artboard, this.posterAsset);
+
+  final String animationAsset;
+  final String artboard;
+  final String posterAsset;
+}
+
+/// Which clip to play from a person's wingman rig. `hero` is the full
+/// think → idea → write → smile story; the rest loop a single emotion.
+enum WingmanRig { hero, think, idea, write, smile }
+
 /// Jack (the boy cherry) and Jill (the girl cherry): a person's own wingman, by name and pose.
 class Wingman {
   const Wingman(this.cherry);
@@ -42,6 +56,29 @@ class Wingman {
   MascotPose get planning => isJill ? MascotPose.girlPlanning : MascotPose.boyPlanning;
   MascotPose get goodbye => isJill ? MascotPose.girlGoodbye : MascotPose.boyGoodbye;
   MascotPose get tryAgain => isJill ? MascotPose.girlTryAgain : MascotPose.boyTryAgain;
+
+  /// The Jack/Jill rig clip for [rig], personalized by this wingman's cherry
+  /// (`app/tool/mascot_rive_jack`, `app/tool/mascot_rive_jill`).
+  WingmanPose rig(WingmanRig rig) {
+    final prefix = isJill ? 'jill' : 'jack';
+    final character = isJill ? 'Jill' : 'Jack';
+    final board = switch (rig) {
+      WingmanRig.hero => character + (isJill ? 'Wingwoman' : 'Wingman'),
+      WingmanRig.think => '${character}Think',
+      WingmanRig.idea => '${character}Idea',
+      WingmanRig.write => '${character}Write',
+      WingmanRig.smile => '${character}Smile',
+    };
+    final poster = switch (rig) {
+      WingmanRig.hero => 'assets/mascots/${prefix}_smile.png',
+      _ => 'assets/mascots/${prefix}_${rig.name}.png',
+    };
+    return WingmanPose(
+      'assets/mascots/rive/${prefix}_${isJill ? 'wingwoman' : 'wingman'}.riv',
+      board,
+      poster,
+    );
+  }
 }
 
 /// The cherries bobbing while something loads, instead of a bare spinner.

@@ -55,7 +55,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
           final matches = snap.data!;
           if (matches.isEmpty) {
             return _Note(
-              pose: MascotPose.duoCooking,
+              rig: Wingman(myCherry).rig(WingmanRig.think),
               title: 'No matches yet',
               body: 'When you and someone both like each other, ${Wingman(myCherry).name} will be waiting here to break the ice.',
             );
@@ -79,9 +79,14 @@ class _ChatListScreenState extends State<ChatListScreen> {
 }
 
 class _Note extends StatelessWidget {
-  const _Note({required this.pose, required this.title, required this.body});
+  const _Note({this.pose, this.rig, required this.title, required this.body})
+      : assert(pose != null || rig != null);
 
-  final MascotPose pose;
+  /// Static hero pose (failures and other moments that shouldn't animate).
+  final MascotPose? pose;
+
+  /// Animated wingman rig clip (`Wingman.rig`).
+  final WingmanPose? rig;
   final String title;
   final String body;
 
@@ -94,7 +99,7 @@ class _Note extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            AnimatedMascot(pose, size: 170),
+            AnimatedWingman(rig!, size: 130),
             Text(title, style: text.titleLarge),
             const SizedBox(height: 6),
             Text(body, textAlign: TextAlign.center, style: text.bodyLarge?.copyWith(color: BakeColors.muted)),

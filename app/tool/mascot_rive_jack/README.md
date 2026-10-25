@@ -59,3 +59,17 @@ Copy-Item app\tool\mascot_rive_jack\build\jack_wingman.riv app\assets\mascots\ri
 ```
 
 Then follow section 8 of the pipeline doc to add `MascotPose` entries and render with `AnimatedMascot`.
+
+## Integration status (2026-10-24, approved)
+
+Shipped with Flutter integration approval: `app/assets/mascots/rive/jack_wingman.riv` plus generated
+rest posters `jack_{think,idea,write,smile}.png` (from `scene.rml` runtime layers via
+`app/tool/mascot_posters.py`; hero poster reuses `*_smile.png`). App wiring: `Wingman.rig(WingmanRig`
+`{hero, think, idea, write, smile})` in `app/lib/widgets/mascot.dart`, rendered by `AnimatedWingman`
+(`app/lib/widgets/mascot_rive.dart`, Factory.flutter loader on web). Placements: MeetCherry hero 240,
+chat empty hero 140, chat AppBar Smile 36, chat-list empty Think 130, Discover loading Think 120,
+Discover DailyHeader hero 72, Recipes DishOfTheDay Idea 64, date-card Write 54, Verify success Smile
+200, match moment Smile 92. Static legacy PNGs intentionally unchanged on quiz/goodbyes/failure states.
+`flutter analyze --no-pub` clean; `flutter test` 89 passing; `flutter build web` bundles all rigs and
+posters (checked in `AssetManifest.bin`). Same placements verified as golden captures in a since-removed
+QA gallery (posters render at identical slots/sizes on web fallback).

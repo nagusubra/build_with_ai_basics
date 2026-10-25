@@ -27,7 +27,7 @@ Future<List<int>> _pump(WidgetTester tester, ChatMessage card, DatePlan plan) as
           myUid: 'me',
           otherUid: 'them',
           otherName: 'Sam',
-          planningPose: MascotPose.boyPlanning,
+          planningPose: Wingman('boy').rig(WingmanRig.write),
           onConfirm: (v) async => taps.add(v),
         ),
       ),

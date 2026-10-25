@@ -112,7 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
               myUid: widget.myUid,
               otherUid: match?.otherUser(widget.myUid) ?? '',
               otherName: widget.otherName,
-              planningPose: wingman.planning,
+              planningPose: _wingman(match).rig(WingmanRig.write),
               onConfirm: _confirm,
             ),
           ],
@@ -160,7 +160,16 @@ class _ChatScreenState extends State<ChatScreen> {
         final match = matchSnap.data;
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.otherName),
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (match?.cherryPresent ?? false) ...[
+                  AnimatedWingman(_wingman(match).rig(WingmanRig.smile), size: 36),
+                  const SizedBox(width: 8),
+                ],
+                Text(widget.otherName),
+              ],
+            ),
             actions: [
               if (match?.cherryPresent ?? false)
                 IconButton(
@@ -190,7 +199,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              AnimatedMascot(_wingman(match).hello, size: 120),
+                              AnimatedWingman(_wingman(match).rig(WingmanRig.hero), size: 140),
                               Text(
                                 snap.hasData ? 'Say hello to ${widget.otherName} 👋' : '${_wingman(match).name} is on the way…',
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(color: BakeColors.muted),

@@ -54,7 +54,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
   }
 
   MascotPose get _tryAgainPose => Wingman(widget.profile.cherryAvatar).tryAgain;
-  MascotPose get _cheerPose => Wingman(widget.profile.cherryAvatar).cheer;
+  WingmanPose get _cheerPose => Wingman(widget.profile.cherryAvatar).rig(WingmanRig.smile);
 
   Future<void> _onSelfie(Uint8List selfie) async {
     setState(() => _stage = _Stage.checking);
@@ -144,7 +144,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                AnimatedMascot(_cheerPose, size: 200),
+                AnimatedWingman(_cheerPose, size: 200),
                 Text("You're verified ✓", style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: BakeColors.leafGreen)),
               ],
             ).animate().fadeIn().scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1)),

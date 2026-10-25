@@ -22,6 +22,8 @@ abstract final class MascotMotion {
   static const welcomeAsset = 'assets/mascots/rive/cherry_duo_welcome.riv';
   static const welcomePosterAsset =
       'assets/mascots/cherry_duo_welcome_rest.png';
+  static const jackAsset = 'assets/mascots/rive/jack_wingman.riv';
+  static const jillAsset = 'assets/mascots/rive/jill_wingwoman.riv';
   static const _enabled = bool.fromEnvironment(
     'MASCOT_RIVE',
     defaultValue: true,
@@ -58,14 +60,18 @@ abstract final class MascotMotion {
 
   static FileLoader loaderFor(String asset) => _loaders.putIfAbsent(
     asset,
-    () => FileLoader.fromAsset(
-      asset,
-      // The layered duo needs no Rive-only effects. Paint it directly into
-      // Flutter's canvas to avoid blank Android texture handoffs.
-      riveFactory: asset == welcomeAsset || !_nativeReady
-          ? Factory.flutter
-          : Factory.rive,
-    ),
+      () => FileLoader.fromAsset(
+        asset,
+        // The layered rigs (duo welcome, the Jack/Jill wingmen) need no
+        // Rive-only effects. Paint them directly into Flutter's canvas to
+        // avoid blank Android texture handoffs.
+        riveFactory: asset == welcomeAsset ||
+                asset == jackAsset ||
+                asset == jillAsset ||
+                !_nativeReady
+            ? Factory.flutter
+            : Factory.rive,
+      ),
   );
 }
 
@@ -86,27 +92,91 @@ class AnimatedMascot extends StatelessWidget {
   final String animationAsset;
   final String? posterAsset;
 
-  Widget _poster({required bool bob}) {
-    final asset = posterAsset;
-    if (asset == null) return Mascot(pose, size: size, bob: bob);
-    return Image.asset(asset, width: size, height: size, fit: BoxFit.contain);
-  }
-
   @override
   Widget build(BuildContext context) => ValueListenableBuilder<bool>(
     valueListenable: MascotMotion.initialized,
-    builder: (context, _, _) => _buildMascot(context),
+    builder: (context, _, _) => _build(context),
   );
 
-  Widget _buildMascot(BuildContext context) {
+  Widget _build(BuildContext context) {
     final artboard = pose.riveArtboard;
     final reduceMotion =
         MediaQuery.maybeOf(context)?.disableAnimations ?? false;
     if (artboard == null || reduceMotion || !MascotMotion.available) {
-      return _poster(bob: bob && !reduceMotion);
+      final asset = posterAsset;
+      if (asset == null) {
+        return Mascot(pose, size: size, bob: bob && !reduceMotion);
+      }
+      return Image.asset(asset, width: size, height: size, fit: BoxFit.contain);
     }
+    return ArtboardMascot(
+      animationAsset: animationAsset,
+      artboard: artboard,
+      size: size,
+      posterAsset: posterAsset,
+      fallback: Mascot(pose, size: size, bob: bob),
+    );
+  }
+}
 
-    return SizedBox(
+/// A wingman rig clip (`Wingman.rig`): the animated Jack/Jill artboard when
+/// possible, its matching static rest poster otherwise.
+class AnimatedWingman extends StatelessWidget {
+  const AnimatedWingman(this.pose, {super.key, this.size = 220, this.bob = true});
+
+  final WingmanPose pose;
+  final double size;
+  final bool bob;
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<bool>(
+    valueListenable: MascotMotion.initialized,
+    builder: (context, _, _) => _build(context),
+  );
+
+  Widget _build(BuildContext context) {
+    final reduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    if (reduceMotion || !MascotMotion.available) {
+      return Image.asset(pose.posterAsset,
+          width: size, height: size, fit: BoxFit.contain);
+    }
+    return ArtboardMascot(
+      animationAsset: pose.animationAsset,
+      artboard: pose.artboard,
+      size: size,
+      posterAsset: pose.posterAsset,
+      fallback: Image.asset(pose.posterAsset,
+          width: size, height: size, fit: BoxFit.contain),
+    );
+  }
+}
+
+/// One artboard of one .riv asset, with [fallback] shown while loading or when
+/// the artboard fails to load. Native availability and reduced motion are
+/// checked before constructing this.
+class ArtboardMascot extends StatelessWidget {
+  const ArtboardMascot({
+    super.key,
+    required this.animationAsset,
+    required this.artboard,
+    required this.size,
+    required this.fallback,
+    this.posterAsset,
+  });
+
+  final String animationAsset;
+  final String artboard;
+  final double size;
+  final Widget fallback;
+
+  /// Shown while the asset is still loading; [fallback] covers load failures.
+  final String? posterAsset;
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<bool>(
+    valueListenable: MascotMotion.initialized,
+    builder: (context, _, _) => SizedBox(
       width: size,
       height: size,
       child: RiveWidgetBuilder(
@@ -120,10 +190,17 @@ class AnimatedMascot extends StatelessWidget {
           RiveLoaded(:final controller) => RepaintBoundary(
             child: RiveWidget(controller: controller, fit: Fit.contain),
           ),
-          RiveFailed() => _poster(bob: bob),
-          RiveLoading() => _poster(bob: false),
+          RiveFailed() => fallback,
+          RiveLoading() => posterAsset != null
+              ? Image.asset(
+                  posterAsset!,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.contain,
+                )
+              : fallback,
         },
       ),
-    );
-  }
+    ),
+  );
 }

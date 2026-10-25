@@ -5,6 +5,7 @@ import '../models/message.dart';
 import '../theme/colors.dart';
 import '../theme/theme.dart';
 import 'mascot.dart';
+import 'mascot_rive.dart';
 
 /// Shared frame for Cherry's cards in the chat.
 class _CherryCard extends StatelessWidget {
@@ -51,7 +52,8 @@ class DateCardView extends StatelessWidget {
   final String myUid;
   final String otherUid;
   final String otherName;
-  final MascotPose planningPose;
+  final WingmanPose planningPose;
+
   final Future<void> Function(int version) onConfirm;
 
   int get _version => (message.payload['version'] as num?)?.toInt() ?? 0;
@@ -72,7 +74,7 @@ class DateCardView extends StatelessWidget {
         children: [
           Row(
             children: [
-              Mascot(planningPose, size: 54, bob: false),
+              AnimatedWingman(planningPose, size: 54, bob: false),
               const SizedBox(width: 8),
               Expanded(child: Text('Your cooking date', style: text.titleMedium?.copyWith(color: BakeColors.deepCherry))),
             ],
@@ -151,21 +153,24 @@ class RecipeCardView extends StatelessWidget {
           if (p['minutes'] != null) Text('⏱ ${p['minutes']} minutes', style: text.bodyMedium?.copyWith(color: BakeColors.muted)),
           Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              tilePadding: EdgeInsets.zero,
-              title: Text('See the full recipe', style: text.titleMedium),
-              children: [
-                Align(alignment: Alignment.centerLeft, child: Text('Ingredients', style: text.titleMedium)),
-                for (final i in ingredients)
-                  Align(alignment: Alignment.centerLeft, child: Padding(padding: const EdgeInsets.only(top: 3), child: Text('• $i'))),
-                const SizedBox(height: 10),
-                Align(alignment: Alignment.centerLeft, child: Text('Steps', style: text.titleMedium)),
-                for (var s = 0; s < steps.length; s++)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(padding: const EdgeInsets.only(top: 4), child: Text('${s + 1}. ${steps[s]}')),
-                  ),
-              ],
+            child: Material(
+              color: Colors.transparent,
+              child: ExpansionTile(
+                tilePadding: EdgeInsets.zero,
+                title: Text('See the full recipe', style: text.titleMedium),
+                children: [
+                  Align(alignment: Alignment.centerLeft, child: Text('Ingredients', style: text.titleMedium)),
+                  for (final i in ingredients)
+                    Align(alignment: Alignment.centerLeft, child: Padding(padding: const EdgeInsets.only(top: 3), child: Text('• $i'))),
+                  const SizedBox(height: 10),
+                  Align(alignment: Alignment.centerLeft, child: Text('Steps', style: text.titleMedium)),
+                  for (var s = 0; s < steps.length; s++)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(padding: const EdgeInsets.only(top: 4), child: Text('${s + 1}. ${steps[s]}')),
+                    ),
+                ],
+              ),
             ),
           ),
           if ((p['allergyNote'] as String?)?.isNotEmpty ?? false)
