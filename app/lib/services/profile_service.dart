@@ -118,6 +118,8 @@ class ProfileService {
   Future<void> saveDiscoverSettings(String uid, {required String lookingFor, required DiscoverFilters filters}) =>
       _user(uid).update({'lookingFor': lookingFor, 'filters': filters.toMap(), 'updatedAt': FieldValue.serverTimestamp()});
 
+  Future<void> markTourSeen(String uid) => _user(uid).update({'tourSeen': true});
+
   Future<void> markPreviewSeen(String uid) => _user(uid).update({'previewSeen': true});
 
   Future<void> completeOnboarding(String uid) => _user(uid).update({'onboardingComplete': true});

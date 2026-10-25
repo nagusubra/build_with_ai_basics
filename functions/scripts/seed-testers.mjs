@@ -119,6 +119,7 @@ async function ensureUser({ email, name, gender, cherry, food }) {
       verified: true,
       previewSeen: true,
       onboardingComplete: true,
+      tourSeen: true,
       devSample: true,
       createdAt: FieldValue.serverTimestamp(),
     },

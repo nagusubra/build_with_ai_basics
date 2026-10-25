@@ -143,6 +143,9 @@ Agreed in the follow-up interview:
   - Robustness: failed photo-URL and name lookups are no longer cached forever; photos fade in and offer "Tap to reload"; Discover shows "Try again" instead of spinning forever; likes and passes that fail to save say so; a failed chat message goes back into the box; asking the wingman to leave, the recipe library, the "liked you" banner, and the match moment all survive a failed fetch; the chat and Chats list subscribe once instead of on every rebuild (less flicker and fewer reads).
 
   Checked: analyzer; 86 app unit tests; a real profile photo fetched from inside the web page at localhost:5050 (200, image/jpeg).
+- [ ] **Web polish and a first-time tour** (asked for after seeing the web version): on a computer the app sits inside an iPhone frame (Dynamic Island, status bar, home indicator, scaled to fit short windows), with an introduction beside it that now says iPhone, Android, and Web instead of "Made for iPhone". After onboarding, a skippable guided tour from the person's Jack or Jill lights up Discover, the filters, Chats, and Me; finishing or skipping saves `tourSeen`, and the test accounts are seeded with it set.
+
+  Checked: analyzer; 93 app unit tests, including the tour (every step, skip, Enter and Esc, card never covering the area it explains); and on the desktop web build against the emulators, every tour step screenshotted, then `tourSeen` confirmed true after "Start exploring". One placement bug was found and fixed: on Discover the card was pushed off the bottom of the screen, so it now sits on whichever side has room, or over the bottom of the highlight. Not yet tried on Vinamra's iPhone.
 - [ ] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map

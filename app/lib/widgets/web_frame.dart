@@ -65,7 +65,7 @@ class WebFrame extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (box.maxWidth >= _brandPanelWidth) ...[
-                  const _BrandPanel(),
+                  const Material(type: MaterialType.transparency, child: _BrandPanel()),
                   const SizedBox(width: 72),
                 ],
                 SizedBox(
@@ -157,7 +157,10 @@ class _IPhone extends StatelessWidget {
                     right: 0,
                     height: topInset,
                     child: const IgnorePointer(
-                      child: Material(type: MaterialType.transparency, child: _StatusBar()),
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: _StatusBar(),
+                      ),
                     ),
                   ),
                   Positioned(
@@ -283,9 +286,10 @@ class _BrandPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-    Widget point(String emoji, String line) => Padding(
+    Widget point(String emoji, String title, String line) => Padding(
       padding: const EdgeInsets.only(top: 14),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 40,
@@ -300,16 +304,48 @@ class _BrandPanel extends StatelessWidget {
           ),
           const SizedBox(width: 14),
           Expanded(
-            child: Text(
-              line,
-              style: text.titleMedium?.copyWith(color: BakeColors.charcoal),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: text.titleMedium?.copyWith(color: BakeColors.charcoal),
+                ),
+                Text(
+                  line,
+                  style: text.bodyMedium?.copyWith(color: BakeColors.muted),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    Widget platform(IconData icon, String name) => Container(
+      margin: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: BakeColors.charcoal,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 14,
             ),
           ),
         ],
       ),
     );
     return SizedBox(
-      width: 380,
+      width: 400,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,13 +362,41 @@ class _BrandPanel extends StatelessWidget {
             style: text.headlineSmall?.copyWith(color: BakeColors.charcoal),
           ),
           const SizedBox(height: 10),
-          point('🍳', 'Profiles built around how you cook and eat'),
-          point('🍒', 'Jack & Jill break the ice for you'),
-          point('📅', 'Plan a virtual cooking date together'),
-          const SizedBox(height: 22),
+          point(
+            '🍳',
+            'Food-first profiles',
+            'Your cooking style, favourite cuisines, and signature dish.',
+          ),
+          point(
+            '🍒',
+            'Jack & Jill, your wingmen',
+            'They break the ice and keep the conversation going.',
+          ),
+          point(
+            '📅',
+            'A real cooking date',
+            'Dish, day, time, a recipe and a song — then they leave you to it.',
+          ),
+          point(
+            '✅',
+            'Genuine people',
+            'A quick selfie check, done right on your device.',
+          ),
+          const SizedBox(height: 24),
           Text(
-            'Made for iPhone — this is the web version.',
-            style: text.bodyMedium?.copyWith(color: BakeColors.muted),
+            'Available on',
+            style: text.labelLarge?.copyWith(
+              color: BakeColors.muted,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              platform(Icons.apple, 'iPhone'),
+              platform(Icons.android, 'Android'),
+              platform(Icons.language_rounded, 'Web'),
+            ],
           ),
         ],
       ),

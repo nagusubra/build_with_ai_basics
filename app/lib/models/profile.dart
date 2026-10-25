@@ -17,6 +17,7 @@ class UserProfile {
     this.quizDone = false,
     this.previewSeen = false,
     this.onboardingComplete = false,
+    this.tourSeen = false,
     this.filters = const DiscoverFilters(),
   });
 
@@ -37,6 +38,7 @@ class UserProfile {
         quizDone: d?['quizDone'] as bool? ?? false,
         previewSeen: d?['previewSeen'] as bool? ?? false,
         onboardingComplete: d?['onboardingComplete'] as bool? ?? false,
+        tourSeen: d?['tourSeen'] as bool? ?? false,
         filters: DiscoverFilters.fromMap((d?['filters'] as Map?)?.cast<String, dynamic>()),
       );
 
@@ -66,6 +68,9 @@ class UserProfile {
   final bool quizDone;
   final bool previewSeen;
   final bool onboardingComplete;
+
+  /// The first-time guided tour has been finished or skipped.
+  final bool tourSeen;
 
   /// Who this person wants to see in Discover, on top of the matching rules.
   final DiscoverFilters filters;
