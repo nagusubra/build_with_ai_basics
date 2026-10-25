@@ -6,16 +6,20 @@ import 'package:flutter/material.dart';
 
 import '../theme/colors.dart';
 
-/// On a wide browser window, BakeOut sits in a phone-sized card on a soft cherry backdrop
-/// (with a short introduction beside it when there's room), so it looks and feels like the
-/// iPhone app instead of stretching edge to edge. Phones and narrow windows get the app full-bleed.
+/// On a wide browser window, BakeOut runs inside an iPhone (body, Dynamic Island, status bar,
+/// home indicator) on a soft cherry backdrop, with a short introduction beside it when there's
+/// room. Phones and narrow windows get the app full-bleed.
 class WebFrame extends StatelessWidget {
   const WebFrame({super.key, required this.child});
 
   final Widget child;
 
-  static const phoneWidth = 430.0;
-  static const _maxPhoneHeight = 932.0;
+  /// iPhone 15 Pro's screen in points, and the safe areas the app keeps clear.
+  static const screen = Size(393, 852);
+  static const _topInset = 54.0;
+  static const _bottomInset = 34.0;
+  static const _bezel = 12.0;
+  static const _device = Size(393 + 2 * _bezel, 852 + 2 * _bezel);
   static const _minWideWidth = 600.0;
   static const _brandPanelWidth = 1020.0;
 
@@ -25,19 +29,24 @@ class WebFrame extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, box) {
         if (box.maxWidth < _minWideWidth) return child;
-        final roomy = box.maxHeight >= 700;
-        final height = roomy
-            ? math.min(box.maxHeight - 48, _maxPhoneHeight)
-            : box.maxHeight;
         final media = MediaQuery.of(context);
         final phone = MediaQuery(
           data: media.copyWith(
-            size: Size(phoneWidth, height),
-            padding: EdgeInsets.zero,
-            viewPadding: EdgeInsets.zero,
+            size: screen,
+            padding: const EdgeInsets.only(
+              top: _topInset,
+              bottom: _bottomInset,
+            ),
+            viewPadding: const EdgeInsets.only(
+              top: _topInset,
+              bottom: _bottomInset,
+            ),
           ),
-          child: SizedBox(width: phoneWidth, height: height, child: child),
+          child: SizedBox.fromSize(size: screen, child: child),
         );
+        // Shrink the whole phone, never crop it, when the window is short.
+        final height = math.min(box.maxHeight - 40, _device.height);
+        final width = height * _device.width / _device.height;
         return DecoratedBox(
           decoration: const BoxDecoration(
             gradient: RadialGradient(
@@ -59,24 +68,19 @@ class WebFrame extends StatelessWidget {
                   const _BrandPanel(),
                   const SizedBox(width: 72),
                 ],
-                Container(
+                SizedBox(
                   key: const Key('web-phone-frame'),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(roomy ? 36 : 0),
-                    border: roomy
-                        ? Border.all(color: BakeColors.line, width: 1.5)
-                        : null,
-                    boxShadow: [
-                      BoxShadow(
-                        color: BakeColors.deepCherry.withValues(alpha: 0.14),
-                        blurRadius: 60,
-                        offset: const Offset(0, 24),
+                  width: width,
+                  height: height,
+                  child: FittedBox(
+                    child: SizedBox.fromSize(
+                      size: _device,
+                      child: _IPhone(
+                        bezel: _bezel,
+                        topInset: _topInset,
+                        child: phone,
                       ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(roomy ? 35 : 0),
-                    child: phone,
+                    ),
                   ),
                 ),
               ],
@@ -84,6 +88,191 @@ class WebFrame extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// An iPhone 15 Pro-style body around [child]: titanium edge, side buttons, Dynamic Island,
+/// status bar, and home indicator. The status bar and island sit over the app's top safe area.
+class _IPhone extends StatelessWidget {
+  const _IPhone({
+    required this.bezel,
+    required this.topInset,
+    required this.child,
+  });
+
+  final double bezel;
+  final double topInset;
+  final Widget child;
+
+  static const _body = Color(0xFF1B1B1D);
+  static const _edge = Color(0xFF4A4A4F);
+
+  Widget _button(double height) => Container(
+    width: 4,
+    height: height,
+    decoration: BoxDecoration(
+      color: _edge,
+      borderRadius: BorderRadius.circular(2),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(left: -3, top: 130, child: _button(30)),
+        Positioned(left: -3, top: 185, child: _button(58)),
+        Positioned(left: -3, top: 255, child: _button(58)),
+        Positioned(right: -3, top: 215, child: _button(90)),
+        Positioned.fill(
+          child: Container(
+            padding: EdgeInsets.all(bezel - 2.5),
+            decoration: BoxDecoration(
+              color: _body,
+              borderRadius: BorderRadius.circular(66),
+              border: Border.all(color: _edge, width: 2.5),
+              boxShadow: [
+                BoxShadow(
+                  color: BakeColors.deepCherry.withValues(alpha: 0.18),
+                  blurRadius: 70,
+                  offset: const Offset(0, 30),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.18),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(54),
+              child: Stack(
+                children: [
+                  Positioned.fill(child: child),
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: topInset,
+                    child: const IgnorePointer(
+                      child: Material(type: MaterialType.transparency, child: _StatusBar()),
+                    ),
+                  ),
+                  Positioned(
+                    top: 11,
+                    left: 0,
+                    right: 0,
+                    child: IgnorePointer(
+                      child: Center(
+                        child: Container(
+                          width: 124,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 8,
+                    left: 0,
+                    right: 0,
+                    child: IgnorePointer(
+                      child: Center(
+                        child: Container(
+                          width: 134,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: BakeColors.charcoal.withValues(alpha: 0.85),
+                            borderRadius: BorderRadius.circular(3),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// 9:41, signal, Wi-Fi, and battery, the way every iPhone promo shows it.
+class _StatusBar extends StatelessWidget {
+  const _StatusBar();
+
+  @override
+  Widget build(BuildContext context) {
+    const ink = BakeColors.charcoal;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(44, 16, 30, 0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            '9:41',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: ink,
+              letterSpacing: -0.2,
+            ),
+          ),
+          const Spacer(),
+          const Padding(
+            padding: EdgeInsets.only(top: 1),
+            child: Row(
+              children: [
+                Icon(Icons.signal_cellular_alt_rounded, size: 17, color: ink),
+                SizedBox(width: 4),
+                Icon(Icons.wifi_rounded, size: 17, color: ink),
+                SizedBox(width: 5),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 3),
+            child: Row(
+              children: [
+                Container(
+                  width: 25,
+                  height: 12,
+                  padding: const EdgeInsets.all(1.5),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: ink.withValues(alpha: 0.45),
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(3.5),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: ink,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 1.5,
+                  height: 4,
+                  margin: const EdgeInsets.only(left: 1),
+                  decoration: BoxDecoration(
+                    color: ink.withValues(alpha: 0.45),
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
