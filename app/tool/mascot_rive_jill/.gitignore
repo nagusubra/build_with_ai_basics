@@ -1,0 +1,12 @@
+__pycache__/
+.author_send.js
+.author_fetch.js
+build/*
+!build/jill_wingwoman.riv
+!build/review.png
+!build/audit.png
+!build/chat_size.png
+!build/preview.webp
+!build/qa.json
+!build/browser_review.png
+!build/backgrounds.png

@@ -1,0 +1,203 @@
+{
+  "master": "master.png",
+  "space": "1024x1024 master px",
+  "registration": {
+    "body": {
+      "ncc": 0.9930580854415894,
+      "scale": 1.0,
+      "dx": 0.0,
+      "dy": 0.0,
+      "source": "raw/body_v1.png"
+    },
+    "head": {
+      "ncc": 0.9948700666427612,
+      "scale": 1.0,
+      "dx": 0.0,
+      "dy": 0.0,
+      "source": "raw/head_v1.png"
+    },
+    "pose_think": {
+      "ncc": 0.997207760810852,
+      "scale": 1.0,
+      "dx": 0.0,
+      "dy": 0.0,
+      "source": "raw/pose_think_v1.png"
+    },
+    "pose_idea": {
+      "ncc": 0.9934443235397339,
+      "scale": 1.0,
+      "dx": 0.0,
+      "dy": 0.0,
+      "source": "raw/pose_idea_v1.png"
+    },
+    "arms_idea": {
+      "left": {
+        "scale": 0.514,
+        "dx": 240.2,
+        "dy": 411.0,
+        "ncc": 0.937639
+      },
+      "right": {
+        "scale": 0.484,
+        "dx": 300.5,
+        "dy": 403.0,
+        "ncc": 0.960199
+      }
+    },
+    "pose_write": {
+      "ncc": 0.9889190793037415,
+      "scale": 1.002,
+      "dx": -1.0,
+      "dy": -2.0,
+      "source": "raw/pose_write_v2.png"
+    },
+    "face_think": {
+      "ncc": 0.9931556582450867,
+      "scale": 0.998,
+      "dx": 1.0,
+      "dy": 0.5,
+      "source": "raw/face_think_v1.png"
+    },
+    "face_idea": {
+      "ncc": 0.9931454062461853,
+      "scale": 1.002,
+      "dx": -1.0,
+      "dy": -0.5,
+      "source": "raw/face_idea_v1.png"
+    },
+    "face_write": {
+      "ncc": 0.9927415251731873,
+      "scale": 1.004,
+      "dx": -2.5,
+      "dy": -1.5,
+      "source": "raw/face_write_v1.png"
+    },
+    "face_smile": {
+      "ncc": 0.9941007494926453,
+      "scale": 0.998,
+      "dx": 1.0,
+      "dy": 0.5,
+      "source": "raw/face_smile_v1.png"
+    },
+    "face_blink": {
+      "ncc": 0.9929713010787964,
+      "scale": 1.0,
+      "dx": 0.0,
+      "dy": 0.0,
+      "source": "raw/face_blink_v1.png"
+    }
+  },
+  "parts": {
+    "body": [
+      361,
+      551,
+      332,
+      400
+    ],
+    "stem": [
+      298,
+      27,
+      273,
+      318
+    ],
+    "blink": [
+      341,
+      366,
+      349,
+      183
+    ],
+    "face_think": [
+      295,
+      194,
+      452,
+      442
+    ],
+    "face_idea": [
+      295,
+      193,
+      452,
+      443
+    ],
+    "face_write": [
+      295,
+      193,
+      452,
+      443
+    ],
+    "face_smile": [
+      295,
+      194,
+      452,
+      442
+    ],
+    "think_left": [
+      283,
+      620,
+      170,
+      141
+    ],
+    "think_right": [
+      600,
+      527,
+      96,
+      151
+    ],
+    "idea_left": [
+      281,
+      522,
+      178,
+      160
+    ],
+    "idea_right": [
+      591,
+      506,
+      168,
+      149
+    ],
+    "write_left": [
+      401,
+      541,
+      228,
+      160
+    ],
+    "write_right": [
+      580,
+      547,
+      160,
+      165
+    ]
+  },
+  "pivots": {
+    "root": [
+      520,
+      950
+    ],
+    "head": [
+      520,
+      615
+    ],
+    "stem": [
+      480,
+      325
+    ],
+    "left": [
+      428,
+      626
+    ],
+    "right": [
+      610,
+      626
+    ]
+  },
+  "writing_contact": {
+    "arm_translation": [
+      28,
+      -4
+    ],
+    "tip_pivot": [
+      602,
+      648
+    ]
+  },
+  "reused_prop": "Jack's approved glossy bulb, rebuilt from his raw/bulb_v1.png"
+}

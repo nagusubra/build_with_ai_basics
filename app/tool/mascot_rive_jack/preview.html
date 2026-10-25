@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<link rel="icon" href="data:,">
 <title>Jack wingman - live Rive preview</title>
 <style>
   body { margin: 0; font: 14px system-ui, sans-serif; background: #FFF0F2; color: #29252A; display: flex; flex-direction: column; align-items: center; }
@@ -25,13 +26,14 @@
   <div><canvas id="chat" width="240" height="264" style="width:120px;height:132px"></canvas><div class="cap">chat header (120 px)</div></div>
 </div>
 <p id="err"></p>
-<script src="https://unpkg.com/@rive-app/canvas@2"></script>
+<script src="https://unpkg.com/@rive-app/canvas@2.47.1"></script>
 <script>
   const SRC = 'build/jack_wingman.riv';
   const BOARDS = ['JackWingman', 'JackThink', 'JackIdea', 'JackWrite', 'JackSmile'];
   let players = [];
   function play(artboard) {
     players.forEach(p => p.cleanup());
+    document.getElementById('err').textContent = '';
     document.querySelectorAll('#bar button').forEach(b => b.classList.toggle('on', b.textContent === artboard));
     players = ['big', 'chat'].map(id => {
       const r = new rive.Rive({

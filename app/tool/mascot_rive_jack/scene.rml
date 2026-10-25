@@ -59,17 +59,17 @@
         <Image x="-47.500" y="-70.500" originX="0" originY="0" assetId="0:109" name="pad"/>
       </Node>
       <Node x="6.000" y="-253.500" name="Head" id="0:10014">
+        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:10017" opacity="0" assetId="0:106" name="blink"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:10018" opacity="0" assetId="0:105" name="face_smile"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:10019" opacity="0" assetId="0:104" name="face_write"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:10020" opacity="0" assetId="0:103" name="face_idea"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:10021" opacity="1" assetId="0:102" name="face_think"/>
         <Node x="-111.000" y="-205.500" name="hat" id="0:10015">
           <Image x="-100.000" y="-143.500" originX="0" originY="0" assetId="0:107" name="hat"/>
         </Node>
         <Node x="12.000" y="-219.000" name="stem" id="0:10016">
           <Image x="-20.000" y="-207.000" originX="0" originY="0" assetId="0:108" name="stem"/>
         </Node>
-        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:10017" opacity="0" assetId="0:106" name="blink"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:10018" opacity="0" assetId="0:105" name="face_smile"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:10019" opacity="0" assetId="0:104" name="face_write"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:10020" opacity="0" assetId="0:103" name="face_idea"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:10021" opacity="1" assetId="0:102" name="face_think"/>
       </Node>
       <Node x="-82.500" y="-226.500" opacity="0" name="idea_arm" id="0:10022">
         <Image x="-170.500" y="-198.000" originX="0" originY="0" assetId="0:101" name="idea_arm"/>
@@ -779,17 +779,17 @@
         <Image x="-47.500" y="-70.500" originX="0" originY="0" assetId="0:109" name="pad"/>
       </Node>
       <Node x="6.000" y="-253.500" name="Head" id="0:20014">
+        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:20017" opacity="0" assetId="0:106" name="blink"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:20018" opacity="0" assetId="0:105" name="face_smile"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:20019" opacity="0" assetId="0:104" name="face_write"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:20020" opacity="0" assetId="0:103" name="face_idea"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:20021" opacity="1" assetId="0:102" name="face_think"/>
         <Node x="-111.000" y="-205.500" name="hat" id="0:20015">
           <Image x="-100.000" y="-143.500" originX="0" originY="0" assetId="0:107" name="hat"/>
         </Node>
         <Node x="12.000" y="-219.000" name="stem" id="0:20016">
           <Image x="-20.000" y="-207.000" originX="0" originY="0" assetId="0:108" name="stem"/>
         </Node>
-        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:20017" opacity="0" assetId="0:106" name="blink"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:20018" opacity="0" assetId="0:105" name="face_smile"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:20019" opacity="0" assetId="0:104" name="face_write"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:20020" opacity="0" assetId="0:103" name="face_idea"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:20021" opacity="1" assetId="0:102" name="face_think"/>
       </Node>
       <Node x="-82.500" y="-226.500" opacity="0" name="idea_arm" id="0:20022">
         <Image x="-170.500" y="-198.000" originX="0" originY="0" assetId="0:101" name="idea_arm"/>
@@ -997,17 +997,17 @@
         <Image x="-47.500" y="-70.500" originX="0" originY="0" assetId="0:109" name="pad"/>
       </Node>
       <Node x="6.000" y="-253.500" name="Head" id="0:30014">
+        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:30017" opacity="0" assetId="0:106" name="blink"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:30018" opacity="0" assetId="0:105" name="face_smile"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:30019" opacity="0" assetId="0:104" name="face_write"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:30020" opacity="1" assetId="0:103" name="face_idea"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:30021" opacity="0" assetId="0:102" name="face_think"/>
         <Node x="-111.000" y="-205.500" name="hat" id="0:30015">
           <Image x="-100.000" y="-143.500" originX="0" originY="0" assetId="0:107" name="hat"/>
         </Node>
         <Node x="12.000" y="-219.000" name="stem" id="0:30016">
           <Image x="-20.000" y="-207.000" originX="0" originY="0" assetId="0:108" name="stem"/>
         </Node>
-        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:30017" opacity="0" assetId="0:106" name="blink"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:30018" opacity="0" assetId="0:105" name="face_smile"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:30019" opacity="0" assetId="0:104" name="face_write"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:30020" opacity="1" assetId="0:103" name="face_idea"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:30021" opacity="0" assetId="0:102" name="face_think"/>
       </Node>
       <Node x="-82.500" y="-226.500" opacity="1" name="idea_arm" id="0:30022">
         <Image x="-170.500" y="-198.000" originX="0" originY="0" assetId="0:101" name="idea_arm"/>
@@ -1166,17 +1166,17 @@
         <Image x="-47.500" y="-70.500" originX="0" originY="0" assetId="0:109" name="pad"/>
       </Node>
       <Node x="6.000" y="-253.500" name="Head" id="0:40014">
+        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:40017" opacity="0" assetId="0:106" name="blink"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:40018" opacity="0" assetId="0:105" name="face_smile"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:40019" opacity="1" assetId="0:104" name="face_write"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:40020" opacity="0" assetId="0:103" name="face_idea"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:40021" opacity="0" assetId="0:102" name="face_think"/>
         <Node x="-111.000" y="-205.500" name="hat" id="0:40015">
           <Image x="-100.000" y="-143.500" originX="0" originY="0" assetId="0:107" name="hat"/>
         </Node>
         <Node x="12.000" y="-219.000" name="stem" id="0:40016">
           <Image x="-20.000" y="-207.000" originX="0" originY="0" assetId="0:108" name="stem"/>
         </Node>
-        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:40017" opacity="0" assetId="0:106" name="blink"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:40018" opacity="0" assetId="0:105" name="face_smile"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:40019" opacity="1" assetId="0:104" name="face_write"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:40020" opacity="0" assetId="0:103" name="face_idea"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:40021" opacity="0" assetId="0:102" name="face_think"/>
       </Node>
       <Node x="-82.500" y="-226.500" opacity="0" name="idea_arm" id="0:40022">
         <Image x="-170.500" y="-198.000" originX="0" originY="0" assetId="0:101" name="idea_arm"/>
@@ -1334,17 +1334,17 @@
         <Image x="-47.500" y="-70.500" originX="0" originY="0" assetId="0:109" name="pad"/>
       </Node>
       <Node x="6.000" y="-253.500" name="Head" id="0:50014">
+        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:50017" opacity="0" assetId="0:106" name="blink"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:50018" opacity="1" assetId="0:105" name="face_smile"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:50019" opacity="0" assetId="0:104" name="face_write"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:50020" opacity="0" assetId="0:103" name="face_idea"/>
+        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:50021" opacity="0" assetId="0:102" name="face_think"/>
         <Node x="-111.000" y="-205.500" name="hat" id="0:50015">
           <Image x="-100.000" y="-143.500" originX="0" originY="0" assetId="0:107" name="hat"/>
         </Node>
         <Node x="12.000" y="-219.000" name="stem" id="0:50016">
           <Image x="-20.000" y="-207.000" originX="0" originY="0" assetId="0:108" name="stem"/>
         </Node>
-        <Image x="-104.000" y="-148.000" originX="0" originY="0" id="0:50017" opacity="0" assetId="0:106" name="blink"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:50018" opacity="1" assetId="0:105" name="face_smile"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:50019" opacity="0" assetId="0:104" name="face_write"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:50020" opacity="0" assetId="0:103" name="face_idea"/>
-        <Image x="-169.000" y="-239.000" originX="0" originY="0" id="0:50021" opacity="0" assetId="0:102" name="face_think"/>
       </Node>
       <Node x="-82.500" y="-226.500" opacity="0" name="idea_arm" id="0:50022">
         <Image x="-170.500" y="-198.000" originX="0" originY="0" assetId="0:101" name="idea_arm"/>

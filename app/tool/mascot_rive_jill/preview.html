@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:,">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jill wingwoman - live Rive preview</title>
+<style>
+  body { margin:0; font:14px system-ui,sans-serif; background:#FFF0F2; color:#29252A; display:flex; flex-direction:column; align-items:center; }
+  h1 { font-size:18px; color:#A71938; margin:16px 0 8px; }
+  .bar { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin:0 12px 10px; }
+  button,select { border:0; border-radius:999px; padding:7px 14px; background:#fff; color:#A71938; cursor:pointer; font:inherit; font-weight:600; }
+  button.on { background:#E83D55; color:#fff; }
+  .stage { display:flex; gap:16px; align-items:flex-end; flex-wrap:wrap; justify-content:center; padding:0 8px; }
+  canvas { background:#FFF9F3; border-radius:20px; box-shadow:0 4px 18px #a7193822; }
+  #big { width:min(432px,70vw,60vh * 648 / 728); height:auto; aspect-ratio:648 / 728; }
+  #chat { width:120px; height:135px; border-radius:12px; }
+  .cap { text-align:center; color:#6E5257; margin-top:4px; }
+  #err { color:#A71938; white-space:pre-wrap; }
+</style>
+</head>
+<body>
+<h1>Jill wingwoman: live Rive preview</h1>
+<div class="bar" id="bar" aria-label="Animation artboards"></div>
+<div class="bar">
+  <label>Background <select id="background"><option value="#FFF9F3">Cream</option><option value="#FFF0F2">Pink</option><option value="#29252A">Charcoal</option></select></label>
+  <button id="pause">Pause</button>
+  <button id="restart">Restart</button>
+</div>
+<div class="stage">
+  <div><canvas id="big" width="648" height="728" aria-label="Full-size Jill animation"></canvas><div class="cap">full size</div></div>
+  <div><canvas id="chat" width="240" height="270" aria-label="120 pixel Jill animation"></canvas><div class="cap">chat header (120 px)</div></div>
+</div>
+<p id="err" role="alert"></p>
+<script src="https://unpkg.com/@rive-app/canvas@2.47.1"></script>
+<script>
+  const SRC = 'build/jill_wingwoman.riv';
+  const BOARDS = ['JillWingwoman','JillThink','JillIdea','JillWrite','JillSmile'];
+  let players = [], current, paused = false;
+  function play(artboard) {
+    players.forEach(player => player.cleanup());
+    current = artboard;
+    paused = false;
+    document.getElementById('pause').textContent = 'Pause';
+    document.getElementById('err').textContent = '';
+    document.querySelectorAll('#bar button').forEach(button => {
+      button.classList.toggle('on', button.textContent === artboard);
+      button.setAttribute('aria-pressed', String(button.textContent === artboard));
+    });
+    players = ['big','chat'].map(id => {
+      const player = new rive.Rive({
+        src:SRC, canvas:document.getElementById(id), artboard, autoplay:true, stateMachine:artboard,
+        layout:new rive.Layout({fit:rive.Fit.Contain}),
+        onLoad() { player.resizeDrawingSurfaceToCanvas(); },
+        onLoadError(event) { document.getElementById('err').textContent = 'Rive load error: ' + (event?.data ?? event); }
+      });
+      return player;
+    });
+  }
+  BOARDS.forEach(artboard => {
+    const button = document.createElement('button');
+    button.textContent = artboard;
+    button.onclick = () => play(artboard);
+    document.getElementById('bar').append(button);
+  });
+  document.getElementById('background').onchange = event => {
+    document.querySelectorAll('canvas').forEach(canvas => canvas.style.background = event.target.value);
+  };
+  document.getElementById('pause').onclick = () => {
+    paused = !paused;
+    players.forEach(player => paused ? player.pause() : player.play());
+    document.getElementById('pause').textContent = paused ? 'Resume' : 'Pause';
+  };
+  document.getElementById('restart').onclick = () => play(current);
+  const start = new URLSearchParams(location.search).get('artboard');
+  play(BOARDS.includes(start) ? start : BOARDS[0]);
+  window.addEventListener('resize', () => players.forEach(player => player.resizeDrawingSurfaceToCanvas()));
+  window.addEventListener('pagehide', () => players.forEach(player => player.cleanup()));
+</script>
+</body>
+</html>

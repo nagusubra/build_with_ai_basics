@@ -1,0 +1,101 @@
+{
+  "continuous_tracks": 120,
+  "artboards": {
+    "JillWingwoman": {
+      "frames": 480,
+      "seam_max_channel": 0,
+      "seam_acceleration_mean": 0.145941,
+      "reviewed_frames": [
+        0,
+        50,
+        70,
+        73,
+        76,
+        125,
+        126,
+        127,
+        137,
+        180,
+        215,
+        216,
+        217,
+        250,
+        300,
+        303,
+        306,
+        320,
+        360,
+        371,
+        372,
+        373,
+        386,
+        420,
+        449,
+        450,
+        451,
+        462
+      ]
+    },
+    "JillThink": {
+      "frames": 150,
+      "seam_max_channel": 0,
+      "seam_acceleration_mean": 0.200499,
+      "reviewed_frames": [
+        0,
+        40,
+        70,
+        73,
+        76,
+        96,
+        99,
+        102
+      ]
+    },
+    "JillIdea": {
+      "frames": 120,
+      "seam_max_channel": 0,
+      "seam_acceleration_mean": 0.050835,
+      "reviewed_frames": [
+        0,
+        40,
+        70,
+        73,
+        76,
+        96,
+        99,
+        102
+      ]
+    },
+    "JillWrite": {
+      "frames": 180,
+      "seam_max_channel": 0,
+      "seam_acceleration_mean": 0.108273,
+      "reviewed_frames": [
+        0,
+        40,
+        70,
+        73,
+        76,
+        96,
+        99,
+        102
+      ]
+    },
+    "JillSmile": {
+      "frames": 120,
+      "seam_max_channel": 0,
+      "seam_acceleration_mean": 0.041026,
+      "reviewed_frames": [
+        0,
+        40,
+        70,
+        73,
+        76,
+        96,
+        99,
+        102
+      ]
+    }
+  },
+  "bytes": 862070
+}

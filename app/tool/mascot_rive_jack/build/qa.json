@@ -1,0 +1,101 @@
+{
+  "continuous_tracks": 40,
+  "artboards": {
+    "JackWingman": {
+      "frames": 480,
+      "seam_max_channel": 0,
+      "seam_acceleration_mean": 0.017116,
+      "reviewed_frames": [
+        0,
+        50,
+        70,
+        73,
+        76,
+        125,
+        126,
+        127,
+        137,
+        180,
+        215,
+        216,
+        217,
+        250,
+        300,
+        303,
+        306,
+        320,
+        360,
+        371,
+        372,
+        373,
+        386,
+        420,
+        449,
+        450,
+        451,
+        462
+      ]
+    },
+    "JackThink": {
+      "frames": 150,
+      "seam_max_channel": 0,
+      "seam_acceleration_mean": 0.018347,
+      "reviewed_frames": [
+        0,
+        40,
+        70,
+        73,
+        76,
+        96,
+        99,
+        102
+      ]
+    },
+    "JackIdea": {
+      "frames": 120,
+      "seam_max_channel": 0,
+      "seam_acceleration_mean": 0.121502,
+      "reviewed_frames": [
+        0,
+        40,
+        70,
+        73,
+        76,
+        96,
+        99,
+        102
+      ]
+    },
+    "JackWrite": {
+      "frames": 180,
+      "seam_max_channel": 1,
+      "seam_acceleration_mean": 0.01486,
+      "reviewed_frames": [
+        0,
+        40,
+        70,
+        73,
+        76,
+        96,
+        99,
+        102
+      ]
+    },
+    "JackSmile": {
+      "frames": 120,
+      "seam_max_channel": 0,
+      "seam_acceleration_mean": 1.679045,
+      "reviewed_frames": [
+        0,
+        40,
+        70,
+        73,
+        76,
+        96,
+        99,
+        102
+      ]
+    }
+  },
+  "bytes": 933067
+}

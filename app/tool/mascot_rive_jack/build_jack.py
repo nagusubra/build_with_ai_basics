@@ -151,13 +151,14 @@ def bulb_layer() -> tuple[np.ndarray, tuple[float, float]]:
     return out, glass
 
 
-def downscale(rgba: np.ndarray) -> np.ndarray:
-    pm = rgba.copy()
-    pm[..., :3] *= pm[..., 3:4] / 255
-    im = Image.fromarray(np.clip(pm, 0, 255).round().astype(np.uint8), "RGBA")
+def downscale(rgba: np.ndarray, keep_green=False) -> np.ndarray:
+    # Pillow resizes RGBA in premultiplied space itself; do not premultiply twice.
+    im = Image.fromarray(np.clip(rgba, 0, 255).round().astype(np.uint8), "RGBA")
     out = np.asarray(im.resize((round(1024 * S),) * 2, Image.LANCZOS), np.float32).copy()
-    a = out[..., 3:4]
-    out[..., :3] = np.where(a > 0, out[..., :3] * 255 / np.maximum(a, 1e-3), 0)
+    if not keep_green:
+        # Lanczos ringing can reintroduce green at otherwise despilled alpha edges.
+        edge = (out[..., 3] > 0) & (out[..., 3] < 255)
+        out[..., 1] = np.where(edge, np.minimum(out[..., 1], np.maximum(out[..., 0], out[..., 2])), out[..., 1])
     return out
 
 
@@ -174,7 +175,7 @@ def write_layers() -> dict[str, tuple[float, float, int, int]]:
                       "head_transform": HEAD_T, "pivots": {}, "parts": {}}
     for name in LAYERS:
         rig["parts"][name] = save(p[name], PARTS / f"{name}.png")
-        x, y, w, h = save(downscale(p[name]), ASSETS / f"jack_{name}.png")
+        x, y, w, h = save(downscale(p[name], keep_green=name == "stem"), ASSETS / f"jack_{name}.png")
         boxes[name] = (x - CROP[0] * S, y - CROP[1] * S, w, h)
     bulb, glass = bulb_layer()
     Image.fromarray(np.clip(bulb, 0, 255).round().astype(np.uint8), "RGBA").save(ASSETS / "jack_bulb.png", optimize=True)
@@ -376,14 +377,15 @@ def rig_xml(base: int, name: str, boxes, pose: str, duration: int) -> list[str]:
 
     nx, ny = art(NECK)
     L.append(f'      <Node x="{nx - rx:.3f}" y="{ny - ry:.3f}" name="Head" id="0:{base + O["head"]}">')
+    img("blink", (nx, ny), O["blink"], 0)
+    for face in ("face_smile", "face_write", "face_idea", "face_think"):
+        img(face, (nx, ny), O[face], vis[face])
+    # First children paint on top: the head conceals the accessory attachment edges.
     for label, pivot in (("hat", HAT), ("stem", STEM)):
         px, py = art(pivot)
         L.append(f'        <Node x="{px - nx:.3f}" y="{py - ny:.3f}" name="{label}" id="0:{base + O[label]}">')
         img(label, (px, py), indent=10)
         L.append("        </Node>")
-    img("blink", (nx, ny), O["blink"], 0)
-    for face in ("face_smile", "face_write", "face_idea", "face_think"):
-        img(face, (nx, ny), O[face], vis[face])
     L.append("      </Node>")
     group("idea_arm", IDEA_SHOULDER, ["idea_arm"])
     img("body", (rx, ry), indent=6)
