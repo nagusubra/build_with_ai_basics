@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BakeOut — App Map</title>
+<style>
+  :root { --cherry: #E83D55; --deep: #A71938; --cream: #FFF9F3; --pink: #FFF0F2; --ink: #2B2B2B; --muted: #6B6B6B; --line: #F1DCDF; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream); color: var(--ink); font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Nunito, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 20px 64px; }
+  h1 { color: var(--deep); font-size: 2.1rem; margin: 0 0 4px; }
+  h2 { color: var(--deep); font-size: 1.3rem; margin: 36px 0 10px; }
+  h3 { font-size: 1.05rem; margin: 0 0 4px; }
+  p, li { max-width: 72ch; }
+  .lede { color: var(--muted); margin-top: 0; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; margin: 12px 0; }
+  .stop { display: grid; grid-template-columns: 40px 1fr; gap: 12px; }
+  .num { width: 32px; height: 32px; border-radius: 50%; background: var(--cherry); color: #fff; font-weight: 800; display: grid; place-items: center; }
+  code { background: var(--pink); color: var(--deep); padding: 1px 6px; border-radius: 6px; font: 0.88em ui-monospace, SFMono-Regular, Menlo, monospace; }
+  pre { background: #2B2B2B; color: #FCEFF1; padding: 12px 14px; border-radius: 12px; overflow-x: auto; font: 0.85rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  pre code { background: none; color: inherit; padding: 0; }
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--deep); font-weight: 700; }
+  summary:focus-visible, a:focus-visible { outline: 3px solid var(--cherry); outline-offset: 2px; border-radius: 4px; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 700; font-size: 0.9rem; }
+  svg { width: 100%; height: auto; }
+  .muted { color: var(--muted); font-size: 0.92rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>BakeOut — App Map</h1>
+  <p class="lede">A food-first dating app where Jack &amp; Jill, your cherry wingmen, break the ice and plan a virtual cooking date, then leave the two of you to it.</p>
+
+  <h2>The main pieces</h2>
+  <ul>
+    <li><strong>The app</strong> (<code>app/</code>, Flutter): one codebase for iPhone, Android, and the web. Screens live in <code>app/lib/screens/</code>, talking to Firebase through small services in <code>app/lib/services/</code>.</li>
+    <li><strong>The server</strong> (<code>functions/</code>, Cloud Functions in TypeScript): matching, the wingman's brain (Gemini), date plans, and account deletion. It reacts to documents the app writes.</li>
+    <li><strong>The data</strong> (Firestore and Storage): profiles, likes, matches, messages, photos. <code>firestore.rules</code> and <code>storage.rules</code> decide who may read or write what.</li>
+  </ul>
+
+  <h2>One action, end to end: a like becomes a match</h2>
+  <p>You swipe right in Discover. If the other person already liked you (or is a judge-demo profile, which likes back), the server makes the match, the wingman writes the opening message, and both phones play “It's a BakeOut!”.</p>
+
+  <div class="card" role="img" aria-label="Diagram: Swipe right writes a like; the onLikeCreated function creates a match; the cherryOpening function asks Gemini for the opening message; the app sees the new match and shows the match moment, then the chat.">
+    <svg viewBox="0 0 820 230" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, Segoe UI, sans-serif" font-size="13">
+      <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#A71938"/></marker></defs>
+      <text x="10" y="18" fill="#6B6B6B" font-weight="700">APP</text>
+      <text x="10" y="128" fill="#6B6B6B" font-weight="700">SERVER</text>
+      <rect x="10" y="28" width="170" height="58" rx="12" fill="#FFF0F2" stroke="#E83D55"/>
+      <text x="95" y="52" text-anchor="middle" font-weight="700">Swipe right</text>
+      <text x="95" y="72" text-anchor="middle" fill="#6B6B6B">_onSwipe → like()</text>
+      <rect x="230" y="28" width="150" height="58" rx="12" fill="#fff" stroke="#F1DCDF"/>
+      <text x="305" y="52" text-anchor="middle" font-weight="700">likes/{me}_{them}</text>
+      <text x="305" y="72" text-anchor="middle" fill="#6B6B6B">Firestore</text>
+      <rect x="222" y="140" width="190" height="58" rx="12" fill="#FFF0F2" stroke="#E83D55"/>
+      <text x="317" y="164" text-anchor="middle" font-weight="700">onLikeCreated</text>
+      <text x="317" y="184" text-anchor="middle" fill="#6B6B6B">handleLike → matchIfMutual</text>
+      <rect x="450" y="140" width="170" height="58" rx="12" fill="#FFF0F2" stroke="#E83D55"/>
+      <text x="535" y="164" text-anchor="middle" font-weight="700">cherryOpening</text>
+      <text x="535" y="184" text-anchor="middle" fill="#6B6B6B">openChat + Gemini</text>
+      <rect x="450" y="28" width="150" height="58" rx="12" fill="#fff" stroke="#F1DCDF"/>
+      <text x="525" y="52" text-anchor="middle" font-weight="700">matches/{id}</text>
+      <text x="525" y="72" text-anchor="middle" fill="#6B6B6B">+ messages</text>
+      <rect x="650" y="28" width="160" height="58" rx="12" fill="#FFF0F2" stroke="#E83D55"/>
+      <text x="730" y="52" text-anchor="middle" font-weight="700">It's a BakeOut!</text>
+      <text x="730" y="72" text-anchor="middle" fill="#6B6B6B">_celebrate → chat</text>
+      <line x1="180" y1="57" x2="228" y2="57" stroke="#A71938" stroke-width="2" marker-end="url(#a)"/>
+      <line x1="305" y1="86" x2="310" y2="138" stroke="#A71938" stroke-width="2" marker-end="url(#a)"/>
+      <line x1="370" y1="140" x2="470" y2="88" stroke="#A71938" stroke-width="2" marker-end="url(#a)"/>
+      <line x1="525" y1="86" x2="532" y2="138" stroke="#A71938" stroke-width="2" marker-end="url(#a)"/>
+      <line x1="600" y1="57" x2="648" y2="57" stroke="#A71938" stroke-width="2" marker-end="url(#a)"/>
+      <text x="404" y="112" fill="#6B6B6B">creates</text>
+      <text x="545" y="118" fill="#6B6B6B">triggers</text>
+    </svg>
+  </div>
+
+  <h2>The route (three stops)</h2>
+  <p class="muted">Search for the anchor in your editor (Cmd+Shift+F in Cursor) rather than trusting line numbers; they drift.</p>
+
+  <div class="card stop">
+    <div class="num">1</div>
+    <div>
+      <h3>The swipe writes a like</h3>
+      <p><code>app/lib/screens/discover/discover_screen.dart</code>, anchor <code>_onSwipe</code>. A right swipe plays the heart burst and calls <code>DiscoverService.like</code> in <code>app/lib/services/discover_service.dart</code>, which writes one document. That's all the app does; it doesn't decide whether it's a match.</p>
+      <details><summary>The whole “like” on the app side</summary>
+<pre><code>Future&lt;void&gt; like(String me, String them) =&gt; _db.doc('likes/${me}_$them').set({
+  'from': me,
+  'to': them,
+  'createdAt': FieldValue.serverTimestamp(),
+});</code></pre>
+      </details>
+    </div>
+  </div>
+
+  <div class="card stop">
+    <div class="num">2</div>
+    <div>
+      <h3>The server decides it's a match</h3>
+      <p><code>functions/src/matching.ts</code>, anchors <code>onLikeCreated</code>, <code>handleLike</code>, <code>matchIfMutual</code>. The new like triggers the function. If the reverse like exists and both want the same thing (partner or friends), one match is created inside a transaction, with each person's own cherry. A one-sided like tells the other person who liked them instead. Judge-demo profiles (<code>demoLikesBack</code>) like back straight away.</p>
+      <p>Proved by <code>functions/test/matching.emulator.test.mjs</code>: “a mutual like creates exactly one match, each person with their own cherry”.</p>
+    </div>
+  </div>
+
+  <div class="card stop">
+    <div class="num">3</div>
+    <div>
+      <h3>The wingman opens the chat, and the app celebrates</h3>
+      <p><code>functions/src/cherry/opening.ts</code>, anchor <code>openChat</code>: the new match triggers <code>cherryOpening</code>, which finds real common ground and asks Gemini for a friendly opener. Back in the app, <code>app/lib/screens/home_shell.dart</code>, anchor <code>_celebrate</code>, is listening for unseen matches and shows “It's a BakeOut!”, then “Let's Break the Ice!” opens the chat.</p>
+    </div>
+  </div>
+
+  <h2>To change this, start here</h2>
+  <table>
+    <tr><th>If you want to change…</th><th>Start in</th></tr>
+    <tr><td>What the wingman says or when it speaks</td><td><code>functions/src/cherry/prompts.ts</code>, timings in <code>functions/src/config.ts</code></td></tr>
+    <tr><td>Who shows up in Discover</td><td><code>app/lib/services/discover_service.dart</code> (<code>compatible</code>, <code>candidates</code>) and <code>passesFilters</code> in <code>app/lib/models/profile.dart</code></td></tr>
+    <tr><td>The quiz questions</td><td><code>app/lib/screens/quiz/questions.dart</code> (<code>quizQuestions</code>)</td></tr>
+    <tr><td>The first-time tour</td><td><code>_startTour</code> in <code>app/lib/screens/home_shell.dart</code></td></tr>
+    <tr><td>The judge panel or the demo people</td><td><code>app/lib/widgets/judge_panel.dart</code>, <code>app/lib/services/judge_access.dart</code>, <code>functions/scripts/judge-demo.mjs</code></td></tr>
+    <tr><td>The web iPhone frame and side panel</td><td><code>app/lib/widgets/web_frame.dart</code></td></tr>
+    <tr><td>Colours and type</td><td><code>app/lib/theme/colors.dart</code>, <code>app/lib/theme/theme.dart</code></td></tr>
+  </table>
+
+  <h2>A practice to reuse</h2>
+  <div class="card">
+    <p><strong>Write the observable result first, then make a test check exactly that.</strong> The build checklist's slice 6 said, before any code: “a one-sided like creates no match; a mutual like creates exactly one match with both cherry assignments.” Those sentences became the tests in <code>functions/test/matching.emulator.test.mjs</code>. When the judge demo later needed profiles that like back, the change was one more sentence (“a demo profile likes back, so the like becomes a match with no ‘liked you’ notice”), one more test, and a few lines in <code>handleLike</code>. All seven matching tests then showed the old behaviour still held.</p>
+    <p>On another project: before asking an agent to build something, write one or two sentences someone could check by watching it happen, and ask for a test that checks exactly those sentences. A change later is then “add a sentence, add a test”, not “hope nothing broke”.</p>
+  </div>
+
+  <h2>Run it again</h2>
+<pre><code>cd app &amp;&amp; flutter run -d web-server --release --web-port 5050   # web, then open http://localhost:5050
+cd app &amp;&amp; flutter run --release                                  # iPhone
+cd functions &amp;&amp; nvm use 22 &amp;&amp; npm run seed:judges               # reset the judge demo</code></pre>
+  <p class="muted">Snapshot of commit <code>23a6b8a</code> plus the wrap-up commit. The code moves on; if a path here stops matching, search for the anchor name instead.</p>
+</main>
+</body>
+</html>
