@@ -49,59 +49,43 @@ The six sample profiles in Discover always like you back, so any like becomes a 
 ### Architecture
 
 ```mermaid
-flowchart LR
-  subgraph App["Flutter app, one codebase"]
-    iOS["iPhone"]
-    Android["Android"]
-    Web["Web, hosted on Vercel"]
+flowchart TB
+  People(["👫 Two people on iPhone, Android or the web"])
+
+  subgraph App["📱 Flutter app · Dart · Rive animations · web hosted on Vercel"]
+    direction LR
+    A1["① Sign up<br/>+ food quiz"] --> A2["② Selfie check"] --> A3["③ Discover<br/>swipe and like"] --> A4["④ Match<br/>and chat"] --> A5["⑤ Date card<br/>both confirm"]
   end
 
-  subgraph Device["On the device, nothing uploaded"]
-    Live["Liveness check<br/>Apple Vision · ML Kit · MediaPipe"]
-    Face["Face match<br/>MobileFaceNet (TensorFlow Lite)"]
-    Recipes["Recipe library<br/>48 bundled recipes"]
-    Rive["Jack & Jill animations<br/>Rive"]
+  subgraph Device["🔒 On-device AI · the selfie never leaves the phone"]
+    direction LR
+    D1["Liveness: blink + head turn<br/>Apple Vision · ML Kit · MediaPipe"] --> D2["Face match vs profile photo<br/>MobileFaceNet · TensorFlow Lite"]
   end
 
-  subgraph Firebase["Firebase"]
-    Auth["Firebase Auth<br/>email and password"]
-    Rules{{"Security rules"}}
-    Store[("Cloud Firestore<br/>users · likes · matches · messages")]
-    Storage[("Cloud Storage<br/>profile photos")]
+  subgraph Firebase["🔥 Firebase"]
+    direction LR
+    B1["Auth<br/>email login"]
+    B2[("Firestore<br/>profiles · likes · matches · chats")]
+    B3[("Storage<br/>profile photos")]
+    B4{{"Security rules<br/>only your own data and chats"}}
   end
 
-  subgraph Functions["Cloud Functions, TypeScript on Node 22"]
-    Like["onLikeCreated<br/>mutual like → match"]
-    Open["cherryOpening<br/>personal opener"]
-    Decide["cherryDecide<br/>speak or stay quiet?"]
-    Tick["cherryTick<br/>every minute: nudge a stalled chat"]
-    Confirm["confirmDatePlan<br/>both confirmed → recipe, song, goodbye"]
-    Callables["dismissCherry · deleteAccount"]
+  subgraph Functions["⚙️ Cloud Functions · TypeScript · Node 22"]
+    direction LR
+    F1["onLikeCreated<br/>mutual like → match"] --> F2["cherryOpening<br/>icebreaker from shared food tastes"] --> F3["cherryDecide + cherryTick<br/>speak, nudge, or stay quiet"] --> F4["confirmDatePlan<br/>recipe, song, goodbye"]
   end
 
-  Gemini["Google Gemini<br/>gemini-3.8-flash"]
-  Secret["Secret Manager<br/>GEMINI_API_KEY"]
+  AI["✨ Google Gemini · gemini-3.8-flash<br/>structured JSON · key in Secret Manager"]
 
-  App -->|"selfie check"| Device
-  App -->|"sign in"| Auth
-  App -->|"reads and writes"| Rules
-  Rules --> Store
-  Rules --> Storage
-  App -->|"callable functions"| Confirm
-  App -->|"callable functions"| Callables
-
-  Store -->|"new like"| Like
-  Like -->|"creates match"| Store
-  Store -->|"new match"| Open
-  Store -->|"new message"| Decide
-  Tick -->|"scans active chats"| Store
-  Open & Decide & Tick & Confirm -->|"wingman messages"| Store
-
-  Open & Decide & Tick & Confirm -->|"structured JSON"| Gemini
-  Secret -.-> Functions
+  People --> App
+  App <-->|"selfie check"| Device
+  App <-->|"realtime data"| Firebase
+  Firebase -->|"triggers on new likes, matches, messages"| Functions
+  Functions <-->|"prompt with both food profiles"| AI
+  Functions -->|"wingman messages appear in the chat"| Firebase
 ```
 
-The selfie is checked and matched on the phone or in the browser. Only the verified badge is saved. The two people's app talks to Firestore and Storage directly, behind security rules. Everything the wingman does runs server-side in Cloud Functions, which hold the Gemini key.
+The app talks to Firebase directly, behind security rules. The selfie check runs entirely on the device, and only the verified badge is saved. Everything the wingman (Jack or Jill) does runs on the server: each function reacts to something happening in Firestore, asks Gemini, and posts back into the chat.
 
 ### The wingman loop
 
