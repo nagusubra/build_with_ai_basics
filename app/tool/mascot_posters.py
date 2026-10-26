@@ -52,10 +52,11 @@ def main() -> None:
                     )
                     placed += 1
                     return
-                for child in node:
+                # Rive paints a node's first child on top, so composite children last-to-first.
+                for child in reversed(list(node)):
                     walk(child, x + lx, y + ly, opacity * 1.0)
 
-            for child in art:
+            for child in reversed(list(art)):
                 walk(child, 0.0, 0.0, 1.0)
             if placed == 0:
                 raise SystemExit(f"{rig} {pose}: no layers composed; check the walk")
