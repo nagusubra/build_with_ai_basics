@@ -263,13 +263,19 @@ class _PhotoPlaceholder extends StatelessWidget {
         child: ColoredBox(
           color: BakeColors.softPink,
           child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🍒', style: TextStyle(fontSize: 40)),
-                if (onRetry != null)
-                  const Text('Tap to reload', style: TextStyle(color: BakeColors.muted, fontWeight: FontWeight.w700, fontSize: 12)),
-              ],
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('🍒', style: TextStyle(fontSize: 40)),
+                  if (onRetry != null)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Text('Tap to reload', style: TextStyle(color: BakeColors.muted, fontWeight: FontWeight.w700, fontSize: 12)),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
