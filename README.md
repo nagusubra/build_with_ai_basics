@@ -46,6 +46,65 @@ The six sample profiles in Discover always like you back, so any like becomes a 
 
 ## How it works
 
+### Architecture
+
+```mermaid
+flowchart LR
+  subgraph App["Flutter app, one codebase"]
+    iOS["iPhone"]
+    Android["Android"]
+    Web["Web, hosted on Vercel"]
+  end
+
+  subgraph Device["On the device, nothing uploaded"]
+    Live["Liveness check<br/>Apple Vision · ML Kit · MediaPipe"]
+    Face["Face match<br/>MobileFaceNet (TensorFlow Lite)"]
+    Recipes["Recipe library<br/>48 bundled recipes"]
+    Rive["Jack & Jill animations<br/>Rive"]
+  end
+
+  subgraph Firebase["Firebase"]
+    Auth["Firebase Auth<br/>email and password"]
+    Rules{{"Security rules"}}
+    Store[("Cloud Firestore<br/>users · likes · matches · messages")]
+    Storage[("Cloud Storage<br/>profile photos")]
+  end
+
+  subgraph Functions["Cloud Functions, TypeScript on Node 22"]
+    Like["onLikeCreated<br/>mutual like → match"]
+    Open["cherryOpening<br/>personal opener"]
+    Decide["cherryDecide<br/>speak or stay quiet?"]
+    Tick["cherryTick<br/>every minute: nudge a stalled chat"]
+    Confirm["confirmDatePlan<br/>both confirmed → recipe, song, goodbye"]
+    Callables["dismissCherry · deleteAccount"]
+  end
+
+  Gemini["Google Gemini<br/>gemini-3.8-flash"]
+  Secret["Secret Manager<br/>GEMINI_API_KEY"]
+
+  App -->|"selfie check"| Device
+  App -->|"sign in"| Auth
+  App -->|"reads and writes"| Rules
+  Rules --> Store
+  Rules --> Storage
+  App -->|"callable functions"| Confirm
+  App -->|"callable functions"| Callables
+
+  Store -->|"new like"| Like
+  Like -->|"creates match"| Store
+  Store -->|"new match"| Open
+  Store -->|"new message"| Decide
+  Tick -->|"scans active chats"| Store
+  Open & Decide & Tick & Confirm -->|"wingman messages"| Store
+
+  Open & Decide & Tick & Confirm -->|"structured JSON"| Gemini
+  Secret -.-> Functions
+```
+
+The selfie is checked and matched on the phone or in the browser. Only the verified badge is saved. The two people's app talks to Firestore and Storage directly, behind security rules. Everything the wingman does runs server-side in Cloud Functions, which hold the Gemini key.
+
+### The wingman loop
+
 ```text
 You like someone ──▶ Firestore "likes" ──▶ onLikeCreated (Cloud Function)
                                               │ mutual like?
