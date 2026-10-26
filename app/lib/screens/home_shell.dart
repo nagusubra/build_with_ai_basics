@@ -255,6 +255,9 @@ class _HomeShellState extends State<HomeShell> {
             wingman: Wingman(
               match.cherryFor[widget.me.uid] ?? widget.me.cherryAvatar,
             ),
+            theirWingman: Wingman(
+              match.cherryFor[them.uid] ?? them.cherryAvatar,
+            ),
             profiles: widget.profiles,
             onBreakTheIce: () {
               widget.chat.markSeen(match.id, widget.me.uid).catchError((_) {});

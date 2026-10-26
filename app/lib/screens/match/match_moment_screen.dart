@@ -17,12 +17,16 @@ class MatchMomentScreen extends StatelessWidget {
     required this.me,
     required this.them,
     required this.wingman,
+    this.theirWingman,
     required this.profiles,
     required this.onBreakTheIce,
   });
 
   final UserProfile me;
   final Wingman wingman;
+
+  /// The other person's own Jack or Jill, when the match says which.
+  final Wingman? theirWingman;
   final UserProfile them;
   final ProfileService profiles;
   final VoidCallback onBreakTheIce;
@@ -60,24 +64,7 @@ class MatchMomentScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [_avatar(me, -0.05), const SizedBox(width: 12), _avatar(them, 0.05)],
                   ),
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      const AnimatedMascot(MascotPose.duoMatch, size: 220),
-                      Positioned(
-                        right: -30,
-                        bottom: -6,
-                        child: AnimatedWingman(
-                          wingman.rig(WingmanRig.smile),
-                          size: 92,
-                          bob: false,
-                        )
-                            .animate(delay: 700.ms)
-                            .fadeIn()
-                            .scale(begin: const Offset(0.5, 0.5), curve: Curves.easeOutBack),
-                      ),
-                    ],
-                  )
+                  _MatchThenNotes(mine: wingman, theirs: theirWingman)
                       .animate()
                       .slideY(begin: 0.4, end: 0, duration: 600.ms, curve: Curves.easeOutBack)
                       .fadeIn(),
@@ -99,6 +86,60 @@ class MatchMomentScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Jack and Jill come together for the match, then hand over to the two wingmen already
+/// writing notes for the chat.
+class _MatchThenNotes extends StatelessWidget {
+  const _MatchThenNotes({required this.mine, this.theirs});
+
+  final Wingman mine;
+  final Wingman? theirs;
+
+  static const _together = Duration(milliseconds: 2400);
+
+  @override
+  Widget build(BuildContext context) {
+    final other = theirs;
+    final writers = [mine, ?other];
+    final caption = other == null
+        ? '${mine.name} is already taking notes ✍️'
+        : other.name == mine.name
+            ? 'Both ${mine.name}s are already taking notes ✍️'
+            : '${mine.name} and ${other.name} are already taking notes ✍️';
+    return SizedBox(
+      height: 236,
+      width: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          const AnimatedMascot(MascotPose.duoMatch, size: 220)
+              .animate(delay: _together)
+              .fadeOut(duration: 450.ms)
+              .scale(end: const Offset(0.85, 0.85), duration: 450.ms),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (final w in writers) AnimatedWingman(w.rig(WingmanRig.write), size: writers.length == 1 ? 190 : 150, bob: false),
+                ],
+              ),
+              Text(
+                caption,
+                key: const Key('match-wingmen-notes'),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: BakeColors.deepCherry, fontWeight: FontWeight.w800),
+              ),
+            ],
+          )
+              .animate(delay: _together + 300.ms)
+              .fadeIn(duration: 500.ms)
+              .scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOutBack, duration: 500.ms),
+        ],
       ),
     );
   }
