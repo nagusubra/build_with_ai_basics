@@ -8,6 +8,8 @@ It runs on **iPhone, Android and the web**, from one Flutter codebase.
 
 👉 **Try it now:** [bakeout.vercel.app](https://bakeout.vercel.app)
 
+🎥 **Product demo and pitch:** [Watch on YouTube](https://youtu.be/a_MJMDfuH4c)
+
 ---
 
 ## Why we built it
@@ -32,6 +34,35 @@ We noticed something else: people with similar eating habits get along, even as 
 - **Friends mode:** looking for a cooking buddy instead of a date? Same app, same flow.
 - **Genuine people:** a quick selfie check (blink, turn, look back) matched against your main photo. It runs entirely on your device; the selfie is never uploaded.
 - **Recipes:** a library of recipes for when Discover runs out, or for your date.
+
+## Product screenshots
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="docs/BakeOut%20web%20app.png"><img src="docs/BakeOut%20web%20app.png" alt="BakeOut welcome screen and web experience" width="100%"></a><br>
+      <strong>Meet BakeOut</strong><br>
+      <sub>A food-first dating app, with quick access to the judge demo.</sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="docs/BakeOut%20web%20app%20-%20profile%20swipe.png"><img src="docs/BakeOut%20web%20app%20-%20profile%20swipe.png" alt="Browsing a cooking-focused profile" width="100%"></a><br>
+      <strong>Discover your kind of person</strong><br>
+      <sub>Get to know someone through their food and cooking style.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <a href="docs/BakeOut%20web%20app%20-%20match.png"><img src="docs/BakeOut%20web%20app%20-%20match.png" alt="BakeOut match moment" width="100%"></a><br>
+      <strong>A match worth celebrating</strong><br>
+      <sub>When the interest is mutual, Jack or Jill helps break the ice.</sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="docs/BakeOut%20web%20app%20-%20wingman%20in%20action.png"><img src="docs/BakeOut%20web%20app%20-%20wingman%20in%20action.png" alt="Cherry the wingman helping in a chat" width="100%"></a><br>
+      <strong>Your wingman in the chat</strong><br>
+      <sub>Cherry keeps the conversation moving with personal, food-inspired prompts.</sub>
+    </td>
+  </tr>
+</table>
 
 ## For judges: try it in one click
 
